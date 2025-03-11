@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+use Illuminate\Support\Facades\Mail;
+
+Route::get('/test-email', function () {
+    Mail::raw('This is a test email from Laravel using Gmail SMTP', function ($message) {
+        $message->to('khxiril.azhr@gmail.com')
+                ->subject('Test Email');
+    });
+
+    return 'Email sent!';
+});
+
 
 Route::get('/', function () {
     return view('welcome');
