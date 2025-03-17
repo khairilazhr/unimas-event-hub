@@ -45,9 +45,10 @@
                         </div>
                     </div>
 
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 text-center">
                         Registration Form
                     </h2>
+
 
                     <!-- Display validation errors -->
                     @if ($errors->any())
@@ -72,8 +73,11 @@
                                 <label for="name"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full
                                     Name</label>
-                                <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700 dark:text-white">
+                                <div class="relative">
+                                    <input type="text" name="name" id="name"
+                                        value="{{ old('name', $user->name ?? '') }}" required
+                                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700 dark:text-white">
+                                </div>
                             </div>
 
                             <!-- Email Field -->
@@ -81,9 +85,52 @@
                                 <label for="email"
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email
                                     Address</label>
-                                <input type="email" name="email" id="email" value="{{ old('email') }}" required
-                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700 dark:text-white">
+                                <div class="relative">
+                                    <input type="email" name="email" id="email"
+                                        value="{{ old('email', $user->email ?? '') }}" required
+                                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700 dark:text-white">
+                                </div>
                             </div>
+
+                            <!-- Buy for someone else button -->
+                            <div class="mt-2">
+                                <button type="button" id="buyForSomeoneElse"
+                                    class="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium">
+                                    Buy for someone else
+                                </button>
+                            </div>
+
+                            <!-- Add this JavaScript to handle the button click -->
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const buyForSomeoneElseBtn = document.getElementById('buyForSomeoneElse');
+                                    const nameField = document.getElementById('name');
+                                    const emailField = document.getElementById('email');
+
+                                    // Store original values
+                                    const originalName = nameField.value;
+                                    const originalEmail = emailField.value;
+
+                                    let isForSomeoneElse = false;
+
+                                    buyForSomeoneElseBtn.addEventListener('click', function () {
+                                        if (!isForSomeoneElse) {
+                                            // Clear the fields
+                                            nameField.value = '';
+                                            emailField.value = '';
+                                            buyForSomeoneElseBtn.textContent = 'Use my information';
+                                        } else {
+                                            // Restore original values
+                                            nameField.value = originalName;
+                                            emailField.value = originalEmail;
+                                            buyForSomeoneElseBtn.textContent = 'Buy for someone else';
+                                        }
+
+                                        isForSomeoneElse = !isForSomeoneElse;
+                                        nameField.focus();
+                                    });
+                                });
+                            </script>
 
                             <!-- Phone Number Field -->
                             <div>
@@ -97,81 +144,64 @@
                             <!-- Ticket Type Field -->
                             <div>
                                 <label for="ticket_type"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ticket
-                                    Type</label>
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                    Ticket Type
+                                </label>
                                 <select name="ticket_type" id="ticket_type" required
                                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700 dark:text-white">
                                     <option value="">-- Select Ticket Type --</option>
-                                    <option value="standard" {{ old('ticket_type') == 'standard' ? 'selected' : '' }}>
-                                        Standard (RM50)</option>
-                                    <option value="premium" {{ old('ticket_type') == 'premium' ? 'selected' : '' }}>
-                                        Premium (RM100)</option>
-                                    <option value="vip" {{ old('ticket_type') == 'vip' ? 'selected' : '' }}>VIP (RM200)
-                                    </option>
+                                    @php
+                                        $ticketTypes = $tickets->pluck('type')->unique();
+                                    @endphp
+                                    @foreach($ticketTypes as $type)
+                                        <option value="{{ $type }}" {{ old('ticket_type') == $type ? 'selected' : '' }}>
+                                            {{ $type }}
+                                            (RM{{ number_format($tickets->where('type', $type)->first()->price, 2) }})
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
 
-                            <!-- Seating Placement -->
-                            <div>
-                                <label for="seating"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Seating
-                                    Placement</label>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <!-- Left Column - Seat Section -->
-                                    <div>
-                                        <label for="seat_section"
-                                            class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Section</label>
-                                        <select name="seat_section" id="seat_section" required
-                                            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700 dark:text-white">
-                                            <option value="">-- Select Section --</option>
-                                            <option value="A" {{ old('seat_section') == 'A' ? 'selected' : '' }}>Section A
-                                            </option>
-                                            <option value="B" {{ old('seat_section') == 'B' ? 'selected' : '' }}>Section B
-                                            </option>
-                                            <option value="C" {{ old('seat_section') == 'C' ? 'selected' : '' }}>Section C
-                                            </option>
-                                            <option value="D" {{ old('seat_section') == 'D' ? 'selected' : '' }}>Section D
-                                            </option>
-                                        </select>
-                                    </div>
+                            <div class="grid grid-cols-3 gap-4 mt-4">
+                                <div>
+                                    <label for="section"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Section
+                                    </label>
+                                    <select name="section" id="section" required
+                                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700 dark:text-white"
+                                        disabled>
+                                        <option value="">-- Select Section --</option>
+                                    </select>
+                                </div>
 
-                                    <!-- Right Column - Seat Row & Number -->
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label for="seat_row"
-                                                class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Row</label>
-                                            <select name="seat_row" id="seat_row" required
-                                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700 dark:text-white">
-                                                <option value="">-- Row --</option>
-                                                @foreach(range(1, 10) as $row)
-                                                    <option value="{{ $row }}" {{ old('seat_row') == $row ? 'selected' : '' }}>{{ $row }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label for="seat_number"
-                                                class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Seat
-                                                #</label>
-                                            <select name="seat_number" id="seat_number" required
-                                                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700 dark:text-white">
-                                                <option value="">-- Seat --</option>
-                                                @foreach(range(1, 20) as $seat)
-                                                    <option value="{{ $seat }}" {{ old('seat_number') == $seat ? 'selected' : '' }}>{{ $seat }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
+                                <div>
+                                    <label for="row"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Row
+                                    </label>
+                                    <select name="row" id="row" required
+                                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700 dark:text-white"
+                                        disabled>
+                                        <option value="">-- Select Row --</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label for="seat"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Seat
+                                    </label>
+                                    <select name="seat" id="seat" required
+                                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700 dark:text-white"
+                                        disabled>
+                                        <option value="">-- Select Seat --</option>
+                                    </select>
                                 </div>
                             </div>
 
-                            <!-- Special Requirements or Notes -->
-                            <div>
-                                <label for="notes"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Special
-                                    Requirements or Notes</label>
-                                <textarea name="notes" id="notes" rows="3"
-                                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 dark:bg-gray-700 dark:text-white">{{ old('notes') }}</textarea>
-                            </div>
+                            <!-- Hidden field to store the final selected ticket ID -->
+                            <input type="hidden" name="ticket_id" id="ticket_id" value="{{ old('ticket_id') }}">
 
                             <!-- Submit Button -->
                             <div class="pt-4">
@@ -216,3 +246,180 @@
         </footer>
     </div>
 </x-app-layout>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const typeSelect = document.getElementById('ticket_type');
+        const sectionSelect = document.getElementById('section');
+        const rowSelect = document.getElementById('row');
+        const seatSelect = document.getElementById('seat');
+        const ticketIdField = document.getElementById('ticket_id');
+
+        // Create a structured data object of all tickets
+        const ticketData = @json($tickets);
+
+        // When ticket type changes
+        typeSelect.addEventListener('change', function () {
+            const selectedType = this.value;
+
+            // Reset and disable subsequent fields
+            resetSelect(sectionSelect);
+            resetSelect(rowSelect);
+            resetSelect(seatSelect);
+
+            if (!selectedType) return;
+
+            // Get all sections for this ticket type
+            const sections = [...new Set(
+                ticketData
+                    .filter(ticket => ticket.type === selectedType)
+                    .map(ticket => ticket.section)
+            )];
+
+            // Populate sections dropdown
+            sections.forEach(section => {
+                const option = document.createElement('option');
+                option.value = section;
+                option.textContent = section;
+                sectionSelect.appendChild(option);
+            });
+
+            sectionSelect.disabled = false;
+        });
+
+        // When section changes
+        sectionSelect.addEventListener('change', function () {
+            const selectedType = typeSelect.value;
+            const selectedSection = this.value;
+
+            // Reset and disable subsequent fields
+            resetSelect(rowSelect);
+            resetSelect(seatSelect);
+
+            if (!selectedSection) return;
+
+            // Get all rows for this ticket type and section
+            const rows = [...new Set(
+                ticketData
+                    .filter(ticket => ticket.type === selectedType && ticket.section === selectedSection)
+                    .map(ticket => ticket.row)
+            )];
+
+            // Populate rows dropdown
+            rows.forEach(row => {
+                const option = document.createElement('option');
+                option.value = row;
+                option.textContent = row;
+                rowSelect.appendChild(option);
+            });
+
+            rowSelect.disabled = false;
+        });
+
+        // When row changes
+        rowSelect.addEventListener('change', function () {
+            const selectedType = typeSelect.value;
+            const selectedSection = sectionSelect.value;
+            const selectedRow = this.value;
+
+            // Reset seat select
+            resetSelect(seatSelect);
+
+            if (!selectedRow) return;
+
+            // Get all seats for this ticket type, section and row
+            const availableTickets = ticketData.filter(ticket =>
+                ticket.type === selectedType &&
+                ticket.section === selectedSection &&
+                ticket.row === selectedRow
+            );
+
+            // Populate seats dropdown
+            availableTickets.forEach(ticket => {
+                const option = document.createElement('option');
+                option.value = ticket.id; // Use ticket ID as the value
+                option.textContent = ticket.seat;
+                option.dataset.ticketId = ticket.id;
+                seatSelect.appendChild(option);
+            });
+
+            seatSelect.disabled = false;
+        });
+
+        // When seat changes
+        seatSelect.addEventListener('change', function () {
+            if (this.value) {
+                // Set the ticket_id field value to the selected ticket's ID
+                ticketIdField.value = this.value;
+            } else {
+                ticketIdField.value = '';
+            }
+        });
+
+        // Helper function to reset a select
+        function resetSelect(selectElement) {
+            selectElement.innerHTML = '<option value="">-- Select an option --</option>';
+            selectElement.disabled = true;
+        }
+
+        // Initialize selections if coming back from validation error
+        if (typeSelect.value) {
+            typeSelect.dispatchEvent(new Event('change'));
+
+            // If section was previously selected
+            setTimeout(() => {
+                const oldSection = "{{ old('section') }}";
+                if (oldSection) {
+                    sectionSelect.value = oldSection;
+                    sectionSelect.dispatchEvent(new Event('change'));
+
+                    // If row was previously selected
+                    setTimeout(() => {
+                        const oldRow = "{{ old('row') }}";
+                        if (oldRow) {
+                            rowSelect.value = oldRow;
+                            rowSelect.dispatchEvent(new Event('change'));
+
+                            // If seat was previously selected
+                            setTimeout(() => {
+                                const oldTicketId = "{{ old('ticket_id') }}";
+                                if (oldTicketId) {
+                                    seatSelect.value = oldTicketId;
+                                }
+                            }, 100);
+                        }
+                    }, 100);
+                }
+            }, 100);
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const buyForSomeoneElseBtn = document.getElementById('buyForSomeoneElse');
+        const nameField = document.getElementById('name');
+        const emailField = document.getElementById('email');
+
+        // Store original values
+        const originalName = nameField.value;
+        const originalEmail = emailField.value;
+
+        let isForSomeoneElse = false;
+
+        buyForSomeoneElseBtn.addEventListener('click', function () {
+            if (!isForSomeoneElse) {
+                // Clear the fields
+                nameField.value = '';
+                emailField.value = '';
+                buyForSomeoneElseBtn.textContent = 'Use my information';
+            } else {
+                // Restore original values
+                nameField.value = originalName;
+                emailField.value = originalEmail;
+                buyForSomeoneElseBtn.textContent = 'Buy for someone else';
+            }
+
+            isForSomeoneElse = !isForSomeoneElse;
+            nameField.focus();
+        });
+    });
+</script>
