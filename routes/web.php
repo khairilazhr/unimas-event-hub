@@ -34,6 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/events', [UserEventController::class, 'index'])->name('user.events');
     Route::get('/events/{event}/register', [UserEventController::class, 'showRegistrationForm'])->name('user.events.register');
     Route::post('/events/{event}/register', [UserEventController::class, 'processRegistration'])->name('user.events.process-registration');
+    Route::get('/events/registration-success/{registration}', [UserEventController::class, 'registrationSuccess'])
+    ->name('user.events.registration-success');
 });
 
 require __DIR__ . '/auth.php';
