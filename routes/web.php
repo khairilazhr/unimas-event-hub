@@ -36,6 +36,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/events/{event}/register', [UserEventController::class, 'processRegistration'])->name('user.events.process-registration');
     Route::get('/events/registration-success/{registration}', [UserEventController::class, 'registrationSuccess'])
     ->name('user.events.registration-success');
+
+    Route::get('/my-bookings', [UserEventController::class, 'myBookings'])->name('user.events.my-bookings');
+    Route::get('/registration/{registration}', [UserEventController::class, 'registrationDetails'])->name('user.events.registration-details');
+    Route::delete('/registration/{registration}/cancel', [UserEventController::class, 'cancelRegistration'])->name('user.events.cancel-registration');
+    
+    // For future implementation - placeholder route
+    Route::get('/registration/{registration}/payment', function() {
+        return redirect()->back()->with('info', 'Payment functionality will be implemented soon.');
+    })->name('user.events.payment');
 });
 
 require __DIR__ . '/auth.php';

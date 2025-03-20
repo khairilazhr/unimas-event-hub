@@ -17,6 +17,7 @@ class EventRegistration extends Model
         'email',
         'phone',
         'notes',
+        'status',
     ];
 
     /**

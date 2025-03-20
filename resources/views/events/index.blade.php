@@ -30,7 +30,7 @@
                                         <div class="flex-grow p-5 flex flex-col justify-between">
                                             <div>
                                                 <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-                                                    {{ $event->title }}
+                                                    {{ $event->name }}
                                                 </h3>
                                                 <p class="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-3">
                                                     {{ $event->description }}

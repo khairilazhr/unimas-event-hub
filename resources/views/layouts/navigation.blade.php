@@ -22,9 +22,9 @@
     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link>
-                        {{ __('My Booking') }}
-                    </x-nav-link>
+                <x-nav-link :href="route('user.events.my-bookings')" :active="request()->routeIs('user.events.my-bookings')">
+    {{ __('My Bookings') }}
+</x-nav-link>
                 </div>
             </div>
 
