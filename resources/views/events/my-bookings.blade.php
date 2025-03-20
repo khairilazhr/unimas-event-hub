@@ -11,7 +11,7 @@
                     @if($registrations->isEmpty())
                         <div class="text-center text-gray-600 dark:text-gray-400 py-8">
                             <p>You don't have any bookings yet.</p>
-                            <a href="{{ route('user.events.index') }}" class="inline-block mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                            <a href="{{ route('user.events') }}" class="inline-block mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
                                 Browse Events
                             </a>
                         </div>
