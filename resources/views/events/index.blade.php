@@ -4,7 +4,7 @@
         <main class="flex-grow py-8 md:py-12 lg:py-16">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 shadow-lg sm:rounded-3xl overflow-hidden">
-                    <div class="relative bg-indigo-600 dark:bg-indigo-800 p-6 md:p-8">
+                    <div class="relative bg-unimasblue dark:bg-unimasblue p-6 md:p-8">
                         <div class="absolute inset-0 opacity-10 bg-pattern-grid"></div>
                         <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-white">
                             Upcoming Events
@@ -74,7 +74,7 @@
                                                         </svg>
                                                     </div>
                                                 @endif
-                                                <div class="absolute top-4 right-4 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                                <div class="absolute top-4 right-4 bg-unimasblue text-white text-xs font-bold px-3 py-1 rounded-full">
                                                     {{ \Carbon\Carbon::parse($event->date)->format('d M') }}
                                                 </div>
                                             </div>
@@ -112,7 +112,7 @@
 
                                                 <div class="mt-6 flex gap-3">
                                                     <a href="{{ route('user.events.register', $event->id) }}"
-                                                       class="flex-1 flex justify-center items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition duration-200">
+                                                       class="flex-1 flex justify-center items-center px-4 py-2 text-sm font-medium text-white bg-unimasblue hover:bg-indigo-700 rounded-lg transition duration-200">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                                                         </svg>
@@ -173,12 +173,12 @@
                     <div>
                         <h3 class="text-base font-semibold text-gray-800 dark:text-white mb-4">Resources</h3>
                         <div class="grid grid-cols-2 gap-2">
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">FAQ</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">Help Center</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">User Guide</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">Terms</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">Privacy</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">Contact</a>
+                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">FAQ</a>
+                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Help Center</a>
+                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">User Guide</a>
+                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Terms</a>
+                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Privacy</a>
+                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Contact</a>
                         </div>
                     </div>
                     <div>

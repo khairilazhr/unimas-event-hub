@@ -4,7 +4,7 @@
         <main class="flex-grow py-6 sm:py-8 md:py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 shadow-lg sm:rounded-xl overflow-hidden">
-                    <div class="relative bg-indigo-600 dark:bg-indigo-800 p-6">
+                    <div class="relative bg-unimasblue dark:bg-unimasblue p-6">
                         <div class="absolute inset-0 opacity-10 bg-pattern-grid"></div>
                         <h1 class="text-2xl sm:text-3xl font-bold text-center text-white">
                             My Bookings
@@ -25,7 +25,7 @@
                                 <p class="text-gray-500 dark:text-gray-400 mb-6">
                                     Find exciting events and reserve your tickets now!
                                 </p>
-                                <a href="{{ route('user.events') }}" class="inline-flex items-center px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                <a href="{{ route('user.events') }}" class="inline-flex items-center px-5 py-2.5 bg-unimasblue hover:bg-unimasblue text-white text-sm font-medium rounded-lg transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                                     <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
@@ -117,7 +117,7 @@
                                                     </td>
                                                     <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <div class="flex flex-col sm:flex-row sm:justify-end gap-2">
-                                                            <a href="{{ route('user.events.registration-details', $registration->id) }}" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 inline-flex items-center justify-center">
+                                                            <a href="{{ route('user.events.registration-details', $registration->id) }}" class="text-unimasblue hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 inline-flex items-center justify-center">
                                                                 <span class="sm:hidden">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -219,12 +219,12 @@
                     <div>
                         <h3 class="text-base font-semibold text-gray-800 dark:text-white mb-4">Resources</h3>
                         <div class="grid grid-cols-2 gap-2">
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">FAQ</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">Help Center</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">User Guide</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">Terms</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">Privacy</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition">Contact</a>
+                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">FAQ</a>
+                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Help Center</a>
+                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">User Guide</a>
+                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Terms</a>
+                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Privacy</a>
+                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Contact</a>
                         </div>
                     </div>
                     <div>
