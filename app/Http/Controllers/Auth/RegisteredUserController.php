@@ -34,12 +34,14 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:user,organizer,admin'], // Add role validation
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role, // Save the selected role
         ]);
 
         event(new Registered($user));
@@ -47,5 +49,18 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         return redirect(RouteServiceProvider::HOME);
+    }
+
+    /**
+     * Show specific registration views for different roles
+     */
+    public function showRegistrationForm($role): View
+    {
+        // Validate the role
+        if (!in_array($role, ['user', 'organizer', 'admin'])) {
+            abort(404);
+        }
+
+        return view('auth.register', ['role' => $role]);
     }
 }

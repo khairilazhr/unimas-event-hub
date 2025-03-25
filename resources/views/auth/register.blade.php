@@ -2,6 +2,9 @@
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
+        <!-- Hidden input to pass role if not already set -->
+        <input type="hidden" name="role" value="{{ $role ?? 'user' }}">
+
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
@@ -72,6 +75,19 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
+        <!-- Role Selection (only show if not pre-set) -->
+        @if(!isset($role))
+            <div class="mt-4">
+                <x-input-label for="role" :value="__('Register As')" />
+                <select name="role" id="role"
+                    class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                    <option value="user">Regular User</option>
+                    <option value="organizer">Event Organizer</option>
+                    <option value="admin">Administrator</option>
+                </select>
+                <x-input-error :messages="$errors->get('role')" class="mt-2" />
+            </div>
+        @endif
 
         <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
@@ -84,21 +100,22 @@
             </x-primary-button>
         </div>
     </form>
-</x-guest-layout>
-<script>
-    function togglePasswordVisibility(inputId, eyeId, eyeOffId) {
-        const input = document.getElementById(inputId);
-        const eyeIcon = document.getElementById(eyeId);
-        const eyeOffIcon = document.getElementById(eyeOffId);
 
-        if (input.type === 'password') {
-            input.type = 'text';
-            eyeIcon.classList.add('hidden');
-            eyeOffIcon.classList.remove('hidden');
-        } else {
-            input.type = 'password';
-            eyeIcon.classList.remove('hidden');
-            eyeOffIcon.classList.add('hidden');
+    <script>
+        function togglePasswordVisibility(inputId, eyeId, eyeOffId) {
+            const input = document.getElementById(inputId);
+            const eyeIcon = document.getElementById(eyeId);
+            const eyeOffIcon = document.getElementById(eyeOffId);
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeIcon.classList.add('hidden');
+                eyeOffIcon.classList.remove('hidden');
+            } else {
+                input.type = 'password';
+                eyeIcon.classList.remove('hidden');
+                eyeOffIcon.classList.add('hidden');
+            }
         }
-    }
-</script>
+    </script>
+</x-guest-layout>
