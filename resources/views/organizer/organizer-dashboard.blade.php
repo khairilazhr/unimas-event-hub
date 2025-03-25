@@ -1,13 +1,136 @@
 <x-app-layout>
     <div class="min-h-screen flex flex-col">
-        <main class="flex-grow py-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-
-                <!-- Dashboard Title -->
-                <div class="text-center">
-                    <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">Organizer Dashboard</h1>
+        <main class="container mx-auto px-4 py-8">
+            <div class="space-y-6">
+                <!-- Welcome Header -->
+                <div class="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">
+                    Welcome, {{ Auth::user()->name }}!
                 </div>
 
+                <!-- Dashboard Content -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Dashboard Overview -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+                            Dashboard Overview
+                        </h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 text-center">
+                                <div class="text-gray-600 dark:text-gray-400 text-sm">Total Events Created</div>
+                                <div class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                                    {{ $totalEvents }}
+                                </div>
+                            </div>
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 text-center">
+                                <div class="text-gray-600 dark:text-gray-400 text-sm">Upcoming Events</div>
+                                <div class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                                    {{ $upcomingEvents }}
+                                </div>
+                            </div>
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 text-center">
+                                <div class="text-gray-600 dark:text-gray-400 text-sm">Pending Payments</div>
+                                <div class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                                    {{ $pendingPayments }}
+                                </div>
+                            </div>
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 text-center">
+                                <div class="text-gray-600 dark:text-gray-400 text-sm">Participants</div>
+                                <div class="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                                    {{ $totalParticipants }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- My Events Panel -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                                My Events Panel
+                            </h2>
+                            <a href="#"
+                                class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600">
+                                View All
+                            </a>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-gray-100 dark:bg-gray-700">
+                                    <tr>
+                                        <th class="px-4 py-2">Event Name</th>
+                                        <th class="px-4 py-2">Date</th>
+                                        <th class="px-4 py-2">Participants</th>
+                                        <th class="px-4 py-2">Status</th>
+                                        <th class="px-4 py-2">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($events as $event)
+                                                                        <tr class="border-b dark:border-gray-700">
+                                                                            <td class="px-4 py-2">{{ $event->name }}</td>
+                                                                            <td class="px-4 py-2">
+                                                                                {{ \Carbon\Carbon::parse($event->date)->format('d/m/Y') }}
+                                                                            </td>
+                                                                            <td class="px-4 py-2">0</td>
+                                                                            <td class="px-4 py-2">
+                                                                                @php
+                                                                                    $isPast = now()->parse($event->date)->isPast();
+                                                                                    $status = $isPast ? 'Completed' : 'Upcoming';
+                                                                                    $statusColor = $isPast ? 'text-gray-600' : 'text-green-600';
+                                                                                @endphp
+                                                                                <span class="{{ $statusColor }} dark:text-opacity-80">
+                                                                                    {{ $status }}
+                                                                                </span>
+                                                                            </td>
+                                                                            <td class="px-4 py-2">
+                                                                                <a href="#"
+                                                                                    class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600">
+                                                                                    Manage
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4 text-gray-500">
+                                                No events found
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Announcements -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">
+                                Announcements
+                            </h2>
+                            <a href="{{ route('announcements.index') }}"
+                                class="text-sm text-blue-600 hover:text-blue-800">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                New Announcement
+                            </a>
+
+                        </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+                            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">Recent:</h3>
+                            <ul class="space-y-2">
+                                <li class="text-sm text-gray-600 dark:text-gray-400">
+                                    - Schedule Change for Event 1
+                                </li>
+                                <li class="text-sm text-gray-600 dark:text-gray-400">
+                                    - New Event Coming Soon
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
 

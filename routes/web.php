@@ -5,6 +5,9 @@ use App\Http\Controllers\UserEventController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\OrganizerController;
+use App\Http\Controllers\AnnouncementController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -34,11 +37,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Organizer-specific routes
-    Route::middleware(['role:organizer'])->group(function () {
-        Route::get('/organizer/dashboard', function () {
-            return view('organizer.organizer-dashboard');
-        })->name('organizer.dashboard');
+    Route::middleware(['auth', 'verified', 'role:organizer'])->group(function () {
+        Route::get('/organizer/dashboard', [OrganizerController::class, 'dashboard'])
+             ->name('organizer.dashboard');
     });
+    
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/organizer/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+    Route::get('/organizer/announcements/create', [AnnouncementController::class, 'create'])->name('announcements.create');
+    Route::post('/organizer/announcements', [AnnouncementController::class, 'store'])->name('announcements.store');
+    Route::get('/organizer/announcements/{announcement}/edit', [AnnouncementController::class, 'edit'])->name('announcements.edit');
+    Route::put('/organizer/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('announcements.update');
+    Route::delete('/organizer/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
 });
 
 Route::get('/register/{role}', [RegisteredUserController::class, 'showRegistrationForm'])

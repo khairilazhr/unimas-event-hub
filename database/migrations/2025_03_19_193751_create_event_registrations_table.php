@@ -22,6 +22,7 @@ class CreateEventRegistrationsTable extends Migration
             $table->string('email');
             $table->string('phone')->nullable();
             $table->text('notes')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }
