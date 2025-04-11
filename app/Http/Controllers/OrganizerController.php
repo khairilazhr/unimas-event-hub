@@ -16,11 +16,11 @@ class OrganizerController extends Controller
 
         // Retrieve events for the current organizer
         $events = Event::where('organizer_id', $user->id)
-        ->withCount('registrations') // This adds a `registrations_count` field
-        ->orderBy('date', 'asc')
-        ->get();
-    
-    // Now, you can sum up all participants from all events
+            ->withCount('registrations') // This adds a `registrations_count` field
+            ->orderBy('date', 'asc')
+            ->get();
+
+        // Now, you can sum up all participants from all events
         $totalParticipants = $events->sum('registrations_count');
 
         // Calculate dashboard statistics
@@ -51,5 +51,63 @@ class OrganizerController extends Controller
     {
         $event = Event::with('registrations')->withCount('registrations')->findOrFail($id);
         return response()->json($event);
+    }
+
+    public function myEvents()
+    {
+        $user = Auth::user();
+        $events = Event::where('organizer_id', $user->id)->get();
+        return view('organizer.events.my-events', compact('events'));
+    }
+
+    public function createEvent()
+    {
+        return view('organizer.events.create-event');
+    }
+
+    public function storeEvent(Request $request)
+    {
+        $event = new Event();
+        $event->name = $request->input('name');
+        $event->description = $request->input('description');
+        $event->organizer_id = Auth::id();
+        $event->status = 'pending';
+        $event->save();
+        return redirect()->route('organizer.events');
+    }
+
+    public function editEvent($id)
+    {
+        $event = Event::find($id);
+        if ($event->status !== 'approved') {
+            return back()->withErrors(['You can only edit approved events.']);
+        }
+        return view('organizer.events.edit-event', compact('event'));
+    }
+
+    public function updateEvent(Request $request, $id)
+    {
+        $event = Event::find($id);
+        if ($event->status !== 'approved') {
+            return back()->withErrors(['You can only edit approved events.']);
+        }
+        $event->name = $request->input('name');
+        $event->description = $request->input('description');
+        $event->save();
+        return redirect()->route('organizer.events');
+    }
+
+    public function viewEvent($id)
+    {
+        $event = Event::find($id);
+        return view('organizer.events.view-event', compact('event'));
+    }
+
+    public function cancelEvent($id)
+    {
+        $event = Event::find($id);
+        $event->status = 'canceled';
+        $event->save();
+        return redirect()->route('organizer.events');
     }
 }

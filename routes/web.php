@@ -39,9 +39,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Organizer-specific routes
     Route::middleware(['auth', 'verified', 'role:organizer'])->group(function () {
         Route::get('/organizer/dashboard', [OrganizerController::class, 'dashboard'])
-             ->name('organizer.dashboard');
+            ->name('organizer.dashboard');
     });
-    
+
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -79,5 +79,19 @@ Route::middleware('auth')->group(function () {
         return redirect()->back()->with('info', 'Payment functionality will be implemented soon.');
     })->name('user.events.payment');
 });
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Organizer-specific routes
+    Route::middleware(['role:organizer'])->group(function () {
+        Route::get('/organizer/events', [OrganizerController::class, 'myEvents'])->name('organizer.events');
+        Route::get('/organizer/events/create', [OrganizerController::class, 'createEvent'])->name('organizer.create.event');
+        Route::post('/organizer/events', [OrganizerController::class, 'storeEvent'])->name('organizer.store.event');
+        Route::get('/organizer/events/{id}/edit', [OrganizerController::class, 'editEvent'])->name('organizer.edit.event');
+        Route::patch('/organizer/events/{id}', [OrganizerController::class, 'updateEvent'])->name('organizer.update.event');
+        Route::get('/organizer/events/{id}', [OrganizerController::class, 'viewEvent'])->name('organizer.view.event');
+        Route::delete('/organizer/events/{id}', [OrganizerController::class, 'cancelEvent'])->name('organizer.cancel.event');
+    });
+});
+
 
 require __DIR__ . '/auth.php';
