@@ -16,10 +16,9 @@ class OrganizerController extends Controller
 
         // Retrieve events for the current organizer with status and registration count
         $events = Event::where('organizer_id', $user->id)
-            ->select('id', 'name', 'date', 'status') // make sure 'status' is selected
-            ->withCount('registrations')             // count participants
-            ->orderBy('date', 'asc')
-            ->get();
+        ->withCount('registrations') // count from EventRegistration where event_id = event.id
+        ->orderBy('date', 'asc')
+        ->get();
 
         // Total stats
         $totalParticipants = $events->sum('registrations_count');

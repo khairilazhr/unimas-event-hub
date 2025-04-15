@@ -66,27 +66,29 @@
                                 </thead>
                                 <tbody>
                                     @forelse($events as $event)
-                                                                        <tr class="border-b dark:border-gray-700">
-                                                                            <td class="px-4 py-2">{{ $event->name }}</td>
-                                                                            <td class="px-4 py-2">
-                                                                                {{ \Carbon\Carbon::parse($event->date)->format('d/m/Y') }}
-                                                                            </td>
-                                                                            <td class="px-4 py-2"></td>
-                                                                            <td class="px-4 py-2">
-    @php
-        $statusColor = match($event->status) {
-            'pending' => 'text-yellow-500',
-            'approved' => 'text-green-600',
-            'rejected' => 'text-red-600',
-            'cancelled' => 'text-gray-500',
-            'completed' => 'text-gray-600',
-            default => 'text-blue-500',
-        };
-    @endphp
-    <span class="{{ $statusColor }} dark:text-opacity-80 capitalize">
-        {{ $event->status }}
-    </span>
-</td>
+                                          <tr class="border-b dark:border-gray-700">
+                                            <td class="px-4 py-2">{{ $event->name }}</td>
+                                            <td class="px-4 py-2">
+                                            {{ \Carbon\Carbon::parse($event->date)->format('d/m/Y') }}
+                                            </td>
+                                            <td class="px-4 py-2">
+                                                {{ $event->registrations_count > 0 ? $event->registrations_count : '0' }}
+                                            </td>
+                                            <td class="px-4 py-2">
+                                                @php
+                                                    $statusColor = match($event->status) {
+                                                        'pending' => 'text-yellow-500',
+                                                        'approved' => 'text-green-600',
+                                                        'rejected' => 'text-red-600',
+                                                        'cancelled' => 'text-gray-500',
+                                                        'completed' => 'text-gray-600',
+                                                        default => 'text-blue-500',
+                                                    };
+                                                @endphp
+                                                <span class="{{ $statusColor }} dark:text-opacity-80 capitalize">
+                                                    {{ $event->status }}
+                                                </span>
+                                            </td>
                                                                             <td class="px-4 py-2">
                                                                                 <a href="#"
                                                                                     class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600">
