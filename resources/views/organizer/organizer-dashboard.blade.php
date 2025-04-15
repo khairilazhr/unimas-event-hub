@@ -71,17 +71,22 @@
                                                                             <td class="px-4 py-2">
                                                                                 {{ \Carbon\Carbon::parse($event->date)->format('d/m/Y') }}
                                                                             </td>
-                                                                            <td class="px-4 py-2">0</td>
+                                                                            <td class="px-4 py-2"></td>
                                                                             <td class="px-4 py-2">
-                                                                                @php
-                                                                                    $isPast = now()->parse($event->date)->isPast();
-                                                                                    $status = $isPast ? 'Completed' : 'Upcoming';
-                                                                                    $statusColor = $isPast ? 'text-gray-600' : 'text-green-600';
-                                                                                @endphp
-                                                                                <span class="{{ $statusColor }} dark:text-opacity-80">
-                                                                                    {{ $status }}
-                                                                                </span>
-                                                                            </td>
+    @php
+        $statusColor = match($event->status) {
+            'pending' => 'text-yellow-500',
+            'approved' => 'text-green-600',
+            'rejected' => 'text-red-600',
+            'cancelled' => 'text-gray-500',
+            'completed' => 'text-gray-600',
+            default => 'text-blue-500',
+        };
+    @endphp
+    <span class="{{ $statusColor }} dark:text-opacity-80 capitalize">
+        {{ $event->status }}
+    </span>
+</td>
                                                                             <td class="px-4 py-2">
                                                                                 <a href="#"
                                                                                     class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600">

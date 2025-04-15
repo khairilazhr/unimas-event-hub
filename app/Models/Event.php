@@ -17,6 +17,7 @@ class Event extends Model
         'location',
         'poster',
         'organizer_id',
+        'status',
     ];
 
     /**

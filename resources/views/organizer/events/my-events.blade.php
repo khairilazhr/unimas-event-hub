@@ -9,7 +9,21 @@
                             My Events
                         </h1>
                     </div>
+
+                    <!-- Always Show Create Event Button -->
                     <div class="p-4 sm:p-6 md:p-8">
+                        <div class="mb-6 flex justify-end">
+                            <a href="{{ route('organizer.create.event') }}"
+                                class="inline-flex items-center px-5 py-2.5 bg-unimasblue hover:bg-unimasblue text-white text-sm font-medium rounded-lg transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                Create Event
+                            </a>
+                        </div>
+
                         @if($events->isEmpty())
                             <div class="flex flex-col items-center justify-center py-12 text-center">
                                 <div class="text-gray-400 dark:text-gray-500 mb-4">
@@ -25,15 +39,6 @@
                                 <p class="text-gray-500 dark:text-gray-400 mb-6">
                                     Create exciting events now!
                                 </p>
-                                <a href="{{ route('organizer.create.event') }}"
-                                    class="inline-flex items-center px-5 py-2.5 bg-unimasblue hover:bg-unimasblue text-white text-sm font-medium rounded-lg transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                                    <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                    Create Event
-                                </a>
                             </div>
                         @else
                             <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
@@ -41,22 +46,18 @@
                                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                         <thead class="bg-gray-50 dark:bg-gray-700">
                                             <tr>
-                                                <th scope="col"
+                                                <th
                                                     class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    Name
-                                                </th>
-                                                <th scope="col"
+                                                    Name</th>
+                                                <th
                                                     class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell">
-                                                    Description
-                                                </th>
-                                                <th scope="col"
+                                                    Description</th>
+                                                <th
                                                     class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden md:table-cell">
-                                                    Status
-                                                </th>
-                                                <th scope="col"
+                                                    Status</th>
+                                                <th
                                                     class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    Actions
-                                                </th>
+                                                    Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody
@@ -66,13 +67,11 @@
                                                     <td class="px-3 sm:px-6 py-4">
                                                         <div
                                                             class="text-sm font-medium text-gray-900 dark:text-white truncate max-w-xs">
-                                                            {{ $event->name }}
-                                                        </div>
+                                                            {{ $event->name }}</div>
                                                     </td>
                                                     <td class="px-3 sm:px-6 py-4 hidden sm:table-cell whitespace-nowrap">
                                                         <div class="text-sm text-gray-900 dark:text-white">
-                                                            {{ $event->description }}
-                                                        </div>
+                                                            {{ $event->description }}</div>
                                                     </td>
                                                     <td class="px-3 sm:px-6 py-4 hidden md:table-cell whitespace-nowrap">
                                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
@@ -92,54 +91,31 @@
                                                     <td
                                                         class="px-3 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                         <div class="flex flex-col sm:flex-row sm:justify-end gap-2">
-                                                            @if($event->status === 'approved')
-                                                                <a href="{{ route('organizer.edit.event', $event->id) }}"
-                                                                    class="text-blue-500 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 inline-flex items-center justify-center">
-                                                                    <span class="sm:hidden">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                                stroke-width="2"
-                                                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                                stroke-width="2"
-                                                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                                        </svg>
-                                                                    </span>
-                                                                    <span class="hidden sm:inline">Edit</span>
-                                                                </a>
-                                                            @endif
-                                                            <a href="{{ route('organizer.view.event', $event->id) }}"
-                                                                class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300 inline-flex items-center justify-center">
-                                                                <span class="sm:hidden">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                                            stroke-width="2"
-                                                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                                                                    </svg>
-                                                                </span>
-                                                                <span class="hidden sm:inline">View</span>
-                                                            </a>
-                                                            <form method="POST"
-                                                                action="{{ route('organizer.cancel.event', $event->id) }}"
-                                                                class="inline">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit"
-                                                                    class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 inline-flex items-center justify-center"
-                                                                    onclick="return confirm('Are you sure you want to cancel this event?')">
-                                                                    <span class="sm:hidden">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                                                            fill="none" viewBox="0 0 24 24"
-                                                                            stroke="currentColor">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                                stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                                        </svg>
-                                                                    </span>
-                                                                    <span class="hidden sm:inline">Cancel</span>
-                                                                </button>
-                                                            </form>
+                                                        <a href="{{ route('organizer.view.event', $event->id) }}"
+    class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-800 dark:text-green-100 dark:hover:bg-green-700 transition">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+    </svg>
+    View
+</a>
+
+<!-- Cancel Button (only for pending) -->
+@if($event->status === 'pending')
+<form method="POST" action="{{ route('organizer.cancel.event', $event->id) }}" class="inline">
+    @csrf
+    @method('DELETE')
+    <button type="submit"
+        onclick="return confirm('Are you sure you want to cancel this event?')"
+        class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-800 dark:text-red-100 dark:hover:bg-red-700 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        Cancel
+    </button>
+</form>
+@endif
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -153,7 +129,6 @@
                 </div>
             </div>
         </main>
-
 
         {{-- Footer --}}
         <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">

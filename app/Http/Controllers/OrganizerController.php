@@ -14,23 +14,20 @@ class OrganizerController extends Controller
         // Get the currently logged-in user
         $user = Auth::user();
 
-        // Retrieve events for the current organizer
+        // Retrieve events for the current organizer with status and registration count
         $events = Event::where('organizer_id', $user->id)
-            ->withCount('registrations') // This adds a `registrations_count` field
+            ->select('id', 'name', 'date', 'status') // make sure 'status' is selected
+            ->withCount('registrations')             // count participants
             ->orderBy('date', 'asc')
             ->get();
 
-        // Now, you can sum up all participants from all events
+        // Total stats
         $totalParticipants = $events->sum('registrations_count');
-
-        // Calculate dashboard statistics
         $totalEvents = $events->count();
-        $upcomingEvents = $events->filter(function ($event) {
-            return Carbon::parse($event->date)->isFuture();
-        })->count();
+        $upcomingEvents = $events->where('status', 'upcoming')->count();
 
-        // Placeholder logic for additional statistics
-        $pendingPayments = 0; // Replace with actual payment logic
+        // Placeholder logic
+        $pendingPayments = 0;
 
         return view('organizer.organizer-dashboard', [
             'events' => $events,
