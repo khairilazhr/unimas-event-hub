@@ -1,12 +1,11 @@
 <?php
 
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserEventController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\OrganizerController;
-use App\Http\Controllers\AnnouncementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,6 +77,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/registration/{registration}/payment', function () {
         return redirect()->back()->with('info', 'Payment functionality will be implemented soon.');
     })->name('user.events.payment');
+
+    Route::get('/verify-ticket/{id}', [App\Http\Controllers\UserEventController::class, 'verifyTicket'])
+        ->name('user.events.verify-ticket');
+
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -92,6 +95,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/organizer/events/{id}', [OrganizerController::class, 'cancelEvent'])->name('organizer.cancel.event');
     });
 });
-
 
 require __DIR__ . '/auth.php';

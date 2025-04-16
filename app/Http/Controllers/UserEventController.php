@@ -1,12 +1,12 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\EventRegistration;
-use App\Models\Ticket; // Add Ticket model import
+use App\Models\Ticket;
+use Illuminate\Http\Request;
+// Add Ticket model import
 
 class UserEventController extends Controller
 {
@@ -31,14 +31,14 @@ class UserEventController extends Controller
     {
         // Validate the request
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'ticket_id' => 'required|exists:tickets,id',
+            'name'        => 'required|string|max:255',
+            'email'       => 'required|email|max:255',
+            'phone'       => 'nullable|string|max:20',
+            'ticket_id'   => 'required|exists:tickets,id',
             'ticket_type' => 'required|string',
-            'section' => 'required|string',
-            'row' => 'required|string',
-            'seat' => 'required|string',
+            'section'     => 'required|string',
+            'row'         => 'required|string',
+            'seat'        => 'required|string',
         ]);
 
         // Verify that the ticket exists and is not already booked
@@ -59,13 +59,13 @@ class UserEventController extends Controller
 
         // Process the registration
         $registration = EventRegistration::create([
-            'event_id' => $event->id,
+            'event_id'  => $event->id,
             'ticket_id' => $request->ticket_id,
-            'user_id' => auth()->id(),
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'status' => $status, // Add status field
+            'user_id'   => auth()->id(),
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'phone'     => $request->phone,
+            'status'    => $status, // Add status field
         ]);
 
         // Redirect to success page
@@ -114,7 +114,7 @@ class UserEventController extends Controller
         }
 
         // Check if the event date is in the future
-        if (!\Carbon\Carbon::parse($registration->event->date)->isFuture()) {
+        if (! \Carbon\Carbon::parse($registration->event->date)->isFuture()) {
             return back()->withErrors(['message' => 'You cannot cancel a registration for a past event.']);
         }
 
@@ -124,6 +124,39 @@ class UserEventController extends Controller
 
         return redirect()->route('user.events.my-bookings')
             ->with('success', 'Your booking has been cancelled successfully.');
+    }
+
+    public function verifyTicket($id)
+    {
+        $registration = EventRegistration::with(['event', 'ticket'])
+            ->findOrFail($id);
+
+        // Check if the ticket is valid
+        $isValid = $registration->status === 'confirmed';
+
+        // Additional checks can be added here
+        // For example, check if the event date is in the future
+        $eventInFuture = \Carbon\Carbon::parse($registration->event->date)->isFuture();
+
+        return response()->json([
+            'valid'        => $isValid,
+            'registration' => [
+                'id'     => $registration->id,
+                'status' => $registration->status,
+                'name'   => $registration->name,
+                'event'  => [
+                    'name'     => $registration->event->name,
+                    'date'     => \Carbon\Carbon::parse($registration->event->date)->format('d M Y, h:i A'),
+                    'location' => $registration->event->location,
+                ],
+                'ticket' => [
+                    'type'    => $registration->ticket->type,
+                    'section' => $registration->ticket->section,
+                    'row'     => $registration->ticket->row,
+                    'seat'    => $registration->ticket->seat,
+                ],
+            ],
+        ]);
     }
 
 }
