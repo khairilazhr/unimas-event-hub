@@ -29,9 +29,9 @@
                 <div class="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-6 text-gray-600 dark:text-gray-300 text-sm mb-6">
                     {{-- Date with icon and formatted nicely --}}
                     <div class="flex items-center space-x-2 animate-fadeIn">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#0057A7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2v-7H3v7a2 2 0 002 2z" />
-                        </svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
                         <time datetime="{{ $event->date }}">
                             {{ \Carbon\Carbon::parse($event->date)->format('l, jS F Y') }}
                         </time>
@@ -42,10 +42,10 @@
 
                     {{-- Location with icon --}}
                     <div class="flex items-center space-x-2 animate-fadeIn delay-150">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#0057A7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 12.414a2 2 0 10-2.828 2.828l4.243 4.243a8 8 0 1111.314-11.314 8 8 0 01-11.314 11.314z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
                         <span>{{ $event->location }}</span>
                     </div>
                 </div>
@@ -136,188 +136,161 @@
 
     {{-- Registration Modal --}}
     <div id="registrationModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-all duration-500"></div>
-        </div>
+    <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+        <div class="absolute inset-0 bg-gray-900/75 backdrop-blur-sm transition-all duration-300"></div>
+    </div>
 
-        <div class="flex items-center justify-center min-h-screen p-4">
-            {{-- Modal panel --}}
-            <div class="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-2xl transform transition-all duration-500 opacity-0 translate-y-10 scale-95 max-w-3xl w-full mx-auto relative" id="modalContent">
-                {{-- Close button --}}
-                <button id="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-500 focus:outline-none z-10 transition-transform duration-300 hover:rotate-90">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl transform transition-all duration-300 opacity-0 translate-y-4 scale-98 max-w-2xl w-full mx-auto relative" id="modalContent">
+            <button id="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none z-10 transition-transform duration-200 hover:rotate-90">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
 
-                <div class="px-6 pt-8 pb-6 sm:px-8">
-                    {{-- Modal title --}}
-                    <h2 class="text-xl sm:text-2xl font-semibold text-[#0057A7] dark:text-[#4f97d1] mb-6 text-center">
-                        Registration Form
-                    </h2>
+            <div class="px-6 pt-6 pb-8">
+                <h2 class="text-xl font-medium text-gray-800 dark:text-gray-200 mb-6">
+                    Registration
+                </h2>
 
-                    {{-- Display validation errors --}}
-                    @if ($errors->any())
-                        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-300 rounded-lg p-4 mb-6">
-                            <ul class="list-disc list-inside">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
+                @if ($errors->any())
+                    <div class="bg-red-50 dark:bg-red-900/10 border-l-4 border-red-400 dark:border-red-600 text-red-700 dark:text-red-400 p-4 mb-6">
+                        <ul class="list-disc list-inside text-sm">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form action="{{ route('user.events.process-registration', $event->id) }}" method="POST" class="space-y-4">
+                    @csrf
+
+                    <div>
+                        <label for="name" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                            Full Name
+                        </label>
+                        <input type="text" name="name" id="name" value="{{ old('name', $user->name ?? '') }}" required
+                            class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                            Email Address
+                        </label>
+                        <input type="email" name="email" id="email" value="{{ old('email', $user->email ?? '') }}" required
+                            class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
+                    </div>
+
+                    <div>
+                        <button type="button" id="buyForSomeoneElse"
+                            class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors">
+                            Buy for someone else
+                        </button>
+                    </div>
+
+                    <div>
+                        <label for="phone" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                            Phone Number
+                        </label>
+                        <input type="tel" name="phone" id="phone" value="{{ old('phone') }}"
+                            class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
+                    </div>
+
+                    <div>
+                        <label for="ticket_type" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                            Ticket Type
+                        </label>
+                        <div class="relative">
+                            <select name="ticket_type" id="ticket_type" required
+                                class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm">
+                                <option value="">Select ticket type</option>
+                                @php
+                                    $ticketTypes = $tickets->pluck('type')->unique();
+                                @endphp
+                                @foreach($ticketTypes as $type)
+                                    <option value="{{ $type }}" {{ old('ticket_type') == $type ? 'selected' : '' }}>
+                                        {{ $type }} (RM{{ number_format($tickets->where('type', $type)->first()->price, 2) }})
+                                    </option>
                                 @endforeach
-                            </ul>
-                        </div>
-                    @endif
-
-                    {{-- Registration Form --}}
-                    <form action="{{ route('user.events.process-registration', $event->id) }}" method="POST" class="space-y-5">
-                        @csrf
-
-                        <!-- Name Field -->
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Full Name
-                            </label>
-                            <div class="relative group">
-                                <input type="text" name="name" id="name" value="{{ old('name', $user->name ?? '') }}" required
-                                    class="w-full px-4 py-3 border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-[#0057A7] dark:focus:border-[#4f97d1] bg-transparent focus:outline-none focus:ring-0 transition-all dark:text-white">
-                                <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0057A7] group-focus-within:w-full transition-all duration-300"></div>
+                            </select>
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Email Field -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Email Address
+                            <label for="section" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                Section
                             </label>
-                            <div class="relative group">
-                                <input type="email" name="email" id="email" value="{{ old('email', $user->email ?? '') }}" required
-                                    class="w-full px-4 py-3 border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-[#0057A7] dark:focus:border-[#4f97d1] bg-transparent focus:outline-none focus:ring-0 transition-all dark:text-white">
-                                <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0057A7] group-focus-within:w-full transition-all duration-300"></div>
-                            </div>
-                        </div>
-
-                        <!-- Buy for someone else button -->
-                        <div>
-                            <button type="button" id="buyForSomeoneElse"
-                                class="text-sm text-[#0057A7] hover:text-[#003d75] dark:text-[#4f97d1] dark:hover:text-[#7bb3e0] font-medium transition-colors duration-300 relative overflow-hidden group">
-                                <span>Buy for someone else</span>
-                                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0057A7] dark:bg-[#4f97d1] group-hover:w-full transition-all duration-300"></span>
-                            </button>
-                        </div>
-
-                        <!-- Phone Number Field -->
-                        <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Phone Number
-                            </label>
-                            <div class="relative group">
-                                <input type="tel" name="phone" id="phone" value="{{ old('phone') }}"
-                                    class="w-full px-4 py-3 border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-[#0057A7] dark:focus:border-[#4f97d1] bg-transparent focus:outline-none focus:ring-0 transition-all dark:text-white">
-                                <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0057A7] group-focus-within:w-full transition-all duration-300"></div>
-                            </div>
-                        </div>
-
-                        <!-- Ticket Type Field -->
-                        <div>
-                            <label for="ticket_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Ticket Type
-                            </label>
-                            <div class="relative group">
-                                <select name="ticket_type" id="ticket_type" required
-                                    class="w-full px-4 py-3 border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-[#0057A7] dark:focus:border-[#4f97d1] bg-transparent focus:outline-none focus:ring-0 transition-all appearance-none dark:text-white">
-                                    <option value="">-- Select Ticket Type --</option>
-                                    @php
-                                        $ticketTypes = $tickets->pluck('type')->unique();
-                                    @endphp
-                                    @foreach($ticketTypes as $type)
-                                        <option value="{{ $type }}" {{ old('ticket_type') == $type ? 'selected' : '' }}>
-                                            {{ $type }} (RM{{ number_format($tickets->where('type', $type)->first()->price, 2) }})
-                                        </option>
-                                    @endforeach
+                            <div class="relative">
+                                <select name="section" id="section" required
+                                    class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-700"
+                                    disabled>
+                                    <option value="">Select section</option>
                                 </select>
-                                <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0057A7] group-focus-within:w-full transition-all duration-300"></div>
-                                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                     </svg>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label for="section" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Section
-                                </label>
-                                <div class="relative group">
-                                    <select name="section" id="section" required
-                                        class="w-full px-4 py-3 border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-[#0057A7] dark:focus:border-[#4f97d1] bg-transparent focus:outline-none focus:ring-0 transition-all appearance-none dark:text-white disabled:opacity-50"
-                                        disabled>
-                                        <option value="">-- Select Section --</option>
-                                    </select>
-                                    <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0057A7] group-focus-within:w-full transition-all duration-300"></div>
-                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label for="row" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Row
-                                </label>
-                                <div class="relative group">
-                                    <select name="row" id="row" required
-                                        class="w-full px-4 py-3 border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-[#0057A7] dark:focus:border-[#4f97d1] bg-transparent focus:outline-none focus:ring-0 transition-all appearance-none dark:text-white disabled:opacity-50"
-                                        disabled>
-                                        <option value="">-- Select Row --</option>
-                                    </select>
-                                    <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0057A7] group-focus-within:w-full transition-all duration-300"></div>
-                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label for="seat" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Seat
-                                </label>
-                                <div class="relative group">
-                                    <select name="seat" id="seat" required
-                                        class="w-full px-4 py-3 border-0 border-b-2 border-gray-200 dark:border-gray-700 focus:border-[#0057A7] dark:focus:border-[#4f97d1] bg-transparent focus:outline-none focus:ring-0 transition-all appearance-none dark:text-white disabled:opacity-50"
-                                        disabled>
-                                        <option value="">-- Select Seat --</option>
-                                    </select>
-                                    <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-[#0057A7] group-focus-within:w-full transition-all duration-300"></div>
-                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
+                        <div>
+                            <label for="row" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                Row
+                            </label>
+                            <div class="relative">
+                                <select name="row" id="row" required
+                                    class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-700"
+                                    disabled>
+                                    <option value="">Select row</option>
+                                </select>
+                                <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Hidden field to store the final selected ticket ID -->
-                        <input type="hidden" name="ticket_id" id="ticket_id" value="{{ old('ticket_id') }}">
-
-                        <!-- Submit Button -->
-                        <div class="pt-8">
-                            <button type="submit"
-                                class="w-full px-6 py-3 text-base font-medium text-white bg-[#0057A7] hover:bg-[#003d75] dark:bg-[#0057A7] dark:hover:bg-[#003d75] rounded-lg transition-all duration-300 transform hover:translate-y-[-2px] hover:shadow-lg">
-                                Complete Registration
-                            </button>
+                        <div>
+                            <label for="seat" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                Seat
+                            </label>
+                            <div class="relative">
+                                <select name="seat" id="seat" required
+                                    class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-700"
+                                    disabled>
+                                    <option value="">Select seat</option>
+                                </select>
+                                <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <input type="hidden" name="ticket_id" id="ticket_id" value="{{ old('ticket_id') }}">
+
+                    <div class="pt-6">
+                        <button type="submit"
+                            class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                            Complete Registration
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-
+</div>
     <style>
         @keyframes fadeUp {
             from {
