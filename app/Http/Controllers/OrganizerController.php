@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class OrganizerController extends Controller
 {
@@ -16,24 +15,24 @@ class OrganizerController extends Controller
 
         // Retrieve events for the current organizer with status and registration count
         $events = Event::where('organizer_id', $user->id)
-        ->withCount('registrations') // count from EventRegistration where event_id = event.id
-        ->orderBy('date', 'asc')
-        ->get();
+            ->withCount('registrations') // count from EventRegistration where event_id = event.id
+            ->orderBy('date', 'asc')
+            ->get();
 
         // Total stats
         $totalParticipants = $events->sum('registrations_count');
-        $totalEvents = $events->count();
-        $upcomingEvents = $events->where('status', 'upcoming')->count();
+        $totalEvents       = $events->count();
+        $upcomingEvents    = $events->where('status', 'upcoming')->count();
 
         // Placeholder logic
         $pendingPayments = 0;
 
         return view('organizer.organizer-dashboard', [
-            'events' => $events,
-            'totalEvents' => $totalEvents,
-            'upcomingEvents' => $upcomingEvents,
-            'pendingPayments' => $pendingPayments,
-            'totalParticipants' => $totalParticipants
+            'events'            => $events,
+            'totalEvents'       => $totalEvents,
+            'upcomingEvents'    => $upcomingEvents,
+            'pendingPayments'   => $pendingPayments,
+            'totalParticipants' => $totalParticipants,
         ]);
     }
 
@@ -51,7 +50,7 @@ class OrganizerController extends Controller
 
     public function myEvents()
     {
-        $user = Auth::user();
+        $user   = Auth::user();
         $events = Event::where('organizer_id', $user->id)->get();
         return view('organizer.events.my-events', compact('events'));
     }
@@ -63,13 +62,65 @@ class OrganizerController extends Controller
 
     public function storeEvent(Request $request)
     {
-        $event = new Event();
-        $event->name = $request->input('name');
-        $event->description = $request->input('description');
-        $event->organizer_id = Auth::id();
-        $event->status = 'pending';
+        // Validate the request
+        $request->validate([
+            'name'                    => 'required|string|max:255',
+            'description'             => 'required|string',
+            'date'                    => 'required|date',
+            'location'                => 'required|string|max:255',
+            'organizer_name'          => 'required|string|max:255',
+            'poster'                  => 'nullable|image|max:2048', // 2MB max
+            'tickets'                 => 'required|array|min:1',
+            'tickets.*.section'       => 'required|string|max:255',
+            'tickets.*.type'          => 'required|string|max:255',
+            'tickets.*.price'         => 'required|numeric|min:0',
+            'tickets.*.description'   => 'nullable|string',
+            'tickets.*.rows'          => 'required|integer|min:1',
+            'tickets.*.seats_per_row' => 'required|integer|min:1',
+        ]);
+
+        // Handle file upload if poster exists
+        $posterPath = null;
+        if ($request->hasFile('poster') && $request->file('poster')->isValid()) {
+            $posterPath = $request->file('poster')->store('posters', 'public');
+        }
+
+        // Create new event
+        $event                 = new Event();
+        $event->name           = $request->input('name');
+        $event->description    = $request->input('description');
+        $event->date           = $request->input('date');
+        $event->location       = $request->input('location');
+        $event->organizer_name = $request->input('organizer_name');
+        $event->poster         = $posterPath;
+        $event->organizer_id   = Auth::id();
+        $event->status         = 'pending'; // Set default status to pending
         $event->save();
-        return redirect()->route('organizer.events');
+
+        // Process ticket sections
+        if ($request->has('tickets')) {
+            foreach ($request->tickets as $ticketData) {
+                // Create ticket types based on rows and seats per row
+                $rows        = $ticketData['rows'];
+                $seatsPerRow = $ticketData['seats_per_row'];
+
+                for ($row = 1; $row <= $rows; $row++) {
+                    for ($seat = 1; $seat <= $seatsPerRow; $seat++) {
+                        $ticket              = new Ticket();
+                        $ticket->eventId     = $event->id; // Link ticket to event
+                        $ticket->type        = $ticketData['type'];
+                        $ticket->price       = $ticketData['price'];
+                        $ticket->description = $ticketData['description'] ?? null;
+                        $ticket->section     = $ticketData['section'];
+                        $ticket->row         = $row;
+                        $ticket->seat        = $seat;
+                        $ticket->save();
+                    }
+                }
+            }
+        }
+
+        return redirect()->route('organizer.events')->with('success', 'Event created successfully! It is pending approval.');
     }
 
     public function editEvent($id)
@@ -87,7 +138,7 @@ class OrganizerController extends Controller
         if ($event->status !== 'approved') {
             return back()->withErrors(['You can only edit approved events.']);
         }
-        $event->name = $request->input('name');
+        $event->name        = $request->input('name');
         $event->description = $request->input('description');
         $event->save();
         return redirect()->route('organizer.events');
@@ -101,7 +152,7 @@ class OrganizerController extends Controller
 
     public function cancelEvent($id)
     {
-        $event = Event::find($id);
+        $event         = Event::find($id);
         $event->status = 'canceled';
         $event->save();
         return redirect()->route('organizer.events');
