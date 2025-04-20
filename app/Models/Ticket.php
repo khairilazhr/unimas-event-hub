@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,6 +16,7 @@ class Ticket extends Model
         'section',
         'row',
         'seat',
+        'status',
     ];
 
     /**

@@ -89,10 +89,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/organizer/events', [OrganizerController::class, 'myEvents'])->name('organizer.events');
         Route::get('/organizer/events/create', [OrganizerController::class, 'createEvent'])->name('organizer.create.event');
         Route::post('/organizer/events', [OrganizerController::class, 'storeEvent'])->name('organizer.store.event');
-        Route::get('/organizer/events/{id}/edit', [OrganizerController::class, 'editEvent'])->name('organizer.edit.event');
-        Route::patch('/organizer/events/{id}', [OrganizerController::class, 'updateEvent'])->name('organizer.update.event');
+        Route::get('/events/{id}/edit', [OrganizerController::class, 'editEvent'])->name('organizer.edit.event');
+        Route::patch('/events/{id}', [OrganizerController::class, 'updateEvent'])->name('organizer.update.event');
         Route::get('/organizer/events/{id}', [OrganizerController::class, 'viewEvent'])->name('organizer.view.event');
         Route::delete('/organizer/events/{id}', [OrganizerController::class, 'cancelEvent'])->name('organizer.cancel.event');
+        Route::delete('/organizer/events/{id}/delete-section', [App\Http\Controllers\OrganizerController::class, 'deleteSection'])->name('organizer.delete.section');
+
     });
 });
 
