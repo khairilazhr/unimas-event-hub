@@ -1,4 +1,3 @@
-{{-- resources/views/organizer/events/edit-event.blade.php --}}
 <x-app-layout>
     <div class="min-h-screen flex flex-col">
         <main class="flex-grow py-6 sm:py-8 md:py-12">

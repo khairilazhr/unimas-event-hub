@@ -9,8 +9,7 @@
             @if($event->poster)
                 <div class="w-full h-72 md:h-96 relative">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent z-10"></div>
-                    <img src="data:image/jpeg;base64,{{ base64_encode($event->poster) }}" alt="Event Poster"
-                        class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
+                                                <img src="{{ Storage::url($event->poster) }}" alt="Poster" class="w-full h-full object-cover transition-transform duration-700 hover:scale-105">
                 </div>
             @endif
 

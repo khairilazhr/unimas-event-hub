@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('organizer_name')->nullable();
             $table->date('date')->nullable();
             $table->string('location')->nullable();
-            $table->binary('poster')->nullable();
+            $table->string('poster')->nullable();
             $table->string('organizer_id')->nullable();
             $table->string('status')->nulable();
             $table->timestamps();

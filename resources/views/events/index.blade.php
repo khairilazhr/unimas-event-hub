@@ -64,9 +64,7 @@
                                         <div class="flex flex-col h-full">
                                             <div class="relative">
                                                 @if($event->poster)
-                                                    <img src="data:image/jpeg;base64,{{ base64_encode($event->poster) }}"
-                                                         alt="{{ $event->name }} Poster"
-                                                         class="w-full h-48 object-cover">
+                                                <img src="{{ Storage::url($event->poster) }}" alt="Poster" class="w-full h-48 object-cover">
                                                 @else
                                                     <div class="w-full h-48 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 flex items-center justify-center">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -194,7 +192,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-500 dark:text-gray-400">
                     <p>© 2025 EventHub. All rights reserved.</p>
                 </div>
