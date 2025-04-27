@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\EventRegistration;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -285,6 +286,9 @@ class OrganizerController extends Controller
     public function viewEvent($id)
     {
         $event = Event::find($id);
+        if (! $event) {
+            return redirect()->route('organizer.events')->with('error', 'Event not found.');
+        }
         return view('organizer.events.view-event', compact('event'));
     }
 
@@ -294,5 +298,84 @@ class OrganizerController extends Controller
         $event->status = 'canceled';
         $event->save();
         return redirect()->route('organizer.events');
+    }
+
+    /**
+     * Show the manage bookings page.
+     */
+    public function manageBookings()
+    {
+        // Get the currently logged-in user (organizer)
+        $user = Auth::user();
+
+        // Get all events that belong to this organizer
+        $events = Event::where('organizer_id', $user->id)->get();
+
+        // Get event IDs for this organizer
+        $eventIds = $events->pluck('id')->toArray();
+
+        // Get all registrations for these events with pagination
+        $registrations = EventRegistration::whereHas('event', function ($query) use ($user) {
+            $query->where('organizer_id', $user->id);
+        })
+            ->with(['event', 'ticket', 'user'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('organizer.events.manage-booking', compact('registrations', 'events'));
+    }
+
+/**
+ * Approve a booking.
+ */
+    public function approveBooking($id)
+    {
+        $registration = EventRegistration::findOrFail($id);
+
+        // Check if the event belongs to the current organizer
+        if ($registration->event->organizer_id != Auth::id()) {
+            return redirect()->back()->with('error', 'You are not authorized to manage this booking.');
+        }
+
+        $registration->status = 'approved';
+        $registration->save();
+
+        return redirect()->back()->with('success', 'Booking has been approved.');
+    }
+
+/**
+ * Reject a booking.
+ */
+    public function rejectBooking($id)
+    {
+        $registration = EventRegistration::findOrFail($id);
+
+        // Check if the event belongs to the current organizer
+        if ($registration->event->organizer_id != Auth::id()) {
+            return redirect()->back()->with('error', 'You are not authorized to manage this booking.');
+        }
+
+        $registration->status = 'rejected';
+        $registration->save();
+
+        return redirect()->back()->with('success', 'Booking has been rejected.');
+    }
+
+/**
+ * Reset a booking to pending status.
+ */
+    public function resetBooking($id)
+    {
+        $registration = EventRegistration::findOrFail($id);
+
+        // Check if the event belongs to the current organizer
+        if ($registration->event->organizer_id != Auth::id()) {
+            return redirect()->back()->with('error', 'You are not authorized to manage this booking.');
+        }
+
+        $registration->status = 'pending';
+        $registration->save();
+
+        return redirect()->back()->with('success', 'Booking has been reset to pending status.');
     }
 }

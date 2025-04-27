@@ -94,7 +94,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/organizer/events/{id}', [OrganizerController::class, 'viewEvent'])->name('organizer.view.event');
         Route::delete('/organizer/events/{id}', [OrganizerController::class, 'cancelEvent'])->name('organizer.cancel.event');
         Route::delete('/organizer/events/{id}/delete-section', [App\Http\Controllers\OrganizerController::class, 'deleteSection'])->name('organizer.delete.section');
-
+        Route::get('/organizer/bookings', [OrganizerController::class, 'manageBookings'])->name('organizer.bookings');
+        Route::post('/organizer/bookings/{id}/approve', [OrganizerController::class, 'approveBooking'])->name('organizer.approve.booking');
+        Route::post('/organizer/bookings/{id}/reject', [OrganizerController::class, 'rejectBooking'])->name('organizer.reject.booking');
+        Route::post('/organizer/bookings/{id}/reset', [OrganizerController::class, 'resetBooking'])->name('organizer.reset.booking');
     });
 });
 

@@ -35,12 +35,12 @@
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
                             {{ __('Dashboard') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('organizer.events')" :active="request()->routeIs('user.events')"
+                        <x-nav-link :href="route('organizer.events')" :active="request()->routeIs('organizer.events')"
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
                             {{ __('My Events') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('user.events.my-bookings')"
-                            :active="request()->routeIs('user.events.my-bookings')"
+                        <x-nav-link :href="route('organizer.bookings')"
+                            :active="request()->routeIs('organizer.bookings')"
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
                             {{ __('Manage Bookings') }}
                         </x-nav-link>
@@ -137,8 +137,8 @@
                         :active="request()->routeIs('organizer.dashboard')">{{ __('Dashboard') }}</x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('organizer.events')"
                         :active="request()->routeIs('organizer.events')">{{ __('My Events') }}</x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('user.events.my-bookings')"
-                        :active="request()->routeIs('user.events.my-bookings')">{{ __('Manage Bookings') }}</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('organizer.bookings')"
+                        :active="request()->routeIs('organizer.bookings')">{{ __('Manage Bookings') }}</x-responsive-nav-link>
                 @else
                     <x-responsive-nav-link :href="route('dashboard')"
                         :active="request()->routeIs('dashboard')">{{ __('Dashboard') }}</x-responsive-nav-link>
