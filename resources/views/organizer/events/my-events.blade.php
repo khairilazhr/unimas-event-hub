@@ -10,15 +10,14 @@
                         </h1>
                     </div>
 
-                    <!-- Always Show Create Event Button -->
                     <div class="p-4 sm:p-6 md:p-8">
                         <div class="mb-6 flex justify-end">
                             <a href="{{ route('organizer.create.event') }}"
-                                class="inline-flex items-center px-5 py-2.5 bg-unimasblue hover:bg-unimasblue text-white text-sm font-medium rounded-lg transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                               class="inline-flex items-center px-5 py-2.5 bg-unimasblue hover:bg-unimasblue text-white text-sm font-medium rounded-lg transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                                 <svg class="w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
+                                     viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                                 Create Event
                             </a>
@@ -28,9 +27,9 @@
                             <div class="flex flex-col items-center justify-center py-12 text-center">
                                 <div class="text-gray-400 dark:text-gray-500 mb-4">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
+                                         viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                     </svg>
                                 </div>
                                 <p class="text-gray-600 dark:text-gray-300 text-lg font-medium mb-2">
@@ -43,37 +42,33 @@
                         @else
                             <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
                                 <div class="overflow-x-auto">
-                                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 table-fixed">
                                         <thead class="bg-gray-50 dark:bg-gray-700">
                                             <tr>
-                                                <th
-                                                    class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/4 sm:w-auto">
                                                     Name</th>
-                                                <th
-                                                    class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell">
+                                                <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell w-1/2">
                                                     Description</th>
-                                                <th
-                                                    class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden md:table-cell">
+                                                <th class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden md:table-cell w-1/5">
                                                     Status</th>
-                                                <th
-                                                    class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                <th class="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/4 sm:w-auto">
                                                     Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody
-                                            class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                             @foreach($events as $event)
                                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
                                                     <td class="px-3 sm:px-6 py-4">
-                                                        <div
-                                                            class="text-sm font-medium text-gray-900 dark:text-white truncate max-w-xs">
-                                                            {{ $event->name }}</div>
+                                                        <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                                            {{ $event->name }}
+                                                        </div>
                                                     </td>
-                                                    <td class="px-3 sm:px-6 py-4 hidden sm:table-cell whitespace-nowrap">
-                                                        <div class="text-sm text-gray-900 dark:text-white">
-                                                            {{ $event->description }}</div>
+                                                    <td class="px-3 sm:px-6 py-4 hidden sm:table-cell">
+                                                        <div class="text-sm text-gray-900 dark:text-white break-words">
+                                                            {{ $event->description }}
+                                                        </div>
                                                     </td>
-                                                    <td class="px-3 sm:px-6 py-4 hidden md:table-cell whitespace-nowrap">
+                                                    <td class="px-3 sm:px-6 py-4 hidden md:table-cell align-top">
                                                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
                                                             @if($event->status == 'approved')
                                                                 bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100
@@ -88,47 +83,44 @@
                                                             {{ ucfirst($event->status ?? 'unknown') }}
                                                         </span>
                                                     </td>
-                                                    <!-- Update the actions column in my-events.blade.php -->
-<td class="px-3 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-    <div class="flex flex-col sm:flex-row sm:justify-end gap-2">
-        <a href="{{ route('organizer.view.event', $event->id) }}"
-            class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-800 dark:text-green-100 dark:hover:bg-green-700 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-            </svg>
-            View
-        </a>
+                                                    <td class="px-3 sm:px-6 py-4 text-right text-sm font-medium align-top">
+                                                        <div class="flex flex-col sm:flex-row sm:justify-end gap-2">
+                                                            <a href="{{ route('organizer.view.event', $event->id) }}"
+                                                               class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-800 dark:text-green-100 dark:hover:bg-green-700 transition">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                                                </svg>
+                                                                View
+                                                            </a>
 
-        <!-- Edit Button (only for pending events) -->
-        @if($event->status === 'pending')
-        <a href="{{ route('organizer.edit.event', $event->id) }}"
-            class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-800 dark:text-blue-100 dark:hover:bg-blue-700 transition">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            Edit
-        </a>
-        @endif
+                                                            @if($event->status === 'pending')
+                                                                <a href="{{ route('organizer.edit.event', $event->id) }}"
+                                                                   class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-800 dark:text-blue-100 dark:hover:bg-blue-700 transition">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                    </svg>
+                                                                    Edit
+                                                                </a>
+                                                            @endif
 
-        <!-- Cancel Button (only for pending) -->
-        @if($event->status === 'pending')
-        <form method="POST" action="{{ route('organizer.cancel.event', $event->id) }}" class="inline">
-            @csrf
-            @method('DELETE')
-            <button type="submit"
-                onclick="return confirm('Are you sure you want to cancel this event?')"
-                class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-800 dark:text-red-100 dark:hover:bg-red-700 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                Cancel
-            </button>
-        </form>
-        @endif
-    </div>
-</td>
+                                                            @if($event->status === 'pending')
+                                                                <form method="POST" action="{{ route('organizer.cancel.event', $event->id) }}" class="inline">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit"
+                                                                            onclick="return confirm('Are you sure you want to cancel this event?')"
+                                                                            class="inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-800 dark:text-red-100 dark:hover:bg-red-700 transition">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                                                                             stroke="currentColor">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                                        </svg>
+                                                                        Cancel
+                                                                    </button>
+                                                                </form>
+                                                            @endif
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
