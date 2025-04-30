@@ -101,8 +101,8 @@
                                                         </div>
                                                     </td>
                                                     <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
-                                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                            @if($registration->status == 'confirmed') 
+                                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                            @if($registration->status == 'confirmed')
                                                                 bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100
                                                             @elseif($registration->status == 'pending')
                                                                 bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100
@@ -126,7 +126,17 @@
                                                                 </span>
                                                                 <span class="hidden sm:inline">View</span>
                                                             </a>
-                                                            
+
+                                                            @if($registration->status == 'confirmed')
+                                                                <a href="{{ route('forum.index', ['eventId' => $registration->event->id]) }}" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 inline-flex items-center justify-center">
+                                                                    <span class="sm:hidden">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-3-3v6m7 4H5a2 2 0 01-2-2V5a2 2 0 012-2h6l2 2h6a2 2 0 012 2v12a2 2 0 01-2 2z" />
+                                                                        </svg>
+                                                                    </span>
+                                                                    <span class="hidden sm:inline">Go to Forum</span>
+                                                                </a>
+                                                            @endif
                                                             @if($registration->status == 'pending')
                                                                 <a href="{{ route('user.events.payment', $registration->id) }}" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300 inline-flex items-center justify-center">
                                                                     <span class="sm:hidden">
@@ -137,7 +147,7 @@
                                                                     <span class="hidden sm:inline">Pay Now</span>
                                                                 </a>
                                                             @endif
-                                                            
+
                                                             @if($registration->status != 'cancelled' && \Carbon\Carbon::parse($registration->event->date)->isFuture())
                                                                 <form method="POST" action="{{ route('user.events.cancel-registration', $registration->id) }}" class="inline">
                                                                     @csrf
@@ -155,7 +165,7 @@
                                                         </div>
                                                     </td>
                                                 </tr>
-                                                
+
                                                 <!-- Mobile-only expanded row with additional details -->
                                                 <tr class="bg-gray-50 dark:bg-gray-750 md:hidden">
                                                     <td colspan="7" class="px-3 sm:px-6 py-3">
@@ -240,7 +250,7 @@
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-500 dark:text-gray-400">
                     <p>© 2025 EventHub. All rights reserved.</p>
                 </div>

@@ -83,6 +83,33 @@ Route::middleware('auth')->group(function () {
 
 });
 
+// Forum routes
+Route::middleware(['auth'])->group(function () {
+    // View forum index (list of topics for an event)
+    Route::get('/events/{eventId}/forum', [App\Http\Controllers\ForumController::class, 'index'])
+        ->name('forum.index');
+
+    // Create a new topic form
+    Route::get('/events/{eventId}/forum/create', [App\Http\Controllers\ForumController::class, 'createTopic'])
+        ->name('forum.create-topic');
+
+    // Store a new topic
+    Route::post('/events/{eventId}/forum', [App\Http\Controllers\ForumController::class, 'storeTopic'])
+        ->name('forum.store-topic');
+
+    // View a specific topic with replies
+    Route::get('/events/{eventId}/forum/{topicId}', [App\Http\Controllers\ForumController::class, 'show'])
+        ->name('forum.show');
+
+    // Store a reply to a topic
+    Route::post('/events/{eventId}/forum/{topicId}/reply', [App\Http\Controllers\ForumController::class, 'storeReply'])
+        ->name('forum.store-reply');
+
+    // Mark a reply as the answer
+    Route::post('/events/{eventId}/forum/{topicId}/mark-answer/{replyId}', [App\Http\Controllers\ForumController::class, 'markAsAnswer'])
+        ->name('forum.mark-as-answer');
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     // Organizer-specific routes
     Route::middleware(['role:organizer'])->group(function () {
