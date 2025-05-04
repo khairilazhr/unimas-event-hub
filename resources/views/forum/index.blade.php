@@ -6,24 +6,41 @@
                 <div class="bg-white dark:bg-gray-800 shadow-lg sm:rounded-xl overflow-hidden">
                     <div class="relative bg-unimasblue dark:bg-unimasblue p-6">
                         <div class="absolute inset-0 opacity-10 bg-pattern-grid"></div>
-                        <div class="flex flex-col sm:flex-row justify-between items-center">
-                            <div>
-                                <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">
-                                    {{ $event->name }} - Forum
-                                </h1>
-                                <p class="text-white text-opacity-90 text-sm">
-                                    Ask questions and get answers from the event organizer and other attendees
-                                </p>
-                            </div>
-                            <div class="mt-4 sm:mt-0">
-                                <a href="{{ route('forum.create-topic', $event->id) }}" class="inline-flex items-center px-5 py-2.5 bg-unimasblue hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                    </svg>
-                                    Ask a Question
-                                </a>
-                            </div>
-                        </div>
+<div class="flex flex-col sm:flex-row justify-between items-center">
+    <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">
+            {{ $event->name }} - Forum
+            @if(auth()->user()->role === 'admin')
+                <span class="text-sm">(Admin Mode)</span>
+            @endif
+        </h1>
+        <p class="text-white text-opacity-90 text-sm">
+            @if(auth()->user()->role === 'admin')
+                Administrator view: Full access to all forum features
+            @else
+                Ask questions and get answers from the event organizer and other attendees
+            @endif
+        </p>
+    </div>
+    @if(auth()->user()->role !== 'admin')
+        <div class="mt-4 sm:mt-0">
+            <a href="{{ route('forum.create-topic', $event->id) }}" class="...">
+                Ask a Question
+            </a>
+        </div>
+    @endif
+</div>
+
+{{-- Add admin navigation if needed --}}
+@if(auth()->user()->role === 'admin')
+    <div class="bg-gray-800 text-white py-2 mt-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-4">
+                <a href="{{ route('admin.dashboard') }}" class="hover:text-gray-300">Admin Dashboard</a>
+            </div>
+        </div>
+    </div>
+@endif
                     </div>
 
                     <div class="p-4 sm:p-6 md:p-8">

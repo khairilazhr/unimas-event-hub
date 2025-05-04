@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\EventRegistration;
 use App\Models\ForumReply;
 use App\Models\ForumTopic;
 use Illuminate\Http\Request;
@@ -17,8 +18,22 @@ class ForumController extends Controller
      */
     public function index($eventId)
     {
-        $event  = Event::findOrFail($eventId);
-        $topics = ForumTopic::where('event_id', $eventId)
+        $event = Event::findOrFail($eventId);
+        $user  = Auth::user();
+
+        // Authorization checks
+        if ($user->role === 'organizer') {
+            abort_unless($event->organizer_id === $user->id, 403, 'Unauthorized access');
+        } elseif ($user->role === 'user') {
+            $hasConfirmedRegistration = EventRegistration::where('user_id', $user->id)
+                ->where('event_id', $event->id)
+                ->where('status', 'confirmed')
+                ->exists();
+            abort_unless($hasConfirmedRegistration, 403, 'You need a confirmed registration');
+        }
+        // Admin requires no checks
+
+        $topics = ForumTopic::where('event_id', $event->id)
             ->with(['user', 'replies'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);

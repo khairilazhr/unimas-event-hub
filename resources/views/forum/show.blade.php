@@ -16,7 +16,6 @@
                                 </p>
                             </div>
                             <a href="{{ route('forum.index', $event->id) }}" class="inline-flex items-center px-5 py-2.5 bg-unimasblue hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-
                                 Back to Forum
                             </a>
                         </div>
@@ -41,12 +40,18 @@
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0">
                                         <div class="w-10 h-10 rounded-full bg-unimasblue flex items-center justify-center text-white font-medium text-lg">
-                                            {{ substr($topic->user->name, 0, 1) }}
+                                            {{ $topic->user_id === $event->organizer_id ? 'O' : substr($topic->user->name, 0, 1) }}
                                         </div>
                                     </div>
                                     <div class="ml-3">
                                         <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                            {{ $topic->user->name }}
+                                            @if($topic->user_id === $event->organizer_id)
+                                                <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-purple-900 dark:text-purple-100">
+                                                    Organizer
+                                                </span>
+                                            @else
+                                                {{ $topic->user->name }}
+                                            @endif
                                         </p>
                                         <p class="text-xs text-gray-500 dark:text-gray-400">
                                             {{ $topic->created_at->diffForHumans() }}
@@ -90,12 +95,18 @@
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0">
                                                 <div class="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-700 dark:text-gray-200 font-medium text-lg">
-                                                    {{ substr($reply->user->name, 0, 1) }}
+                                                    {{ $reply->user_id === $event->organizer_id ? 'O' : substr($reply->user->name, 0, 1) }}
                                                 </div>
                                             </div>
                                             <div class="ml-3">
                                                 <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                                    {{ $reply->user->name }}
+                                                    @if($reply->user_id === $event->organizer_id)
+                                                        <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-purple-900 dark:text-purple-100">
+                                                            Organizer
+                                                        </span>
+                                                    @else
+                                                        {{ $reply->user->name }}
+                                                    @endif
                                                 </p>
                                                 <p class="text-xs text-gray-500 dark:text-gray-400">
                                                     {{ $reply->created_at->diffForHumans() }}
@@ -159,6 +170,12 @@
                                     @enderror
                                 </div>
 
+                                @if(auth()->user()->id === $event->organizer_id)
+                                    <div class="mb-4 text-sm text-purple-600 dark:text-purple-400">
+                                        You're replying as the Event Organizer
+                                    </div>
+                                @endif
+
                                 <div class="flex justify-end">
                                     <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-unimasblue rounded-lg hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-300 dark:bg-unimasblue dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
                                         Post Answer
@@ -170,7 +187,7 @@
                 </div>
             </div>
         </main>
-        {{-- Footer (same as in my-bookings.blade.php) --}}
+{{-- Footer (same as in my-bookings.blade.php) --}}
         <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
