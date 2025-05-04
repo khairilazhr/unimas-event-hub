@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\OrganizerController;
@@ -30,9 +31,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin-specific routes
     Route::middleware(['role:admin'])->group(function () {
-        Route::get('/admin/dashboard', function () {
-            return view('admin.admin-dashboard');
-        })->name('admin.dashboard');
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
+            ->name('admin.dashboard');
     });
 
     // Organizer-specific routes
