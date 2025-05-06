@@ -33,6 +33,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
             ->name('admin.dashboard');
+        // User Management
+        Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+        Route::get('/admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
+        Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+
+        // Event Management
+        Route::get('/admin/events', [AdminController::class, 'events'])->name('admin.events');
+        Route::post('/admin/events/{event}/approve', [AdminController::class, 'approveEvent'])->name('admin.events.approve');
+        Route::post('/admin/events/{event}/reject', [AdminController::class, 'rejectEvent'])->name('admin.events.reject');
+
     });
 
     // Organizer-specific routes
