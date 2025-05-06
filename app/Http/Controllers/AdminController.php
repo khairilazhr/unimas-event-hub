@@ -2,6 +2,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\EventRegistration;
+use App\Models\ForumReply;
+use App\Models\ForumTopic;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -15,17 +18,33 @@ class AdminController extends Controller
         $regularUserCount = $userCount - $organizerCount;
 
         // Event statistics
-        $eventCount         = Event::count();
-        $pendingEventCount  = Event::where('status', 'pending')->count();
-        $approvedEventCount = Event::where('status', 'approved')->count();
+        $eventCount        = Event::count();
+        $activeEventCount  = Event::where('status', 'approved')->count();
+        $pendingEventCount = Event::where('status', 'pending')->count();
 
-        // Recent events for dashboard
-        $recentEvents = Event::latest()->take(5)->get();
+        // Registration statistics
+        $registrationCount = EventRegistration::count();
+
+        // Forum statistics
+        $forumTopicCount = ForumTopic::count();
+        $forumReplyCount = ForumReply::count();
+
+        // Recent activities
+        $recentEvents        = Event::with('organizer')->latest()->take(5)->get();
+        $recentRegistrations = EventRegistration::with(['event', 'user'])->latest()->take(5)->get();
 
         return view('admin.admin-dashboard', compact(
-            'userCount', 'organizerCount', 'regularUserCount',
-            'eventCount', 'pendingEventCount', 'approvedEventCount',
-            'recentEvents'
+            'userCount',
+            'organizerCount',
+            'regularUserCount',
+            'eventCount',
+            'activeEventCount',
+            'pendingEventCount',
+            'registrationCount',
+            'forumTopicCount',
+            'forumReplyCount',
+            'recentEvents',
+            'recentRegistrations'
         ));
     }
 
@@ -34,10 +53,12 @@ class AdminController extends Controller
     {
         $query = User::query();
 
+        // Filter by role
         if ($request->has('role')) {
             $query->where('role', $request->role);
         }
 
+        // Search by name or email
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -46,8 +67,19 @@ class AdminController extends Controller
             });
         }
 
-        $users = $query->paginate(10);
-        return view('admin.users.index', compact('users'));
+        $users = $query->latest()->paginate(10);
+
+        // Get counts for filter badges (unfiltered)
+        $totalCount       = User::count();
+        $organizerCount   = User::where('role', 'organizer')->count();
+        $regularUserCount = $totalCount - $organizerCount;
+
+        return view('admin.users.index', compact(
+            'users',
+            'totalCount',
+            'organizerCount',
+            'regularUserCount'
+        ));
     }
 
     public function editUser(User $user)
@@ -112,5 +144,12 @@ class AdminController extends Controller
     {
         $event->update(['status' => 'rejected']);
         return redirect()->route('admin.events')->with('success', 'Event rejected successfully.');
+    }
+
+    public function showEvent(Event $event)
+    {
+        $event->load(['organizer', 'tickets', 'registrations', 'forumTopics.user']);
+
+        return view('admin.events.show', compact('event'));
     }
 }
