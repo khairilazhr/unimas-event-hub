@@ -37,11 +37,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
         Route::get('/admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
         Route::put('/admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+        Route::delete('/admin/users/{user}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
+        Route::get('/admin/registrations', [AdminController::class, 'registrations'])->name('admin.registrations');
 
         // Event Management
         Route::get('/admin/events', [AdminController::class, 'events'])->name('admin.events');
         Route::post('/admin/events/{event}/approve', [AdminController::class, 'approveEvent'])->name('admin.events.approve');
         Route::post('/admin/events/{event}/reject', [AdminController::class, 'rejectEvent'])->name('admin.events.reject');
+        Route::get('/admin/events/{event}', [AdminController::class, 'showEvent'])->name('admin.events.show');
 
     });
 
