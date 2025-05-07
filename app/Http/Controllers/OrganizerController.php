@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\Ticket;
@@ -332,15 +333,25 @@ class OrganizerController extends Controller
     {
         $registration = EventRegistration::findOrFail($id);
 
-        // Check if the event belongs to the current organizer
         if ($registration->event->organizer_id != Auth::id()) {
-            return redirect()->back()->with('error', 'You are not authorized to manage this booking.');
+            return redirect()->back()->with('error', 'Unauthorized action.');
         }
 
         $registration->status = 'approved';
         $registration->save();
 
-        return redirect()->back()->with('success', 'Booking has been approved.');
+        // Create attendance record with initial status
+        Attendance::firstOrCreate(
+            ['event_registration_id' => $registration->id],
+            [
+                'event_id'  => $registration->event_id,
+                'ticket_id' => $registration->ticket_id,
+                'user_id'   => $registration->user_id,
+                'status'    => Attendance::STATUS_REGISTERED,
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Booking approved.');
     }
 
 /**
