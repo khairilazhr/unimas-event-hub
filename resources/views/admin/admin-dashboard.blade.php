@@ -207,7 +207,7 @@
                             </a>
                         </div>
                     </div>
-                    <div>
+                    <!-- <div>
                         <h3 class="text-base font-semibold text-gray-800 dark:text-white mb-4">Resources</h3>
                         <div class="grid grid-cols-2 gap-2">
                             <a href="#"
@@ -225,7 +225,7 @@
                             <a href="#"
                                 class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Contact</a>
                         </div>
-                    </div>
+                    </div> -->
                     <div>
                         <h3 class="text-base font-semibold text-gray-800 dark:text-white mb-4">Need Help?</h3>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
