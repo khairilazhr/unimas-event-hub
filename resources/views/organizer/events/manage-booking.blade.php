@@ -127,13 +127,6 @@
                                                             Reject
                                                         </button>
                                                     </form>
-                                                @else
-                                                    <form action="{{ route('organizer.reset.booking', $registration->id) }}" method="POST" class="inline">
-                                                        @csrf
-                                                        <button type="submit" class="text-blue-600 hover:text-blue-900">
-                                                            Reset to Pending
-                                                        </button>
-                                                    </form>
                                                 @endif
                                             </td>
                                         </tr>
