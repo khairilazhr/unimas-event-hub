@@ -1,135 +1,112 @@
 <x-app-layout>
     <div class="min-h-screen flex flex-col">
-        <main class="flex-grow py-4 sm:py-6">
+        <main class="flex-grow py-4">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 shadow-lg sm:rounded-xl overflow-hidden">
-                    <!-- Keep header unchanged -->
-                    <div class="relative bg-unimasblue dark:bg-unimasblue p-6">
+                    <div class="relative bg-unimasblue dark:bg-unimasblue p-4">
                         <div class="absolute inset-0 opacity-10 bg-pattern-grid"></div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-center text-white">
+                        <h1 class="text-xl sm:text-2xl font-bold text-center text-white">
                             Register New Event
                         </h1>
                     </div>
-
-                    <div class="p-4 sm:p-5">
+                    <div class="p-4 sm:p-6">
                         <form action="{{ route('organizer.store.event') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
-                            <!-- Main form content in 2 columns -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- Left column - Event details -->
+                                <!-- Event Details -->
+                                <div class="md:col-span-2">
+                                    <label for="name" class="block text-sm font-medium mb-1">Event Name:</label>
+                                    <input type="text" id="name" name="name" required
+                                        class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <label for="description" class="block text-sm font-medium mb-1">Description:</label>
+                                    <textarea id="description" name="description" required rows="3"
+                                        class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"></textarea>
+                                </div>
+
                                 <div>
-                                    <div class="mb-3">
-                                        <label for="name" class="block text-sm font-medium mb-1">Event Name:</label>
-                                        <input type="text" id="name" name="name" required
-                                            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200">
-                                    </div>
+                                    <label for="date" class="block text-sm font-medium mb-1">Event Date:</label>
+                                    <input type="datetime-local" id="date" name="date" required
+                                        class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                                </div>
 
-                                    <div class="mb-3">
-                                        <label for="description" class="block text-sm font-medium mb-1">Event Description:</label>
-                                        <textarea id="description" name="description" required rows="3"
-                                            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"></textarea>
-                                    </div>
+                                <div>
+                                    <label for="location" class="block text-sm font-medium mb-1">Location:</label>
+                                    <input type="text" id="location" name="location" required
+                                        class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                                </div>
 
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                                <div class="md:col-span-2">
+                                    <label for="organizer_name" class="block text-sm font-medium mb-1">Organizer:</label>
+                                    <input type="text" id="organizer_name" name="organizer_name" required
+                                        class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                                </div>
+
+                                <div>
+                                    <label for="poster" class="block text-sm font-medium mb-1">Event Poster:</label>
+                                    <input type="file" id="poster" name="poster" accept="image/*"
+                                        class="w-full border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                                </div>
+
+                                <div>
+                                    <label for="qr_code" class="block text-sm font-medium mb-1">QR Code:</label>
+                                    <input type="file" id="qr_code" name="qr_code" accept="image/*"
+                                        class="w-full border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+                            <h2 class="text-lg font-bold mb-3">Ticket Information</h2>
+
+                            <div id="ticket-sections" class="space-y-3">
+                                <div class="ticket-section bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         <div>
-                                            <label for="date" class="block text-sm font-medium mb-1">Event Date:</label>
-                                            <input type="datetime-local" id="date" name="date" required
-                                                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200">
+                                            <label class="block text-sm font-medium mb-1">Section Name:</label>
+                                            <input type="text" name="tickets[0][section]" required
+                                                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
                                         </div>
                                         <div>
-                                            <label for="location" class="block text-sm font-medium mb-1">Location:</label>
-                                            <input type="text" id="location" name="location" required
-                                                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200">
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label for="organizer_name" class="block text-sm font-medium mb-1">Organizer Name:</label>
-                                        <input type="text" id="organizer_name" name="organizer_name" required
-                                            class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200">
-                                    </div>
-
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        <div>
-                                            <label for="poster" class="block text-sm font-medium mb-1">Event Poster:</label>
-                                            <input type="file" id="poster" name="poster" accept="image/*"
-                                                class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                                            <label class="block text-sm font-medium mb-1">Ticket Type:</label>
+                                            <input type="text" name="tickets[0][type]" required
+                                                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
                                         </div>
                                         <div>
-                                            <label for="qr_code" class="block text-sm font-medium mb-1">QR Payment Code:</label>
-                                            <input type="file" id="qr_code" name="qr_code" accept="image/*"
-                                                class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                                            <label class="block text-sm font-medium mb-1">Price:</label>
+                                            <input type="number" name="tickets[0][price]" required step="0.01" min="0"
+                                                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium mb-1">Seating:</label>
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <input type="number" name="tickets[0][rows]" required min="1" placeholder="Rows"
+                                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                                                <input type="number" name="tickets[0][seats_per_row]" required min="1" placeholder="Seats/Row"
+                                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                                            </div>
+                                        </div>
+                                        <div class="md:col-span-2">
+                                            <label class="block text-sm font-medium mb-1">Description:</label>
+                                            <textarea name="tickets[0][description]" rows="2"
+                                                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"></textarea>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Right column - Ticket information -->
-                                <div>
-                                    <h2 class="text-lg font-bold mb-3">Ticket Information</h2>
+                            <div class="mt-4 flex justify-between items-center">
+                                <button type="button" id="add-section-btn"
+                                    class="text-sm px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded transition">
+                                    + Add Section
+                                </button>
 
-                                    <div id="ticket-sections">
-                                        <div class="ticket-section bg-gray-50 dark:bg-gray-700 p-3 rounded-lg mb-3">
-                                            <div class="flex justify-between items-center mb-2">
-                                                <h3 class="text-md font-medium">Section 1</h3>
-                                            </div>
-
-                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
-                                                <div>
-                                                    <label for="section_name_0" class="block text-sm font-medium mb-1">Section Name:</label>
-                                                    <input type="text" id="section_name_0" name="tickets[0][section]" required
-                                                        class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
-                                                </div>
-                                                <div>
-                                                    <label for="ticket_type_0" class="block text-sm font-medium mb-1">Ticket Type:</label>
-                                                    <input type="text" id="ticket_type_0" name="tickets[0][type]" required
-                                                        class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
-                                                </div>
-                                            </div>
-
-                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
-                                                <div>
-                                                    <label for="price_0" class="block text-sm font-medium mb-1">Price:</label>
-                                                    <input type="number" id="price_0" name="tickets[0][price]" required step="0.01" min="0"
-                                                        class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
-                                                </div>
-                                                <div>
-                                                    <label for="description_0" class="block text-sm font-medium mb-1">Description:</label>
-                                                    <input type="text" id="description_0" name="tickets[0][description]"
-                                                        class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
-                                                </div>
-                                            </div>
-
-                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                <div>
-                                                    <label for="rows_0" class="block text-sm font-medium mb-1">Rows:</label>
-                                                    <input type="number" id="rows_0" name="tickets[0][rows]" required min="1"
-                                                        class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
-                                                </div>
-                                                <div>
-                                                    <label for="seats_per_row_0" class="block text-sm font-medium mb-1">Seats per Row:</label>
-                                                    <input type="number" id="seats_per_row_0" name="tickets[0][seats_per_row]" required min="1"
-                                                        class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex justify-between mb-3">
-                                        <button type="button" id="add-section-btn"
-                                            class="inline-flex items-center px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-800 text-xs font-medium rounded transition duration-300">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                            </svg>
-                                            Add Section
-                                        </button>
-
-                                        <button type="submit"
-                                            class="inline-flex items-center px-4 py-2 bg-unimasblue hover:bg-unimasblue text-white text-sm font-medium rounded-lg transition duration-300 shadow-md hover:shadow-lg">
-                                            Register Event
-                                        </button>
-                                    </div>
-                                </div>
+                                <button type="submit"
+                                    class="px-4 py-2 bg-unimasblue hover:bg-unimasblue-dark text-white text-sm font-medium rounded-lg shadow-md transition">
+                                    Register Event
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -218,72 +195,64 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const addSectionBtn = document.getElementById('add-section-btn');
-            const ticketSections = document.getElementById('ticket-sections');
-            let sectionCount = 1;
+    document.addEventListener('DOMContentLoaded', function() {
+        const addSectionBtn = document.getElementById('add-section-btn');
+        const ticketSections = document.getElementById('ticket-sections');
+        let sectionCount = 1;
 
-            addSectionBtn.addEventListener('click', function() {
-                sectionCount++;
-                const newSection = document.createElement('div');
-                newSection.className = 'ticket-section bg-gray-50 dark:bg-gray-700 p-3 rounded-lg mb-3';
-                newSection.innerHTML = `
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-md font-medium">Section ${sectionCount}</h3>
+        addSectionBtn.addEventListener('click', function() {
+            const newSection = document.createElement('div');
+            newSection.className = 'ticket-section bg-gray-50 dark:bg-gray-700 p-3 rounded-lg';
+            newSection.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="md:col-span-2 flex justify-between items-center">
+                        <h3 class="text-sm font-medium">Section ${sectionCount + 1}</h3>
                         <button type="button" class="remove-section text-red-500 hover:text-red-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
-                        <div>
-                            <label for="section_name_${sectionCount-1}" class="block text-sm font-medium mb-1">Section Name:</label>
-                            <input type="text" id="section_name_${sectionCount-1}" name="tickets[${sectionCount-1}][section]" required
-                                class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
-                        </div>
-                        <div>
-                            <label for="ticket_type_${sectionCount-1}" class="block text-sm font-medium mb-1">Ticket Type:</label>
-                            <input type="text" id="ticket_type_${sectionCount-1}" name="tickets[${sectionCount-1}][type]" required
-                                class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Section Name:</label>
+                        <input type="text" name="tickets[${sectionCount}][section]" required
+                            class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Ticket Type:</label>
+                        <input type="text" name="tickets[${sectionCount}][type]" required
+                            class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Price:</label>
+                        <input type="number" name="tickets[${sectionCount}][price]" required step="0.01" min="0"
+                            class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Seating:</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" name="tickets[${sectionCount}][rows]" required min="1" placeholder="Rows"
+                                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
+                            <input type="number" name="tickets[${sectionCount}][seats_per_row]" required min="1" placeholder="Seats/Row"
+                                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200">
                         </div>
                     </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
-                        <div>
-                            <label for="price_${sectionCount-1}" class="block text-sm font-medium mb-1">Price:</label>
-                            <input type="number" id="price_${sectionCount-1}" name="tickets[${sectionCount-1}][price]" required step="0.01" min="0"
-                                class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
-                        </div>
-                        <div>
-                            <label for="description_${sectionCount-1}" class="block text-sm font-medium mb-1">Description:</label>
-                            <input type="text" id="description_${sectionCount-1}" name="tickets[${sectionCount-1}][description]"
-                                class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
-                        </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium mb-1">Description:</label>
+                        <textarea name="tickets[${sectionCount}][description]" rows="2"
+                            class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-200"></textarea>
                     </div>
+                </div>
+            `;
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label for="rows_${sectionCount-1}" class="block text-sm font-medium mb-1">Rows:</label>
-                            <input type="number" id="rows_${sectionCount-1}" name="tickets[${sectionCount-1}][rows]" required min="1"
-                                class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
-                        </div>
-                        <div>
-                            <label for="seats_per_row_${sectionCount-1}" class="block text-sm font-medium mb-1">Seats per Row:</label>
-                            <input type="number" id="seats_per_row_${sectionCount-1}" name="tickets[${sectionCount-1}][seats_per_row]" required min="1"
-                                class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring focus:ring-blue-200">
-                        </div>
-                    </div>
-                `;
-                ticketSections.appendChild(newSection);
+            ticketSections.appendChild(newSection);
+            sectionCount++;
 
-                // Add event listener to the remove button
-                const removeBtn = newSection.querySelector('.remove-section');
-                removeBtn.addEventListener('click', function() {
-                    newSection.remove();
-                });
+            // Add remove functionality
+            newSection.querySelector('.remove-section').addEventListener('click', function() {
+                this.closest('.ticket-section').remove();
             });
         });
-    </script>
+    });
+</script>
 </x-app-layout>
