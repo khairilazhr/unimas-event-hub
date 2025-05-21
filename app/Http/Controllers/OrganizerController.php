@@ -72,7 +72,8 @@ class OrganizerController extends Controller
             'date'                    => 'required|date',
             'location'                => 'required|string|max:255',
             'organizer_name'          => 'required|string|max:255',
-            'poster'                  => 'nullable|image|max:2048', // 2MB max
+            'poster'                  => 'nullable|image|max:2048',
+            'qr_code'                 => 'nullable|image|max:2048',
             'tickets'                 => 'required|array|min:1',
             'tickets.*.section'       => 'required|string|max:255',
             'tickets.*.type'          => 'required|string|max:255',
@@ -82,13 +83,16 @@ class OrganizerController extends Controller
             'tickets.*.seats_per_row' => 'required|integer|min:1',
         ]);
 
-        // Handle file upload if poster exists
         $posterPath = null;
         if ($request->hasFile('poster') && $request->file('poster')->isValid()) {
             $posterPath = $request->file('poster')->store('posters', 'public');
         }
 
-        // Create new event
+        $qrcodePath = null;
+        if ($request->hasFile('qr_code') && $request->file('qr_code')->isValid()) {
+            $qrcodePath = $request->file('qr_code')->store('qr_codes', 'public');
+        }
+
         $event                 = new Event();
         $event->name           = $request->input('name');
         $event->description    = $request->input('description');
@@ -96,8 +100,9 @@ class OrganizerController extends Controller
         $event->location       = $request->input('location');
         $event->organizer_name = $request->input('organizer_name');
         $event->poster         = $posterPath;
+        $event->qr_code        = $qrcodePath;
         $event->organizer_id   = Auth::id();
-        $event->status         = 'pending'; // Set default status to pending
+        $event->status         = 'pending';
         $event->save();
 
         // Process ticket sections
@@ -164,7 +169,8 @@ class OrganizerController extends Controller
             'date'                         => 'required|date',
             'location'                     => 'required|string|max:255',
             'organizer_name'               => 'required|string|max:255',
-            'poster'                       => 'nullable|image|max:2048', // 2MB max
+            'poster'                       => 'nullable|image|max:2048',
+            'qr_code'                      => 'nullable|image|max:2048',
             'new_tickets'                  => 'nullable|array',
             'new_tickets.*.section'        => 'required_with:new_tickets|string|max:255',
             'new_tickets.*.type'           => 'required_with:new_tickets|string|max:255',
@@ -175,7 +181,6 @@ class OrganizerController extends Controller
             'new_tickets.*.update_section' => 'nullable|string',
         ]);
 
-        // Handle file upload if poster exists
         if ($request->hasFile('poster') && $request->file('poster')->isValid()) {
             // Delete old poster if it exists
             if ($event->poster) {
@@ -183,6 +188,14 @@ class OrganizerController extends Controller
             }
             $posterPath    = $request->file('poster')->store('posters', 'public');
             $event->poster = $posterPath;
+        }
+
+        if ($request->hasFile(key: 'qr_code') && $request->file('qr_code')->isValid()) {
+            if ($event->qr_code) {
+                Storage::disk('public')->delete($event->qr_code);
+            }
+            $qrcodePath     = $request->file('qr_code')->store('qr_codes', 'public');
+            $event->qr_code = $qrcodePath;
         }
 
         // Update event details

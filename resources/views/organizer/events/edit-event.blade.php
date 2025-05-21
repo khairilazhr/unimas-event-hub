@@ -87,6 +87,24 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 shadow-sm">
+                                    <label for="qr_code" class="block text-xs font-medium text-gray-700 dark:text-gray-300">
+                                        QR Payment Code
+                                    </label>
+
+                                    <div class="flex items-center mt-1">
+                                        @if($event->qr_code)
+                                            <div class="flex-shrink-0 mr-2">
+                                                <img src="{{ asset('storage/' . $event->qr_code) }}" alt="Payment QR code" class="w-20 h-auto rounded-md shadow-sm">
+                                            </div>
+                                        @endif
+                                        <div class="flex-grow">
+                                            <input type="file" name="qr_code" id="qr_code"
+                                                class="block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm py-1">
+                                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Max size: 2MB. Recommended: 1000x1000px</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- Ticket Management Section - Tabbed Interface -->

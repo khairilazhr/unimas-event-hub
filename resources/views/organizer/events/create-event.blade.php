@@ -52,6 +52,12 @@
                                         class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200">
                                 </div>
 
+                                <div class="mb-4">
+                                    <label for="qr_code" class="block text-lg font-medium mb-2">QR Payment Code:</label>
+                                    <input type="file" id="qr_code" name="qr_code" accept="image/*"
+                                        class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200">
+                                </div>
+
                                 <hr class="my-6">
                                 <h2 class="text-xl font-bold mb-4">Ticket Information</h2>
 
