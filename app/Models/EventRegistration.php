@@ -35,7 +35,7 @@ class EventRegistration extends Model
     {
         return $this->belongsTo(Ticket::class);
     }
-    
+
     /**
      * Get the user who made this registration.
      */

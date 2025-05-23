@@ -4,7 +4,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 shadow-lg sm:rounded-xl overflow-hidden">
                     <!-- Header Section -->
-                    <div class="relative bg-blue-600 dark:bg-blue-800 p-6">
+                    <div class="relative bg-unimasblue dark:bg-unimasblue p-6">
                         <div class="absolute inset-0 opacity-10 bg-pattern-grid"></div>
                         <h1 class="text-2xl sm:text-3xl font-bold text-center text-white">
                             Manage Events
@@ -21,7 +21,7 @@
                                            class="w-full rounded-lg border-gray-300 dark:bg-gray-700 dark:border-gray-600"
                                            value="{{ request('search') }}">
                                     <button type="submit"
-                                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-300 shadow-md hover:shadow-lg">
+                                            class="px-4 py-2 bg-unimasblue hover:bg-blue-700 text-white rounded-lg transition duration-300 shadow-md hover:shadow-lg">
                                         Search
                                     </button>
                                 </div>

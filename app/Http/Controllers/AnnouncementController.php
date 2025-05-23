@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Announcement;
 use App\Models\Event;
 use Illuminate\Http\Request;
@@ -11,12 +12,14 @@ class AnnouncementController extends Controller
     public function index()
     {
         $announcements = Announcement::orderBy('created_at', 'desc')->get();
+
         return view('organizer.announcements.index', compact('announcements'));
     }
 
     public function create()
     {
         $events = Event::all(); // Fetch all events from the database
+
         return view('organizer.announcements.create', compact('events'));
     }
 
@@ -27,7 +30,7 @@ class AnnouncementController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
         ]);
-    
+
         Announcement::create([
             'eventId' => $request->eventId,
             'title' => $request->title,
@@ -35,7 +38,7 @@ class AnnouncementController extends Controller
             'announcement_date' => now(),
             'created_by' => Auth::user()->name,
         ]);
-    
+
         return redirect()->route('announcements.index')->with('success', 'Announcement created successfully.');
     }
 
@@ -64,6 +67,7 @@ class AnnouncementController extends Controller
     public function destroy(Announcement $announcement)
     {
         $announcement->delete();
+
         return redirect()->route('announcements.index')->with('success', 'Announcement deleted successfully.');
     }
 }

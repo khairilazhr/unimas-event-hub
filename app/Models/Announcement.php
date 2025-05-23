@@ -14,7 +14,7 @@ class Announcement extends Model
         'title',
         'content',
         'announcement_date',
-        'created_by'
+        'created_by',
     ];
 
     /**
@@ -29,5 +29,4 @@ class Announcement extends Model
     {
         return $this->belongsTo(User::class, 'organizer_id');
     }
-
 }

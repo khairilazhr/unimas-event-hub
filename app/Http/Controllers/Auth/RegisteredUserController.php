@@ -57,7 +57,7 @@ class RegisteredUserController extends Controller
     public function showRegistrationForm($role): View
     {
         // Validate the role
-        if (!in_array($role, ['user', 'organizer', 'admin'])) {
+        if (! in_array($role, ['user', 'organizer', 'admin'])) {
             abort(404);
         }
 

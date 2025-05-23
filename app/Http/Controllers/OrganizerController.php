@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
@@ -24,17 +25,17 @@ class OrganizerController extends Controller
 
         // Total stats
         $totalParticipants = $events->sum('registrations_count');
-        $totalEvents       = $events->count();
-        $upcomingEvents    = $events->where('status', 'upcoming')->count();
+        $totalEvents = $events->count();
+        $upcomingEvents = $events->where('status', 'upcoming')->count();
 
         // Placeholder logic
         $pendingPayments = 0;
 
         return view('organizer.organizer-dashboard', [
-            'events'            => $events,
-            'totalEvents'       => $totalEvents,
-            'upcomingEvents'    => $upcomingEvents,
-            'pendingPayments'   => $pendingPayments,
+            'events' => $events,
+            'totalEvents' => $totalEvents,
+            'upcomingEvents' => $upcomingEvents,
+            'pendingPayments' => $pendingPayments,
             'totalParticipants' => $totalParticipants,
         ]);
     }
@@ -42,19 +43,22 @@ class OrganizerController extends Controller
     public function index()
     {
         $events = Event::withCount('registrations')->get(); // Eager load with total count
+
         return response()->json($events);
     }
 
     public function show($id)
     {
         $event = Event::with('registrations')->withCount('registrations')->findOrFail($id);
+
         return response()->json($event);
     }
 
     public function myEvents()
     {
-        $user   = Auth::user();
+        $user = Auth::user();
         $events = Event::where('organizer_id', $user->id)->get();
+
         return view('organizer.events.my-events', compact('events'));
     }
 
@@ -67,19 +71,19 @@ class OrganizerController extends Controller
     {
         // Validate the request
         $request->validate([
-            'name'                    => 'required|string|max:255',
-            'description'             => 'required|string',
-            'date'                    => 'required|date',
-            'location'                => 'required|string|max:255',
-            'organizer_name'          => 'required|string|max:255',
-            'poster'                  => 'nullable|image|max:2048',
-            'qr_code'                 => 'nullable|image|max:2048',
-            'tickets'                 => 'required|array|min:1',
-            'tickets.*.section'       => 'required|string|max:255',
-            'tickets.*.type'          => 'required|string|max:255',
-            'tickets.*.price'         => 'required|numeric|min:0',
-            'tickets.*.description'   => 'nullable|string',
-            'tickets.*.rows'          => 'required|integer|min:1',
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'date' => 'required|date',
+            'location' => 'required|string|max:255',
+            'organizer_name' => 'required|string|max:255',
+            'poster' => 'nullable|image|max:2048',
+            'qr_code' => 'nullable|image|max:2048',
+            'tickets' => 'required|array|min:1',
+            'tickets.*.section' => 'required|string|max:255',
+            'tickets.*.type' => 'required|string|max:255',
+            'tickets.*.price' => 'required|numeric|min:0',
+            'tickets.*.description' => 'nullable|string',
+            'tickets.*.rows' => 'required|integer|min:1',
             'tickets.*.seats_per_row' => 'required|integer|min:1',
         ]);
 
@@ -93,35 +97,35 @@ class OrganizerController extends Controller
             $qrcodePath = $request->file('qr_code')->store('qr_codes', 'public');
         }
 
-        $event                 = new Event();
-        $event->name           = $request->input('name');
-        $event->description    = $request->input('description');
-        $event->date           = $request->input('date');
-        $event->location       = $request->input('location');
+        $event = new Event;
+        $event->name = $request->input('name');
+        $event->description = $request->input('description');
+        $event->date = $request->input('date');
+        $event->location = $request->input('location');
         $event->organizer_name = $request->input('organizer_name');
-        $event->poster         = $posterPath;
-        $event->qr_code        = $qrcodePath;
-        $event->organizer_id   = Auth::id();
-        $event->status         = 'pending';
+        $event->poster = $posterPath;
+        $event->qr_code = $qrcodePath;
+        $event->organizer_id = Auth::id();
+        $event->status = 'pending';
         $event->save();
 
         // Process ticket sections
         if ($request->has('tickets')) {
             foreach ($request->tickets as $ticketData) {
                 // Create ticket types based on rows and seats per row
-                $rows        = $ticketData['rows'];
+                $rows = $ticketData['rows'];
                 $seatsPerRow = $ticketData['seats_per_row'];
 
                 for ($row = 1; $row <= $rows; $row++) {
                     for ($seat = 1; $seat <= $seatsPerRow; $seat++) {
-                        $ticket              = new Ticket();
-                        $ticket->eventId     = $event->id; // Link ticket to event
-                        $ticket->type        = $ticketData['type'];
-                        $ticket->price       = $ticketData['price'];
+                        $ticket = new Ticket;
+                        $ticket->eventId = $event->id; // Link ticket to event
+                        $ticket->type = $ticketData['type'];
+                        $ticket->price = $ticketData['price'];
                         $ticket->description = $ticketData['description'] ?? null;
-                        $ticket->section     = $ticketData['section'];
-                        $ticket->row         = $row;
-                        $ticket->seat        = $seat;
+                        $ticket->section = $ticketData['section'];
+                        $ticket->row = $row;
+                        $ticket->seat = $seat;
                         $ticket->save();
                     }
                 }
@@ -164,20 +168,20 @@ class OrganizerController extends Controller
 
         // Validate the request
         $request->validate([
-            'name'                         => 'required|string|max:255',
-            'description'                  => 'required|string',
-            'date'                         => 'required|date',
-            'location'                     => 'required|string|max:255',
-            'organizer_name'               => 'required|string|max:255',
-            'poster'                       => 'nullable|image|max:2048',
-            'qr_code'                      => 'nullable|image|max:2048',
-            'new_tickets'                  => 'nullable|array',
-            'new_tickets.*.section'        => 'required_with:new_tickets|string|max:255',
-            'new_tickets.*.type'           => 'required_with:new_tickets|string|max:255',
-            'new_tickets.*.price'          => 'required_with:new_tickets|numeric|min:0',
-            'new_tickets.*.description'    => 'nullable|string',
-            'new_tickets.*.rows'           => 'required_with:new_tickets|integer|min:1',
-            'new_tickets.*.seats_per_row'  => 'required_with:new_tickets|integer|min:1',
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'date' => 'required|date',
+            'location' => 'required|string|max:255',
+            'organizer_name' => 'required|string|max:255',
+            'poster' => 'nullable|image|max:2048',
+            'qr_code' => 'nullable|image|max:2048',
+            'new_tickets' => 'nullable|array',
+            'new_tickets.*.section' => 'required_with:new_tickets|string|max:255',
+            'new_tickets.*.type' => 'required_with:new_tickets|string|max:255',
+            'new_tickets.*.price' => 'required_with:new_tickets|numeric|min:0',
+            'new_tickets.*.description' => 'nullable|string',
+            'new_tickets.*.rows' => 'required_with:new_tickets|integer|min:1',
+            'new_tickets.*.seats_per_row' => 'required_with:new_tickets|integer|min:1',
             'new_tickets.*.update_section' => 'nullable|string',
         ]);
 
@@ -186,7 +190,7 @@ class OrganizerController extends Controller
             if ($event->poster) {
                 Storage::disk('public')->delete($event->poster);
             }
-            $posterPath    = $request->file('poster')->store('posters', 'public');
+            $posterPath = $request->file('poster')->store('posters', 'public');
             $event->poster = $posterPath;
         }
 
@@ -194,15 +198,15 @@ class OrganizerController extends Controller
             if ($event->qr_code) {
                 Storage::disk('public')->delete($event->qr_code);
             }
-            $qrcodePath     = $request->file('qr_code')->store('qr_codes', 'public');
+            $qrcodePath = $request->file('qr_code')->store('qr_codes', 'public');
             $event->qr_code = $qrcodePath;
         }
 
         // Update event details
-        $event->name           = $request->input('name');
-        $event->description    = $request->input('description');
-        $event->date           = $request->input('date');
-        $event->location       = $request->input('location');
+        $event->name = $request->input('name');
+        $event->description = $request->input('description');
+        $event->date = $request->input('date');
+        $event->location = $request->input('location');
         $event->organizer_name = $request->input('organizer_name');
         $event->save();
 
@@ -231,20 +235,20 @@ class OrganizerController extends Controller
                 }
 
                 // Create ticket types based on rows and seats per row
-                $rows        = $ticketData['rows'];
+                $rows = $ticketData['rows'];
                 $seatsPerRow = $ticketData['seats_per_row'];
 
                 for ($row = 1; $row <= $rows; $row++) {
                     for ($seat = 1; $seat <= $seatsPerRow; $seat++) {
-                        $ticket              = new Ticket();
-                        $ticket->eventId     = $event->id;
-                        $ticket->type        = $ticketData['type'];
-                        $ticket->price       = $ticketData['price'];
+                        $ticket = new Ticket;
+                        $ticket->eventId = $event->id;
+                        $ticket->type = $ticketData['type'];
+                        $ticket->price = $ticketData['price'];
                         $ticket->description = $ticketData['description'] ?? null;
-                        $ticket->section     = $section;
-                        $ticket->row         = $row;
-                        $ticket->seat        = $seat;
-                        $ticket->status      = 'available';
+                        $ticket->section = $section;
+                        $ticket->row = $row;
+                        $ticket->seat = $seat;
+                        $ticket->status = 'available';
                         $ticket->save();
                     }
                 }
@@ -303,14 +307,16 @@ class OrganizerController extends Controller
         if (! $event) {
             return redirect()->route('organizer.events')->with('error', 'Event not found.');
         }
+
         return view('organizer.events.view-event', compact('event'));
     }
 
     public function cancelEvent($id)
     {
-        $event         = Event::find($id);
+        $event = Event::find($id);
         $event->status = 'canceled';
         $event->save();
+
         return redirect()->route('organizer.events');
     }
 
@@ -339,9 +345,9 @@ class OrganizerController extends Controller
         return view('organizer.events.manage-booking', compact('registrations', 'events'));
     }
 
-/**
- * Approve a booking.
- */
+    /**
+     * Approve a booking.
+     */
     public function approveBooking($id)
     {
         $registration = EventRegistration::findOrFail($id);
@@ -357,19 +363,19 @@ class OrganizerController extends Controller
         Attendance::firstOrCreate(
             ['event_registration_id' => $registration->id],
             [
-                'event_id'  => $registration->event_id,
+                'event_id' => $registration->event_id,
                 'ticket_id' => $registration->ticket_id,
-                'user_id'   => $registration->user_id,
-                'status'    => Attendance::STATUS_REGISTERED,
+                'user_id' => $registration->user_id,
+                'status' => Attendance::STATUS_REGISTERED,
             ]
         );
 
         return redirect()->back()->with('success', 'Booking approved.');
     }
 
-/**
- * Reject a booking.
- */
+    /**
+     * Reject a booking.
+     */
     public function rejectBooking($id)
     {
         $registration = EventRegistration::findOrFail($id);
@@ -385,9 +391,9 @@ class OrganizerController extends Controller
         return redirect()->back()->with('success', 'Booking has been rejected.');
     }
 
-/**
- * Reset a booking to pending status.
- */
+    /**
+     * Reset a booking to pending status.
+     */
     public function resetBooking($id)
     {
         $registration = EventRegistration::findOrFail($id);

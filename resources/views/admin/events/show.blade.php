@@ -4,7 +4,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 shadow-lg sm:rounded-xl overflow-hidden">
                     <!-- Header Section -->
-                    <div class="relative bg-blue-600 dark:bg-blue-800 p-6">
+                    <div class="relative bg-unimasblue dark:bg-unimasblue p-6">
                         <div class="absolute inset-0 opacity-10 bg-pattern-grid"></div>
                         <div class="flex items-center justify-between">
                             <h1 class="text-2xl sm:text-3xl font-bold text-white">

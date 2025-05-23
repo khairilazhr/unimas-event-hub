@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
 {
@@ -20,10 +19,10 @@ class CheckRole
         \Log::info('Current User:', [
             'authenticated' => Auth::check(),
             'user' => Auth::user(),
-            'requested_roles' => $roles
+            'requested_roles' => $roles,
         ]);
 
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect('login');
         }
 
@@ -33,7 +32,7 @@ class CheckRole
         \Log::info('User Role Check:', [
             'user_role' => $user->role,
             'allowed_roles' => $roles,
-            'role_match' => in_array($user->role, $roles)
+            'role_match' => in_array($user->role, $roles),
         ]);
 
         if (in_array($user->role, $roles)) {

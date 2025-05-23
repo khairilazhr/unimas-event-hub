@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Event;
@@ -19,7 +20,7 @@ class ForumController extends Controller
     public function index($eventId)
     {
         $event = Event::findOrFail($eventId);
-        $user  = Auth::user();
+        $user = Auth::user();
 
         // Authorization checks
         if ($user->role === 'organizer') {
@@ -50,30 +51,30 @@ class ForumController extends Controller
     public function createTopic($eventId)
     {
         $event = Event::findOrFail($eventId);
+
         return view('forum.create-topic', compact('event'));
     }
 
     /**
      * Store a newly created topic in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $eventId
      * @return \Illuminate\Http\RedirectResponse
      */
     public function storeTopic(Request $request, $eventId)
     {
         $request->validate([
-            'title'   => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'content' => 'required|string',
         ]);
 
         $event = Event::findOrFail($eventId);
 
-        $topic           = new ForumTopic();
-        $topic->title    = $request->title;
-        $topic->content  = $request->content;
+        $topic = new ForumTopic;
+        $topic->title = $request->title;
+        $topic->content = $request->content;
         $topic->event_id = $eventId;
-        $topic->user_id  = Auth::id();
+        $topic->user_id = Auth::id();
         $topic->save();
 
         return redirect()->route('forum.show', ['eventId' => $eventId, 'topicId' => $topic->id])
@@ -98,7 +99,6 @@ class ForumController extends Controller
     /**
      * Store a newly created reply in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $eventId
      * @param  int  $topicId
      * @return \Illuminate\Http\RedirectResponse
@@ -111,10 +111,10 @@ class ForumController extends Controller
 
         $topic = ForumTopic::findOrFail($topicId);
 
-        $reply           = new ForumReply();
-        $reply->content  = $request->content;
+        $reply = new ForumReply;
+        $reply->content = $request->content;
         $reply->topic_id = $topicId;
-        $reply->user_id  = Auth::id();
+        $reply->user_id = Auth::id();
         $reply->save();
 
         return redirect()->route('forum.show', ['eventId' => $eventId, 'topicId' => $topicId])
@@ -140,7 +140,7 @@ class ForumController extends Controller
             ForumReply::where('topic_id', $topicId)->update(['is_answer' => false]);
 
             // Mark this reply as the answer
-            $reply            = ForumReply::findOrFail($replyId);
+            $reply = ForumReply::findOrFail($replyId);
             $reply->is_answer = true;
             $reply->save();
 

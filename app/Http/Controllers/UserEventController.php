@@ -1,11 +1,12 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+
 // Add Ticket model import
 
 class UserEventController extends Controller
@@ -13,6 +14,7 @@ class UserEventController extends Controller
     public function index()
     {
         $events = Event::latest()->paginate(6); // Show 6 events per page
+
         return view('events.index', compact('events'));
     }
 
@@ -31,14 +33,14 @@ class UserEventController extends Controller
     {
         // Validate the request
         $validated = $request->validate([
-            'name'        => 'required|string|max:255',
-            'email'       => 'required|email|max:255',
-            'phone'       => 'nullable|string|max:20',
-            'ticket_id'   => 'required|exists:tickets,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'ticket_id' => 'required|exists:tickets,id',
             'ticket_type' => 'required|string',
-            'section'     => 'required|string',
-            'row'         => 'required|string',
-            'seat'        => 'required|string',
+            'section' => 'required|string',
+            'row' => 'required|string',
+            'seat' => 'required|string',
         ]);
 
         // Verify that the ticket exists and is not already booked
@@ -59,13 +61,13 @@ class UserEventController extends Controller
 
         // Process the registration
         $registration = EventRegistration::create([
-            'event_id'  => $event->id,
+            'event_id' => $event->id,
             'ticket_id' => $request->ticket_id,
-            'user_id'   => auth()->id(),
-            'name'      => $request->name,
-            'email'     => $request->email,
-            'phone'     => $request->phone,
-            'status'    => $status, // Add status field
+            'user_id' => auth()->id(),
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'status' => $status, // Add status field
         ]);
 
         // Redirect to success page
@@ -93,6 +95,7 @@ class UserEventController extends Controller
 
         return view('events.my-bookings', compact('registrations'));
     }
+
     public function registrationDetails(EventRegistration $registration)
     {
         // Security check - only allow users to view their own registrations
@@ -139,24 +142,23 @@ class UserEventController extends Controller
         $eventInFuture = \Carbon\Carbon::parse($registration->event->date)->isFuture();
 
         return response()->json([
-            'valid'        => $isValid,
+            'valid' => $isValid,
             'registration' => [
-                'id'     => $registration->id,
+                'id' => $registration->id,
                 'status' => $registration->status,
-                'name'   => $registration->name,
-                'event'  => [
-                    'name'     => $registration->event->name,
-                    'date'     => \Carbon\Carbon::parse($registration->event->date)->format('d M Y, h:i A'),
+                'name' => $registration->name,
+                'event' => [
+                    'name' => $registration->event->name,
+                    'date' => \Carbon\Carbon::parse($registration->event->date)->format('d M Y, h:i A'),
                     'location' => $registration->event->location,
                 ],
                 'ticket' => [
-                    'type'    => $registration->ticket->type,
+                    'type' => $registration->ticket->type,
                     'section' => $registration->ticket->section,
-                    'row'     => $registration->ticket->row,
-                    'seat'    => $registration->ticket->seat,
+                    'row' => $registration->ticket->row,
+                    'seat' => $registration->ticket->seat,
                 ],
             ],
         ]);
     }
-
 }

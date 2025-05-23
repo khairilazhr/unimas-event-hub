@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,8 +10,10 @@ class Attendance extends Model
     use HasFactory;
 
     public const STATUS_REGISTERED = 'registered';
-    public const STATUS_ATTENDED   = 'attended';
-    public const STATUS_ABSENT     = 'absent';
+
+    public const STATUS_ATTENDED = 'attended';
+
+    public const STATUS_ABSENT = 'absent';
 
     protected $fillable = [
         'event_registration_id',
@@ -29,7 +32,7 @@ class Attendance extends Model
 
             // Validate status
             if (! in_array($attendance->status, self::validStatuses())) {
-                throw new \InvalidArgumentException("Invalid attendance status");
+                throw new \InvalidArgumentException('Invalid attendance status');
             }
         });
     }
