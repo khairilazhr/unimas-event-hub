@@ -140,7 +140,7 @@
     </div>
 
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl transform transition-all duration-300 opacity-0 translate-y-4 scale-98 max-w-2xl w-full mx-auto relative" id="modalContent">
+        <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl transform transition-all duration-300 opacity-0 translate-y-4 scale-98 max-w-6xl w-full mx-auto relative" id="modalContent">
             <button id="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none z-10 transition-transform duration-200 hover:rotate-90">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -173,12 +173,22 @@
                             class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
                     </div>
 
-                    <div>
-                        <label for="email" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                            Email Address
-                        </label>
-                        <input type="email" name="email" id="email" value="{{ old('email', $user->email ?? '') }}" required
-                            class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="w-full md:w-1/2"> 
+                            <label for="email" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                Email Address
+                            </label>
+                            <input type="email" name="email" id="email" value="{{ old('email', $user->email ?? '') }}" required
+                                class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
+                        </div>
+
+                        <div class="w-full md:w-1/2"> 
+                            <label for="phone" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                Phone Number
+                            </label>
+                            <input type="tel" name="phone" id="phone" value="{{ old('phone') }}"
+                                class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
+                        </div>
                     </div>
 
                     <div>
@@ -188,35 +198,29 @@
                         </button>
                     </div>
 
-                    <div>
-                        <label for="phone" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                            Phone Number
-                        </label>
-                        <input type="tel" name="phone" id="phone" value="{{ old('phone') }}"
-                            class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
-                    </div>
-
-                    <div>
-                        <label for="ticket_type" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                            Ticket Type
-                        </label>
-                        <div class="relative">
-                            <select name="ticket_type" id="ticket_type" required
-                                class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm">
-                                <option value="">Select ticket type</option>
-                                @php
-                                    $ticketTypes = $tickets->pluck('type')->unique();
-                                @endphp
-                                @foreach($ticketTypes as $type)
-                                    <option value="{{ $type }}" {{ old('ticket_type') == $type ? 'selected' : '' }}>
-                                        {{ $type }} (RM{{ number_format($tickets->where('type', $type)->first()->price, 2) }})
-                                    </option>
-                                @endforeach
-                            </select>
-                            <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="w-full md:w-1/2">
+                            <label for="ticket_type" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                Ticket Type
+                            </label>
+                            <div class="relative">
+                                <select name="ticket_type" id="ticket_type" required
+                                    class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm">
+                                    <option value="">Select ticket type</option>
+                                    @php
+                                        $ticketTypes = $tickets->pluck('type')->unique();
+                                    @endphp
+                                    @foreach($ticketTypes as $type)
+                                        <option value="{{ $type }}" {{ old('ticket_type') == $type ? 'selected' : '' }}>
+                                            {{ $type }} (RM{{ number_format($tickets->where('type', $type)->first()->price, 2) }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -273,6 +277,31 @@
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                     </svg>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">
+                            Payment Information
+                        </h3>
+
+                        @if($event->qr_code)
+                        <div class="w-full flex justify-center items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                            <div class="relative max-w-md w-full">
+                                <img src="{{ Storage::url($event->qr_code) }}" 
+                                     alt="QR Code" 
+                                     class="w-auto h-auto max-w-full object-contain rounded-lg shadow-md"
+                                >
+                            </div>
+                        </div>
+                        @endif
+
+                        <div>
+                            <label for="payment_instructions" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                Payment Instructions
+                            </label>
+                            <div id="payment_instructions" class="p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300">
                             </div>
                         </div>
                     </div>
@@ -591,14 +620,12 @@
                 }
             });
 
-            // Hide modal when ESC key is pressed
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
                     hideModal();
                 }
             });
 
-            // If there are validation errors, show the modal automatically
             @if ($errors->any())
                 document.addEventListener('DOMContentLoaded', function() {
                     showModal();
