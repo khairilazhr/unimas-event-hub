@@ -162,7 +162,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('user.events.process-registration', $event->id) }}" method="POST" class="space-y-4">
+                <form action="{{ route('user.events.process-registration', $event->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                     @csrf
 
                     <div>
@@ -303,6 +303,20 @@
                             </label>
                             <div id="payment_instructions" class="p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300">
                             </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Upload Payment Receipt (Required for paid tickets)
+                            </label>
+                            <input type="file" name="receipt" id="receipt" 
+                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer
+                                        bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700
+                                        dark:border-gray-600 dark:placeholder-gray-400"
+                                accept=".jpg,.jpeg,.png,.pdf">
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                Supported formats: JPG, PNG, PDF (Max 2MB)
+                            </p>
                         </div>
                     </div>
 

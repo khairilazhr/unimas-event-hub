@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Payment;
 use App\Models\EventRegistration;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
@@ -33,6 +34,7 @@ class UserEventController extends Controller
     {
         // Validate the request
         $validated = $request->validate([
+            // Keep existing validation rules
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:20',
@@ -41,25 +43,24 @@ class UserEventController extends Controller
             'section' => 'required|string',
             'row' => 'required|string',
             'seat' => 'required|string',
+            'receipt' => 'required_if:ticket_price,gt,0|file|mimes:jpg,png,pdf|max:2048'
         ]);
-
-        // Verify that the ticket exists and is not already booked
+    
+        // Get the ticket
         $ticket = Ticket::findOrFail($request->ticket_id);
-
-        if ($ticket->eventId != $event->id) {
-            return back()->withErrors(['ticket_id' => 'Invalid ticket selection.'])->withInput();
+    
+        // Validate receipt requirement
+        if ($ticket->price > 0 && !$request->hasFile('receipt')) {
+            return back()->withErrors(['receipt' => 'Payment receipt is required for paid tickets']);
         }
-
-        // Check if ticket is already booked
-        $existingRegistration = EventRegistration::where('ticket_id', $ticket->id)->first();
-        if ($existingRegistration) {
-            return back()->withErrors(['ticket_id' => 'This ticket has already been booked.'])->withInput();
+    
+        // Store the receipt
+        $receiptPath = null;
+        if ($request->hasFile('receipt') && $request->file('receipt')->isValid()) {
+            $receiptPath = $request->file('receipt')->store('receipts', 'public');
         }
-
-        // Set status based on ticket price
-        $status = $ticket->price > 0 ? 'pending' : 'confirmed';
-
-        // Process the registration
+    
+        // Create registration
         $registration = EventRegistration::create([
             'event_id' => $event->id,
             'ticket_id' => $request->ticket_id,
@@ -67,10 +68,19 @@ class UserEventController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'status' => $status, // Add status field
+            'status' => $ticket->price > 0 ? 'pending' : 'confirmed',
         ]);
-
-        // Redirect to success page
+    
+        // Create payment record if needed
+        if ($ticket->price > 0) {
+            Payment::create([
+                'event_reg_id' => $registration->id,
+                'user_id' => auth()->id(),
+                'receipt' => $receiptPath,
+                'ref_no' => 'PAY-'.strtoupper(uniqid())
+            ]);
+        }
+    
         return redirect()->route('user.events.registration-success', $registration->id);
     }
 
