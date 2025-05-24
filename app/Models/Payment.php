@@ -15,4 +15,9 @@ class Payment extends Model
         'ref_no',
         'receipt'
     ];
+
+    public function payment()
+{
+    return $this->hasOne(Payment::class, 'event_reg_id');
+}
 }
