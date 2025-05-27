@@ -138,6 +138,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/organizer/bookings/{id}/approve', [OrganizerController::class, 'approveBooking'])->name('organizer.approve.booking');
         Route::post('/organizer/bookings/{id}/reject', [OrganizerController::class, 'rejectBooking'])->name('organizer.reject.booking');
         Route::post('/organizer/bookings/{id}/reset', [OrganizerController::class, 'resetBooking'])->name('organizer.reset.booking');
+        Route::get('/organizer/bookings/{id}', [OrganizerController::class, 'showBooking'])->name('organizer.bookings.show');
     });
 });
 

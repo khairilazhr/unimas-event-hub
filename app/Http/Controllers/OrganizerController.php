@@ -342,7 +342,7 @@ class OrganizerController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('organizer.events.manage-booking', compact('registrations', 'events'));
+        return view('organizer.bookings.index', compact('registrations', 'events'));
     }
 
     /**
@@ -407,5 +407,17 @@ class OrganizerController extends Controller
         $registration->save();
 
         return redirect()->back()->with('success', 'Booking has been reset to pending status.');
+    }
+
+    public function showBooking($id)
+    {
+    $registration = EventRegistration::with(['event', 'ticket', 'payment'])
+        ->findOrFail($id);
+
+    if ($registration->event->organizer_id != Auth::id()) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    return view('organizer.bookings.show', compact('registration'));
     }
 }

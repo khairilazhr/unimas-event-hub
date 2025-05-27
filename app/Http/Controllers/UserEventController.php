@@ -87,8 +87,13 @@ class UserEventController extends Controller
     public function registrationSuccess(EventRegistration $registration)
     {
         // Load the event and ticket relations
-        $registration->load(['event', 'ticket']);
-
+        if ($registration->user_id != auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+    
+        // Load the payment relationship
+        $registration->load(['event', 'ticket', 'payment']);
+    
         return view('events.registration-success', compact('registration'));
     }
 

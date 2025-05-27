@@ -114,21 +114,11 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                @if($registration->status == 'pending')
-                                                    <form action="{{ route('organizer.approve.booking', $registration->id) }}" method="POST" class="inline">
-                                                        @csrf
-                                                        <button type="submit" class="text-green-600 hover:text-green-900 mr-3">
-                                                            Approve
-                                                        </button>
-                                                    </form>
-                                                    <form action="{{ route('organizer.reject.booking', $registration->id) }}" method="POST" class="inline">
-                                                        @csrf
-                                                        <button type="submit" class="text-red-600 hover:text-red-900">
-                                                            Reject
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            </td>
+    <a href="{{ route('organizer.bookings.show', $registration->id) }}" 
+       class="text-blue-600 hover:text-blue-900">
+        View Details
+    </a>
+</td>
                                         </tr>
                                     @empty
                                         <tr>
