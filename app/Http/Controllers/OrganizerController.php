@@ -78,6 +78,9 @@ class OrganizerController extends Controller
             'organizer_name' => 'required|string|max:255',
             'poster' => 'nullable|image|max:2048',
             'qr_code' => 'nullable|image|max:2048',
+            'supporting_docs' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+            'refund_type' => 'nullable|string|max:255',
+            'refund_policy' => 'nullable|string|max:1000',
             'tickets' => 'required|array|min:1',
             'tickets.*.section' => 'required|string|max:255',
             'tickets.*.type' => 'required|string|max:255',
@@ -97,6 +100,11 @@ class OrganizerController extends Controller
             $qrcodePath = $request->file('qr_code')->store('qr_codes', 'public');
         }
 
+        $supportingDocsPath = null;
+        if ($request->hasFile('supporting_docs') && $request->file('supporting_docs')->isValid()) {
+            $supportingDocsPath = $request->file('supporting_docs')->store('supporting_docs', 'public');
+        }
+
         $event = new Event;
         $event->name = $request->input('name');
         $event->description = $request->input('description');
@@ -105,6 +113,9 @@ class OrganizerController extends Controller
         $event->organizer_name = $request->input('organizer_name');
         $event->poster = $posterPath;
         $event->qr_code = $qrcodePath;
+        $event->supporting_docs = $supportingDocsPath;
+        $event->refund_type = $request->input('refund_type');
+        $event->refund_policy = $request->input('refund_policy');
         $event->organizer_id = Auth::id();
         $event->status = 'pending';
         $event->save();

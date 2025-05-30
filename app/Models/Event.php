@@ -18,6 +18,9 @@ class Event extends Model
         'poster',
         'organizer_id',
         'qr_code',
+        'supporting_docs',
+        'refund_type',
+        'refund_policy',
         'status',
     ];
 
