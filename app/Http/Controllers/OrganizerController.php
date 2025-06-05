@@ -78,6 +78,7 @@ class OrganizerController extends Controller
             'organizer_name' => 'required|string|max:255',
             'poster' => 'nullable|image|max:2048',
             'qr_code' => 'nullable|image|max:2048',
+            'payment_details' => 'nullable|string|max:1000',
             'supporting_docs' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'refund_type' => 'nullable|string|max:255',
             'refund_policy' => 'nullable|string|max:1000',
@@ -113,6 +114,7 @@ class OrganizerController extends Controller
         $event->organizer_name = $request->input('organizer_name');
         $event->poster = $posterPath;
         $event->qr_code = $qrcodePath;
+        $event->payment_details = $request->input('payment_details');
         $event->supporting_docs = $supportingDocsPath;
         $event->refund_type = $request->input('refund_type');
         $event->refund_policy = $request->input('refund_policy');
@@ -186,6 +188,10 @@ class OrganizerController extends Controller
             'organizer_name' => 'required|string|max:255',
             'poster' => 'nullable|image|max:2048',
             'qr_code' => 'nullable|image|max:2048',
+            'payment_details' => 'nullable|string|max:1000',
+            'supporting_docs' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+            'refund_type' => 'nullable|string|max:255',
+            'refund_policy' => 'nullable|string|max:1000',
             'new_tickets' => 'nullable|array',
             'new_tickets.*.section' => 'required_with:new_tickets|string|max:255',
             'new_tickets.*.type' => 'required_with:new_tickets|string|max:255',
@@ -211,6 +217,15 @@ class OrganizerController extends Controller
             }
             $qrcodePath = $request->file('qr_code')->store('qr_codes', 'public');
             $event->qr_code = $qrcodePath;
+        }
+
+        if ($request->hasFile('supporting_docs') && $request->file('supporting_docs')->isValid()) {
+            // Delete old supporting docs if they exist
+            if ($event->supporting_docs) {
+                Storage::disk('public')->delete($event->supporting_docs);
+            }
+            $supportingDocsPath = $request->file('supporting_docs')->store('supporting_docs', 'public');
+            $event->supporting_docs = $supportingDocsPath;
         }
 
         // Update event details

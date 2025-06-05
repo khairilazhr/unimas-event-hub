@@ -57,17 +57,29 @@
                                     </div>
 
                                     <div>
-                                        <label for="qr_code" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">QR Code</label>
-                                        <input type="file" id="qr_code" name="qr_code" accept="image/*"
-                                            class="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-unimasblue focus:border-transparent" />
-                                    </div>
-
-                                    <div>
                                         <label for="supporting_doc" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Supporting Document</label>
                                         <input type="file" id="supporting_doc" name="supporting_docs" accept="image/*" 
                                             class="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-unimasblue focus:border-transparent" />
                                     </div>
                                 </div>
+                            </section>
+
+                            <section>
+                                <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-6 border-b border-gray-200 dark:border-gray-700 pb-2">
+                                    Payment Information
+                                </h2>
+
+                                <div>
+                                    <label for="qr_code" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">QR Code</label>
+                                    <input type="file" id="qr_code" name="qr_code" accept="image/*"
+                                        class="w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-unimasblue focus:border-transparent" />
+                                </div>
+                                <div class="mt-4">
+                                    <label for="payment_details" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Payment Details</label>
+                                    <textarea id="payment_details" name="payment_details" rows="3"
+                                        class="w-full rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-unimasblue focus:border-transparent resize-none"></textarea>
+                                </div>
+
                             </section>
 
                             <!-- Refund Information Section -->
