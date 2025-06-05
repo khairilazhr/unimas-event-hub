@@ -166,123 +166,122 @@ class OrganizerController extends Controller
     }
 
     public function updateEvent(Request $request, $id)
-    {
-        $event = Event::findOrFail($id);
+{
+    $event = Event::findOrFail($id);
 
-        // Check if event belongs to current user
-        if ($event->organizer_id != Auth::id()) {
-            return redirect()->route('organizer.events')->with('error', 'You are not authorized to edit this event.');
-        }
-
-        // Check if event status is pending
-        if ($event->status !== 'pending') {
-            return redirect()->route('organizer.events')->with('error', 'Only pending events can be edited.');
-        }
-
-        // Validate the request
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'date' => 'required|date',
-            'location' => 'required|string|max:255',
-            'organizer_name' => 'required|string|max:255',
-            'poster' => 'nullable|image|max:2048',
-            'qr_code' => 'nullable|image|max:2048',
-            'payment_details' => 'nullable|string|max:1000',
-            'supporting_docs' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-            'refund_type' => 'nullable|string|max:255',
-            'refund_policy' => 'nullable|string|max:1000',
-            'new_tickets' => 'nullable|array',
-            'new_tickets.*.section' => 'required_with:new_tickets|string|max:255',
-            'new_tickets.*.type' => 'required_with:new_tickets|string|max:255',
-            'new_tickets.*.price' => 'required_with:new_tickets|numeric|min:0',
-            'new_tickets.*.description' => 'nullable|string',
-            'new_tickets.*.rows' => 'required_with:new_tickets|integer|min:1',
-            'new_tickets.*.seats_per_row' => 'required_with:new_tickets|integer|min:1',
-            'new_tickets.*.update_section' => 'nullable|string',
-        ]);
-
-        if ($request->hasFile('poster') && $request->file('poster')->isValid()) {
-            // Delete old poster if it exists
-            if ($event->poster) {
-                Storage::disk('public')->delete($event->poster);
-            }
-            $posterPath = $request->file('poster')->store('posters', 'public');
-            $event->poster = $posterPath;
-        }
-
-        if ($request->hasFile(key: 'qr_code') && $request->file('qr_code')->isValid()) {
-            if ($event->qr_code) {
-                Storage::disk('public')->delete($event->qr_code);
-            }
-            $qrcodePath = $request->file('qr_code')->store('qr_codes', 'public');
-            $event->qr_code = $qrcodePath;
-        }
-
-        if ($request->hasFile('supporting_docs') && $request->file('supporting_docs')->isValid()) {
-            // Delete old supporting docs if they exist
-            if ($event->supporting_docs) {
-                Storage::disk('public')->delete($event->supporting_docs);
-            }
-            $supportingDocsPath = $request->file('supporting_docs')->store('supporting_docs', 'public');
-            $event->supporting_docs = $supportingDocsPath;
-        }
-
-        // Update event details
-        $event->name = $request->input('name');
-        $event->description = $request->input('description');
-        $event->date = $request->input('date');
-        $event->location = $request->input('location');
-        $event->organizer_name = $request->input('organizer_name');
-        $event->save();
-
-        // Process new ticket sections
-        if ($request->has('new_tickets')) {
-            foreach ($request->new_tickets as $ticketData) {
-                // Skip empty ticket sections
-                if (empty($ticketData['section']) || empty($ticketData['type']) ||
-                    ! isset($ticketData['price']) || empty($ticketData['rows']) ||
-                    empty($ticketData['seats_per_row'])) {
-                    continue;
-                }
-
-                // Check if this is an update to an existing section
-                if (isset($ticketData['update_section'])) {
-                    // Delete all available tickets in the section first
-                    Ticket::where('eventId', $event->id)
-                        ->where('section', $ticketData['update_section'])
-                        ->where('status', 'available')
-                        ->delete();
-
-                    // Then create new tickets with the updated data
-                    $section = $ticketData['section'];
-                } else {
-                    $section = $ticketData['section'];
-                }
-
-                // Create ticket types based on rows and seats per row
-                $rows = $ticketData['rows'];
-                $seatsPerRow = $ticketData['seats_per_row'];
-
-                for ($row = 1; $row <= $rows; $row++) {
-                    for ($seat = 1; $seat <= $seatsPerRow; $seat++) {
-                        $ticket = new Ticket;
-                        $ticket->eventId = $event->id;
-                        $ticket->type = $ticketData['type'];
-                        $ticket->price = $ticketData['price'];
-                        $ticket->description = $ticketData['description'] ?? null;
-                        $ticket->section = $section;
-                        $ticket->row = $row;
-                        $ticket->seat = $seat;
-                        $ticket->status = 'available';
-                        $ticket->save();
-                    }
-                }
-            }
-        }
-
-        return redirect()->route('organizer.events')->with('success', 'Event updated successfully!');
+    // Check if event belongs to current user
+    if ($event->organizer_id != Auth::id()) {
+        return redirect()->route('organizer.events')->with('error', 'You are not authorized to edit this event.');
     }
+
+    // Check if event status is pending
+    if ($event->status !== 'pending') {
+        return redirect()->route('organizer.events')->with('error', 'Only pending events can be edited.');
+    }
+
+    // Validate the request
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'required|string',
+        'date' => 'required|date',
+        'location' => 'required|string|max:255',
+        'organizer_name' => 'required|string|max:255',
+        'poster' => 'nullable|image|max:2048',
+        'qr_code' => 'nullable|image|max:2048',
+        'payment_details' => 'nullable|string|max:1000',
+        'supporting_docs' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        'refund_type' => 'nullable|string|max:255',
+        'refund_policy' => 'nullable|string|max:1000',
+    ]);
+
+    // Handle file uploads
+    if ($request->hasFile('poster') && $request->file('poster')->isValid()) {
+        // Delete old poster if it exists
+        if ($event->poster) {
+            Storage::disk('public')->delete($event->poster);
+        }
+        $posterPath = $request->file('poster')->store('posters', 'public');
+        $event->poster = $posterPath;
+    }
+
+    if ($request->hasFile('qr_code') && $request->file('qr_code')->isValid()) {
+        if ($event->qr_code) {
+            Storage::disk('public')->delete($event->qr_code);
+        }
+        $qrcodePath = $request->file('qr_code')->store('qr_codes', 'public');
+        $event->qr_code = $qrcodePath;
+    }
+
+    if ($request->hasFile('supporting_docs') && $request->file('supporting_docs')->isValid()) {
+        // Delete old supporting docs if they exist
+        if ($event->supporting_docs) {
+            Storage::disk('public')->delete($event->supporting_docs);
+        }
+        $supportingDocsPath = $request->file('supporting_docs')->store('supporting_docs', 'public');
+        $event->supporting_docs = $supportingDocsPath;
+    }
+
+    // Update all event details (including the missing fields)
+    $event->name = $request->input('name');
+    $event->description = $request->input('description');
+    $event->date = $request->input('date');
+    $event->location = $request->input('location');
+    $event->organizer_name = $request->input('organizer_name');
+    
+    // Add these missing field updates
+    $event->payment_details = $request->input('payment_details');
+    $event->refund_type = $request->input('refund_type');
+    $event->refund_policy = $request->input('refund_policy');
+    
+    $event->save();
+
+    // Process new ticket sections
+    if ($request->has('new_tickets')) {
+        foreach ($request->new_tickets as $ticketData) {
+            // Skip empty ticket sections
+            if (empty($ticketData['section']) || empty($ticketData['type']) ||
+                ! isset($ticketData['price']) || empty($ticketData['rows']) ||
+                empty($ticketData['seats_per_row'])) {
+                continue;
+            }
+
+            // Check if this is an update to an existing section
+            if (isset($ticketData['update_section'])) {
+                // Delete all available tickets in the section first
+                Ticket::where('eventId', $event->id)
+                    ->where('section', $ticketData['update_section'])
+                    ->where('status', 'available')
+                    ->delete();
+
+                // Then create new tickets with the updated data
+                $section = $ticketData['section'];
+            } else {
+                $section = $ticketData['section'];
+            }
+
+            // Create ticket types based on rows and seats per row
+            $rows = $ticketData['rows'];
+            $seatsPerRow = $ticketData['seats_per_row'];
+
+            for ($row = 1; $row <= $rows; $row++) {
+                for ($seat = 1; $seat <= $seatsPerRow; $seat++) {
+                    $ticket = new Ticket;
+                    $ticket->eventId = $event->id;
+                    $ticket->type = $ticketData['type'];
+                    $ticket->price = $ticketData['price'];
+                    $ticket->description = $ticketData['description'] ?? null;
+                    $ticket->section = $section;
+                    $ticket->row = $row;
+                    $ticket->seat = $seat;
+                    $ticket->status = 'available';
+                    $ticket->save();
+                }
+            }
+        }
+    }
+
+    return redirect()->route('organizer.events')->with('success', 'Event updated successfully!');
+}
 
     public function deleteSection(Request $request, $eventId)
     {

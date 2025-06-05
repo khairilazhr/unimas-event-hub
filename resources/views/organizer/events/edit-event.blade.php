@@ -26,86 +26,197 @@
                             @csrf
                             @method('PATCH')
 
-                            <!-- Basic Info Section - Grid Layout -->
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 shadow-sm">
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                                    <!-- Event Name -->
-                                    <div>
-                                        <label for="name" class="block text-xs font-medium text-gray-700 dark:text-gray-300">Event Name</label>
-                                        <input type="text" name="name" id="name" value="{{ old('name', $event->name) }}"
-                                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm py-1">
+                            <!-- Event Details Section -->
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 shadow-sm">
+                                <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-6">Event Details</h3>
+                                
+                                <div class="space-y-6">
+                                    <!-- Basic Info Grid -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                        <div>
+                                            <label for="name" class="block text-xs font-medium text-gray-700 dark:text-gray-300">Event Name</label>
+                                            <input type="text" name="name" id="name" value="{{ old('name', $event->name) }}"
+                                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm">
+                                        </div>
+
+                                        <div>
+                                            <label for="date" class="block text-xs font-medium text-gray-700 dark:text-gray-300">Event Date</label>
+                                            <input type="datetime-local" name="date" id="date" value="{{ old('date', date('Y-m-d\TH:i', strtotime($event->date))) }}"
+                                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm">
+                                        </div>
+
+                                        <div>
+                                            <label for="location" class="block text-xs font-medium text-gray-700 dark:text-gray-300">Location</label>
+                                            <input type="text" name="location" id="location" value="{{ old('location', $event->location) }}"
+                                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm">
+                                        </div>
+
+                                        <div>
+                                            <label for="organizer_name" class="block text-xs font-medium text-gray-700 dark:text-gray-300">Organizer Name</label>
+                                            <input type="text" name="organizer_name" id="organizer_name" value="{{ old('organizer_name', $event->organizer_name) }}"
+                                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm">
+                                        </div>
                                     </div>
 
-                                    <!-- Event Date -->
+                                    <!-- Description -->
                                     <div>
-                                        <label for="date" class="block text-xs font-medium text-gray-700 dark:text-gray-300">Event Date</label>
-                                        <input type="datetime-local" name="date" id="date" value="{{ old('date', date('Y-m-d\TH:i', strtotime($event->date))) }}"
-                                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm py-1">
+                                        <label for="description" class="block text-xs font-medium text-gray-700 dark:text-gray-300">Event Description</label>
+                                        <textarea name="description" id="description" rows="3"
+                                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm">{{ old('description', $event->description) }}</textarea>
                                     </div>
 
-                                    <!-- Location -->
-                                    <div>
-                                        <label for="location" class="block text-xs font-medium text-gray-700 dark:text-gray-300">Location</label>
-                                        <input type="text" name="location" id="location" value="{{ old('location', $event->location) }}"
-                                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm py-1">
-                                    </div>
+                                    <!-- Media Section -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <!-- Event Poster -->
+                                        <div class="bg-white dark:bg-gray-600 rounded-lg p-4">
+                                            <label for="poster" class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                Event Poster
+                                            </label>
+                                            <div class="flex items-center space-x-4">
+                                                @if($event->poster)
+                                                    <div class="flex-shrink-0">
+                                                        <img src="{{ asset('storage/' . $event->poster) }}" 
+                                                            alt="Event poster" 
+                                                            class="w-24 h-24 object-cover rounded-lg">
+                                                    </div>
+                                                @endif
+                                                <div class="flex-grow">
+                                                    <input type="file" name="poster" id="poster"
+                                                        class="block w-full text-sm text-gray-500 dark:text-gray-400
+                                                            file:mr-4 file:py-2 file:px-4
+                                                            file:rounded-full file:border-0
+                                                            file:text-sm file:font-semibold
+                                                            file:bg-unimasblue file:text-white
+                                                            hover:file:bg-unimasblue/90">
+                                                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                                        Max size: 2MB. Recommended: 1200x630px
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                    <!-- Organizer Name -->
-                                    <div>
-                                        <label for="organizer_name" class="block text-xs font-medium text-gray-700 dark:text-gray-300">Organizer Name</label>
-                                        <input type="text" name="organizer_name" id="organizer_name" value="{{ old('organizer_name', $event->organizer_name) }}"
-                                            class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm py-1">
+                                        <!-- Supporting Documents -->
+                                        <div class="bg-white dark:bg-gray-600 rounded-lg p-4">
+                                            <label for="supporting_docs" class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                Supporting Documents
+                                            </label>
+                                            <div class="flex items-center space-x-4">
+                                                @if($event->supporting_docs)
+                                                    <div class="flex-shrink-0">
+                                                        <a href="{{ asset('storage/' . $event->supporting_docs) }}" 
+                                                        target="_blank"
+                                                        class="inline-flex items-center text-sm text-unimasblue dark:text-blue-400 hover:underline">
+                                                            <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                            </svg>
+                                                            View Document
+                                                        </a>
+                                                    </div>
+                                                @endif
+                                                <div class="flex-grow">
+                                                    <input type="file" name="supporting_docs" id="supporting_docs"
+                                                        class="block w-full text-sm text-gray-500 dark:text-gray-400
+                                                            file:mr-4 file:py-2 file:px-4
+                                                            file:rounded-full file:border-0
+                                                            file:text-sm file:font-semibold
+                                                            file:bg-unimasblue file:text-white
+                                                            hover:file:bg-unimasblue/90">
+                                                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                                        Max size: 5MB. PDF or DOCX format
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Second Row with Description and Event Poster - side by side -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <!-- Description -->
-                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 shadow-sm">
-                                    <label for="description" class="block text-xs font-medium text-gray-700 dark:text-gray-300">Description</label>
-                                    <textarea name="description" id="description" rows="3"
-                                        class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm">{{ old('description', $event->description) }}</textarea>
-                                </div>
-
-                                <!-- Event Poster -->
-                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 shadow-sm">
-                                    <label for="poster" class="block text-xs font-medium text-gray-700 dark:text-gray-300">
-                                        Event Poster
-                                    </label>
-
-                                    <div class="flex items-center mt-1">
-                                        @if($event->poster)
-                                            <div class="flex-shrink-0 mr-2">
-                                                <img src="{{ asset('storage/' . $event->poster) }}" alt="Event poster" class="w-20 h-auto rounded-md shadow-sm">
+                                <!-- Payment Section -->
+                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-sm">
+                                    <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4">Payment Section</h3>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <!-- QR Code -->
+                                        <div>
+                                            <label for="qr_code" class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                QR Payment Code
+                                            </label>
+                                            <div class="flex items-center space-x-4 bg-white dark:bg-gray-600 rounded-lg p-3">
+                                                @if($event->qr_code)
+                                                    <div class="flex-shrink-0">
+                                                        <img src="{{ asset('storage/' . $event->qr_code) }}" 
+                                                            alt="Payment QR code" 
+                                                            class="w-32 h-32 object-cover rounded-lg shadow-sm">
+                                                    </div>
+                                                @endif
+                                                <div class="flex-grow">
+                                                    <input type="file" 
+                                                        name="qr_code" 
+                                                        id="qr_code"
+                                                        accept="image/*"
+                                                        class="block w-full text-sm text-gray-500 dark:text-gray-400
+                                                                file:mr-4 file:py-2 file:px-4
+                                                                file:rounded-full file:border-0
+                                                                file:text-sm file:font-semibold
+                                                                file:bg-unimasblue file:text-white
+                                                                hover:file:bg-unimasblue/90
+                                                                dark:file:bg-unimasblue dark:hover:file:bg-unimasblue/90">
+                                                    <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                                        Max size: 2MB. Recommended: 1000x1000px
+                                                    </p>
+                                                </div>
                                             </div>
-                                        @endif
-                                        <div class="flex-grow">
-                                            <input type="file" name="poster" id="poster"
-                                                class="block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm py-1">
-                                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Max size: 2MB. Recommended: 1200x630px</p>
+                                        </div>
+
+                                        <!-- Payment Details -->
+                                        <div>
+                                            <label for="payment_details" class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                                Payment Instructions
+                                            </label>
+                                            <div class="bg-white dark:bg-gray-600 rounded-lg p-3">
+                                                <textarea name="payment_details" 
+                                                        id="payment_details" 
+                                                        rows="5"
+                                                        placeholder="Enter payment instructions here..."
+                                                        class="block w-full rounded-md border-gray-300 dark:border-gray-700 
+                                                                shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue 
+                                                                focus:ring-opacity-50 dark:bg-gray-700 dark:text-white text-sm
+                                                                resize-none">{{ old('payment_details', $event->payment_details) }}</textarea>
+                                                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                                    Include bank details, payment methods, or any special instructions.
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 shadow-sm">
-                                    <label for="qr_code" class="block text-xs font-medium text-gray-700 dark:text-gray-300">
-                                        QR Payment Code
-                                    </label>
 
-                                    <div class="flex items-center mt-1">
-                                        @if($event->qr_code)
-                                            <div class="flex-shrink-0 mr-2">
-                                                <img src="{{ asset('storage/' . $event->qr_code) }}" alt="Payment QR code" class="w-20 h-auto rounded-md shadow-sm">
-                                            </div>
-                                        @endif
-                                        <div class="flex-grow">
-                                            <input type="file" name="qr_code" id="qr_code"
-                                                class="block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm py-1">
-                                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Max size: 2MB. Recommended: 1000x1000px</p>
-                                        </div>
+                                <!-- Refund Type & Refund Policy -->
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-sm mt-4">
+                                <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4">Refund Policy</h3>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="refund_type" class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Refund Type
+                                        </label>
+                                        <select name="refund_type" id="refund_type"
+                                                class="block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm">
+                                            <option value="no_refund" {{ old('refund_type', $event->refund_type) == 'no_refund' ? 'selected' : '' }}>No Refund</option>
+                                            <option value="partial_refund" {{ old('refund_type', $event->refund_type) == 'partial_refund' ? 'selected' : '' }}>Partial Refund</option>
+                                            <option value="full_refund" {{ old('refund_type', $event->refund_type) == 'full_refund' ? 'selected' : '' }}>Full Refund</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label for="refund_policy" class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Refund Policy
+                                        </label>
+                                        <textarea name="refund_policy" id="refund_policy" rows="3"
+                                                  class="block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm">{{ old('refund_policy', $event->refund_policy) }}</textarea>
                                     </div>
                                 </div>
                             </div>
+                        
 
                             <!-- Ticket Management Section - Tabbed Interface -->
                             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 shadow-sm">
