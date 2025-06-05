@@ -96,36 +96,42 @@
                             <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                                 <h2 class="text-lg font-semibold mb-4">Payment Details</h2>
                                 <dl class="space-y-2">
-                                    <!-- ... other payment fields ... -->
-                                    @if($registration->payment && $registration->payment->receipt)
-                                        <div>
-                                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Payment Receipt</dt>
-                                            <dd class="mt-1">
-                                                @php
-                                                    $extension = pathinfo($registration->payment->receipt, PATHINFO_EXTENSION);
-                                                @endphp
-                                                
-                                                <div class="flex items-center space-x-2">
-                                                    <a href="{{ Storage::disk('public')->url($registration->payment->receipt) }}" 
+                                @if($registration->payment && $registration->payment->receipt)
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Payment Receipt</dt>
+                                        <dd class="mt-1">
+                                            @php
+                                                $receipt = $registration->payment->receipt;
+                                                $extension = pathinfo($receipt, PATHINFO_EXTENSION);
+                                                $exists = Storage::disk('public')->exists($receipt);
+                                                $fileUrl = $exists ? asset('storage/' . $receipt) : null;
+                                            @endphp
+                                            
+                                            <div class="flex items-center space-x-2">
+                                                @if($exists && $fileUrl)
+                                                    <a href="{{ $fileUrl }}" 
                                                     target="_blank"
                                                     class="text-blue-600 hover:text-blue-800 flex items-center">
                                                         <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                                         </svg>
-                                                        View PDF Receipt
+                                                        View Receipt
                                                     </a>
-                                                    <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs">
-                                                        PDF
+                                                    <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs uppercase">
+                                                        {{ $extension }}
                                                     </span>
-                                                </div>
-                                            </dd>
-                                        </div>
-                                    @else
-                                        <div>
-                                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Receipt</dt>
-                                            <dd class="mt-1 text-sm text-gray-500">No receipt uploaded</dd>
-                                        </div>
-                                    @endif
+                                                @else
+                                                    <span class="text-sm text-gray-500">Receipt file not found ({{ $receipt }})</span>
+                                                @endif
+                                            </div>
+                                        </dd>
+                                    </div>
+                                @else
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Receipt</dt>
+                                        <dd class="mt-1 text-sm text-gray-500">No receipt uploaded</dd>
+                                    </div>
+                                @endif
                                 </dl>
                             </div>
                         </div>
