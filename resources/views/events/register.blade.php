@@ -54,15 +54,30 @@
             <div class="p-6 md:p-10 pt-0">
                 <div class="mb-8 max-w-3xl">
                     <div class="text-sm text-gray-700 dark:text-gray-300 mb-6 leading-relaxed prose prose-indigo dark:prose-invert">
+                    <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Description</h2>
                         {!! nl2br(e($event->description)) !!}
                     </div>
                     <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                    <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Organizer</h2>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-[#0057A7]" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                         </svg>
                         <span>{{ $event->organizer_name }}</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- Refund Policy -->
+            <div class="p-6 md:p-10 bg-gray-50 dark:bg-gray-700 rounded-b-lg">
+<!--                 <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Refund Type</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    {{ $event->refund_type ?? 'No refund type specified.' }}
+                </p> -->
+
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Refund Policy</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-300">
+                    {{ $event->refund_policy ?? 'No refund policy specified.' }}
+                </p>
             </div>
 
         </div>
@@ -298,26 +313,79 @@
                         @endif
 
                         <div>
-                            <label for="payment_instructions" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                Payment Instructions
+                            <label for="payment_details" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                Payment Details
                             </label>
-                            <div id="payment_instructions" class="p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-300">
+                            <div class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                                <p class="whitespace-pre-wrap text-sm">{{ trim($event->payment_details ?? 'No payment instructions provided.') }}</p>
                             </div>
                         </div>
 
                         <div class="mt-6">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Upload Payment Receipt (Required for paid tickets)
-                            </label>
-                            <input type="file" name="receipt" id="receipt" 
-                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer
-                                        bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700
-                                        dark:border-gray-600 dark:placeholder-gray-400"
-                                accept=".jpg,.jpeg,.png,.pdf">
-                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                Supported formats: JPG, PNG, PDF (Max 2MB)
-                            </p>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            Payment Receipt
+                        </label>
+                        
+                        <div class="w-full p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 transition-all hover:border-blue-500 dark:hover:border-blue-400">
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="mb-3">
+                                    <svg class="w-10 h-10 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                    </svg>
+                                </div>
+                                
+                                <div class="text-center mb-4">
+                                    <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Upload Payment Receipt
+                                    </h4>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                        Required for paid tickets
+                                    </p>
+                                </div>
+
+                                <div class="relative w-full">
+                                    <input type="file" 
+                                        name="receipt" 
+                                        id="receipt" 
+                                        accept=".jpg,.jpeg,.png,.pdf"
+                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        required>
+                                    <button type="button" 
+                                            class="w-full px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
+                                        Choose File
+                                    </button>
+                                </div>
+
+                                <div class="mt-3">
+                                    <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <span>Supported formats: JPG, PNG, PDF (Max 2MB)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="file-preview" class="hidden mt-4 p-3 bg-white dark:bg-gray-600 rounded-md">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900 dark:text-white" id="file-name"></p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400" id="file-size"></p>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="remove-file" class="text-red-500 hover:text-red-700 dark:hover:text-red-400">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
+                    </div>
                     </div>
 
                     <input type="hidden" name="ticket_id" id="ticket_id" value="{{ old('ticket_id') }}">
@@ -645,6 +713,26 @@
                     showModal();
                 });
             @endif
+        });
+
+        const fileInput = document.getElementById('receipt');
+        const filePreview = document.getElementById('file-preview');
+        const fileName = document.getElementById('file-name');
+        const fileSize = document.getElementById('file-size');
+        const removeFile = document.getElementById('remove-file');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                fileName.textContent = file.name;
+                fileSize.textContent = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+                filePreview.classList.remove('hidden');
+            }
+        });
+
+        removeFile.addEventListener('click', function() {
+            fileInput.value = '';
+            filePreview.classList.add('hidden');
         });
     </script>
 </x-app-layout>
