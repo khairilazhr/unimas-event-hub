@@ -68,7 +68,7 @@ class UserEventController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'status' => $ticket->price > 0 ? 'pending' : 'confirmed',
+            'status' => $ticket->price > 0 ? 'pending' : 'approved', 
         ]);
     
         // Create payment record if needed
@@ -150,7 +150,7 @@ class UserEventController extends Controller
             ->findOrFail($id);
 
         // Check if the ticket is valid
-        $isValid = $registration->status === 'confirmed';
+        $isValid = $registration->status === 'approved';
 
         // Additional checks can be added here
         // For example, check if the event date is in the future

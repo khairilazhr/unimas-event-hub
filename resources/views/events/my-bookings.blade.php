@@ -33,163 +33,109 @@
                                 </a>
                             </div>
                         @else
-                            <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                        <thead class="bg-gray-50 dark:bg-gray-700">
-                                            <tr>
-                                                <th scope="col" class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    Event
-                                                </th>
-                                                <th scope="col" class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell">
-                                                    Date
-                                                </th>
-                                                <th scope="col" class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden md:table-cell">
-                                                    Ticket
-                                                </th>
-                                                <th scope="col" class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden lg:table-cell">
-                                                    Seat
-                                                </th>
-                                                <th scope="col" class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden sm:table-cell">
-                                                    Price
-                                                </th>
-                                                <th scope="col" class="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    Status
-                                                </th>
-                                                <th scope="col" class="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                    Actions
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                            @foreach($registrations as $registration)
-                                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-750">
-                                                    <td class="px-3 sm:px-6 py-4">
-                                                        <div class="flex flex-col">
-                                                            <div class="text-sm font-medium text-gray-900 dark:text-white truncate max-w-xs">
-                                                                {{ $registration->event->name }}
-                                                            </div>
-                                                            <div class="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs sm:hidden">
-                                                                {{ \Carbon\Carbon::parse($registration->event->date)->format('d M Y') }}
-                                                            </div>
-                                                            <div class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">
-                                                                {{ $registration->event->location }}
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-3 sm:px-6 py-4 hidden sm:table-cell whitespace-nowrap">
-                                                        <div class="text-sm text-gray-900 dark:text-white">
-                                                            {{ \Carbon\Carbon::parse($registration->event->date)->format('d M Y') }}
-                                                        </div>
-                                                        <div class="text-xs text-gray-500 dark:text-gray-400">
-                                                            {{ \Carbon\Carbon::parse($registration->event->date)->format('h:i A') }}
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-3 sm:px-6 py-4 hidden md:table-cell whitespace-nowrap">
-                                                        <div class="text-sm text-gray-900 dark:text-white">
-                                                            {{ $registration->ticket->type }}
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-3 sm:px-6 py-4 hidden lg:table-cell whitespace-nowrap">
-                                                        <div class="text-sm text-gray-900 dark:text-white">
-                                                            {{ $registration->ticket->section }} - Row {{ $registration->ticket->row }} - Seat {{ $registration->ticket->seat }}
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-3 sm:px-6 py-4 hidden sm:table-cell whitespace-nowrap">
-                                                        <div class="text-sm text-gray-900 dark:text-white font-medium">
-                                                            RM{{ number_format($registration->ticket->price, 2) }}
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
-                                                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                            @if($registration->status == 'confirmed')
-                                                                bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100
-                                                            @elseif($registration->status == 'pending')
-                                                                bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100
-                                                            @elseif($registration->status == 'cancelled')
-                                                                bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100
-                                                            @else
-                                                                bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100
-                                                            @endif
-                                                        ">
-                                                            {{ ucfirst($registration->status ?? 'unknown') }}
-                                                        </span>
-                                                    </td>
-                                                    <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <div class="flex flex-col sm:flex-row sm:justify-end gap-2">
-                                                            <a href="{{ route('user.events.registration-details', $registration->id) }}" class="text-unimasblue hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 inline-flex items-center justify-center">
-                                                                <span class="sm:hidden">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                                                    </svg>
-                                                                </span>
-                                                                <span class="hidden sm:inline">View</span>
-                                                            </a>
-
-                                                            @if($registration->status == 'confirmed')
-                                                                <a href="{{ route('forum.index', ['eventId' => $registration->event->id]) }}" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 inline-flex items-center justify-center">
-                                                                    <span class="sm:hidden">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-3-3v6m7 4H5a2 2 0 01-2-2V5a2 2 0 012-2h6l2 2h6a2 2 0 012 2v12a2 2 0 01-2 2z" />
-                                                                        </svg>
-                                                                    </span>
-                                                                    <span class="hidden sm:inline">Go to Forum</span>
-                                                                </a>
-                                                            @endif
-                                                            @if($registration->status == 'pending')
-                                                                <a href="{{ route('user.events.payment', $registration->id) }}" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300 inline-flex items-center justify-center">
-                                                                    <span class="sm:hidden">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                                                                        </svg>
-                                                                    </span>
-                                                                    <span class="hidden sm:inline">Pay Now</span>
-                                                                </a>
-                                                            @endif
-
-                                                            @if($registration->status != 'cancelled' && \Carbon\Carbon::parse($registration->event->date)->isFuture())
-                                                                <form method="POST" action="{{ route('user.events.cancel-registration', $registration->id) }}" class="inline">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 inline-flex items-center justify-center" onclick="return confirm('Are you sure you want to cancel this booking?')">
-                                                                        <span class="sm:hidden">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                                            </svg>
-                                                                        </span>
-                                                                        <span class="hidden sm:inline">Cancel</span>
-                                                                    </button>
-                                                                </form>
-                                                            @endif
-                                                        </div>
-                                                    </td>
-                                                </tr>
-
-                                                <!-- Mobile-only expanded row with additional details -->
-                                                <tr class="bg-gray-50 dark:bg-gray-750 md:hidden">
-                                                    <td colspan="7" class="px-3 sm:px-6 py-3">
-                                                        <div class="grid grid-cols-2 gap-2 text-xs">
-                                                            <div>
-                                                                <span class="text-gray-500 dark:text-gray-400">Ticket:</span>
-                                                                <span class="text-gray-900 dark:text-white ml-1">{{ $registration->ticket->type }}</span>
-                                                            </div>
-                                                            <div>
-                                                                <span class="text-gray-500 dark:text-gray-400">Price:</span>
-                                                                <span class="text-gray-900 dark:text-white ml-1">RM{{ number_format($registration->ticket->price, 2) }}</span>
-                                                            </div>
-                                                            <div class="col-span-2">
-                                                                <span class="text-gray-500 dark:text-gray-400">Seat:</span>
-                                                                <span class="text-gray-900 dark:text-white ml-1">{{ $registration->ticket->section }} - Row {{ $registration->ticket->row }} - Seat {{ $registration->ticket->seat }}</span>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
+                        <div class="grid gap-6 md:gap-8">
+    @foreach($registrations as $registration)
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div class="p-6">
+                <!-- Top Section with Fixed Height -->
+                <div class="flex flex-col lg:flex-row min-h-[120px]">
+                    <!-- Left Content -->
+                    <div class="flex-1">
+                        <!-- Header with Fixed Status Position -->
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex-1 pr-4">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1 truncate">
+                                    {{ $registration->event->name }}
+                                </h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ $registration->event->location }}
+                                </p>
                             </div>
+                            <!-- Fixed Width Status Badge -->
+                            <div class="w-24 flex-shrink-0">
+                                <span class="px-3 py-1 inline-flex justify-center w-full text-xs leading-5 font-semibold rounded-full
+                                    @if($registration->status == 'approved')
+                                        bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100
+                                    @elseif($registration->status == 'pending')
+                                        bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100
+                                    @elseif($registration->status == 'rejected')
+                                        bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100
+                                    @else
+                                        bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100
+                                    @endif">
+                                    {{ ucfirst($registration->status ?? 'unknown') }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Event Details Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                             <div>
+                                                            <span class="block text-gray-500 dark:text-gray-400 font-medium">Date & Time</span>
+                                                            <span class="text-gray-900 dark:text-white">
+                                                                {{ \Carbon\Carbon::parse($registration->event->date)->format('d M Y') }}
+                                                            </span>
+                                                            <span class="block text-gray-600 dark:text-gray-300 text-xs">
+                                                                {{ \Carbon\Carbon::parse($registration->event->date)->format('h:i A') }}
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                            <span class="block text-gray-500 dark:text-gray-400 font-medium">Ticket Type</span>
+                                                            <span class="text-gray-900 dark:text-white">
+                                                                {{ $registration->ticket->type }}
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                            <span class="block text-gray-500 dark:text-gray-400 font-medium">Seat</span>
+                                                            <span class="text-gray-900 dark:text-white">
+                                                                {{ $registration->ticket->section }} - Row {{ $registration->ticket->row }} - Seat {{ $registration->ticket->seat }}
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                            <span class="block text-gray-500 dark:text-gray-400 font-medium">Price</span>
+                                                            <span class="text-gray-900 dark:text-white font-semibold">
+                                                                RM{{ number_format($registration->ticket->price, 2) }}
+                                                            </span>
+                                                        </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Content - Fixed Width Actions Column -->
+                    <div class="lg:w-48 flex-shrink-0 lg:ml-6 mt-4 lg:mt-0">
+                        <div class="flex flex-col gap-2">
+                            <a href="{{ route('user.events.registration-details', $registration->id) }}" 
+                               class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30 transition-colors w-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                View Details
+                            </a>
+
+                            @if($registration->status == 'approved')
+                                <a href="{{ route('forum.index', ['eventId' => $registration->event->id]) }}" 
+                                   class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-blue-600 bg-blue-50 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors w-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h2m2-4h4a2 2 0 012 2v6a2 2 0 01-2 2h-4m0 0V8a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2h4z" />
+                                    </svg>
+                                    Forum
+                                </a>
+
+                                <a href="{{ route('forum.index', ['eventId' => $registration->event->id]) }}" 
+                                   class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-orange-600 bg-orange-50 hover:bg-orange-100 dark:text-orange-400 dark:bg-orange-900/20 dark:hover:bg-orange-900/30 transition-colors w-full">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
+                                    </svg>
+                                    Request Refund
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endforeach
+</div>
                         @endif
                     </div>
                 </div>
@@ -226,17 +172,6 @@
                             </a>
                         </div>
                     </div>
-<!--                     <div>
-                        <h3 class="text-base font-semibold text-gray-800 dark:text-white mb-4">Resources</h3>
-                        <div class="grid grid-cols-2 gap-2">
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">FAQ</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Help Center</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">User Guide</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Terms</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Privacy</a>
-                            <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Contact</a>
-                        </div>
-                    </div> -->
                     <div>
                         <h3 class="text-base font-semibold text-gray-800 dark:text-white mb-4">Need Help?</h3>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">

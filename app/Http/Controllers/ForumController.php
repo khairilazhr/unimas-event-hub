@@ -28,7 +28,7 @@ class ForumController extends Controller
         } elseif ($user->role === 'user') {
             $hasConfirmedRegistration = EventRegistration::where('user_id', $user->id)
                 ->where('event_id', $event->id)
-                ->where('status', 'confirmed')
+                ->where('status', 'approved')
                 ->exists();
             abort_unless($hasConfirmedRegistration, 403, 'You need a confirmed registration');
         }
