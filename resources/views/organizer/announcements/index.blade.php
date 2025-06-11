@@ -1,107 +1,108 @@
-<x-app-layout class="flex flex-col min-h-screen">
-    <main class="container mx-auto px-4 py-8 max-w-4xl flex-grow">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-4xl font-bold text-gray-800 animate-fade-in-up">
-                Announcements
-            </h1>
-            <a href="{{ route('announcements.create') }}"
-                class="group relative inline-flex items-center px-6 py-3 overflow-hidden rounded-lg bg-blue-600 text-white shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-                <span class="absolute inset-0 bg-blue-700 opacity-0 group-hover:opacity-20 transition-opacity"></span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-                        clip-rule="evenodd" />
-                </svg>
-                New Announcement
-            </a>
-        </div>
+<x-app-layout>
+    <div class="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+        {{-- Main Content --}}
+        <main class="flex-grow py-6 sm:py-8 md:py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white dark:bg-gray-800 shadow-lg sm:rounded-xl overflow-hidden">
+                    <div class="relative bg-unimasblue dark:bg-unimasblue p-6">
+                        <div class="absolute inset-0 opacity-10 bg-pattern-grid"></div>
+                        <div class="flex justify-between items-center relative z-10">
+                            <h1 class="text-2xl sm:text-3xl font-bold text-white">
+                                Announcements
+                            </h1>
+                            <a href="{{ route('announcements.create') }}"
+                                class="inline-flex items-center px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium rounded-lg transition duration-300 shadow-md hover:shadow-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                New Announcement
+                            </a>
+                        </div>
+                    </div>
 
-        @if(session('success'))
-            <div class="animate-slide-in-right bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-r-lg shadow-md"
-                role="alert">
-                <div class="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p class="font-bold">{{ session('success') }}</p>
+                    <div class="p-4 sm:p-6 md:p-8">
+                        @if(session('success'))
+                            <div class="mb-6 animate-slide-in-right bg-green-100 dark:bg-green-900/30 border-l-4 border-green-500 text-green-700 dark:text-green-400 p-4 rounded-r-lg shadow-md">
+                                <div class="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <p class="font-medium">{{ session('success') }}</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="grid gap-6 md:gap-8">
+                            @forelse ($announcements as $announcement)
+                                <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+                                    <div class="p-6">
+                                        <div class="flex flex-col lg:flex-row justify-between">
+                                            <!-- Content Section -->
+                                            <div class="flex-1">
+                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                                                    {{ $announcement->title }}
+                                                </h3>
+                                                <div class="grid gap-4">
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                                        {{ $announcement->content }}
+                                                    </p>
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                        Posted on {{ \Carbon\Carbon::parse($announcement->announcement_date)->format('d M Y, h:i A') }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Actions Section -->
+                                            <div class="lg:ml-6 mt-4 lg:mt-0 flex gap-2">
+                                                <!-- Edit Button -->
+                                                <a href="{{ route('announcements.edit', $announcement) }}" 
+                                                    class="inline-flex items-center justify-center w-24 h-10 text-sm font-medium rounded-lg text-blue-600 bg-blue-50 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                    </svg>
+                                                    Edit
+                                                </a>
+
+                                                <!-- Delete Button -->
+                                                <form action="{{ route('announcements.destroy', $announcement) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        onclick="return confirm('Are you sure you want to delete this announcement?')"
+                                                        class="inline-flex items-center justify-center w-24 h-10 text-sm font-medium rounded-lg text-red-600 bg-red-50 hover:bg-red-100 dark:text-red-400 dark:bg-red-900/20 dark:hover:bg-red-900/30 transition-colors">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        </svg>
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="flex flex-col items-center justify-center py-12 text-center">
+                                    <div class="text-gray-400 dark:text-gray-500 mb-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-gray-600 dark:text-gray-300 text-lg font-medium mb-2">
+                                        No announcements yet
+                                    </p>
+                                    <p class="text-gray-500 dark:text-gray-400 mb-6">
+                                        Create your first announcement to keep everyone informed!
+                                    </p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
                 </div>
             </div>
-        @endif
+        </main>
 
-        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Title
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Date
-                            </th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        @forelse ($announcements as $announcement)
-                            <tr class="hover:bg-gray-50 transition-colors duration-200 group">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    {{ $announcement->title }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ $announcement->announcement_date }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex space-x-3">
-                                        <a href="{{ route('announcements.edit', $announcement) }}"
-                                            class="text-blue-600 hover:text-blue-900 transition-colors duration-200 flex items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20"
-                                                fill="currentColor">
-                                                <path
-                                                    d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-                                            Edit
-                                        </a>
-                                        <form action="{{ route('announcements.destroy', $announcement) }}" method="POST"
-                                            class="inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="text-red-600 hover:text-red-900 transition-colors duration-200 flex items-center"
-                                                onclick="return confirm('Are you sure you want to delete this announcement?')">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1"
-                                                    viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd"
-                                                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                                Delete
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="px-6 py-4 text-center text-gray-500">
-                                    No announcements found.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        {{-- Footer --}}
+        <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
@@ -178,4 +179,5 @@
             </div>
         </div>
     </footer>
+    </div>
 </x-app-layout>

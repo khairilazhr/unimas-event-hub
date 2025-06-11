@@ -1,51 +1,82 @@
 <x-app-layout>
     <div
         class="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-        <main class="flex-grow py-8 md:py-12 lg:py-16 container mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 class="text-3xl font-extrabold text-gray-800 dark:text-white text-center mb-6 animate-fade-in">Create
-                Announcement</h1>
-
-            <div class="bg-white dark:bg-gray-900 shadow-xl rounded-lg p-6 sm:p-8 max-w-3xl mx-auto animate-slide-in">
-                <form action="{{ route('announcements.store') }}" method="POST" class="space-y-4">
-                    @csrf
-
-                    <div>
-                        <label for="eventId" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Select
-                            Event:</label>
-                        <select name="eventId"
-                            class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                            <option value="">Select an Event</option>
-                            @foreach ($events as $event)
-                                <option value="{{ $event->id }}">{{ $event->name }}</option>
-                            @endforeach
-                        </select>
+        {{-- Main Content --}}
+        <main class="flex-grow py-6 sm:py-8 md:py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white dark:bg-gray-800 shadow-lg sm:rounded-xl overflow-hidden">
+                    <div class="relative bg-unimasblue dark:bg-unimasblue p-6">
+                        <div class="absolute inset-0 opacity-10 bg-pattern-grid"></div>
+                        <div class="flex justify-between items-center relative z-10">
+                            <h1 class="text-2xl sm:text-3xl font-bold text-white">
+                                Create Announcement
+                            </h1>
+                        </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Title:</label>
-                        <input type="text" name="title"
-                            class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            required>
-                    </div>
+                    <div class="p-4 sm:p-6 md:p-8">
+                        <form action="{{ route('announcements.store') }}" method="POST"
+                            class="max-w-3xl mx-auto space-y-6">
+                            @csrf
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Content:</label>
-                        <textarea name="content"
-                            class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
-                    </div>
+                            <div class="bg-white dark:bg-gray-800 rounded-lg">
+                                <div class="grid gap-6">
+                                    <div>
+                                        <label for="eventId"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Select Event
+                                        </label>
+                                        <select name="eventId"
+                                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-unimasblue focus:border-transparent">
+                                            <option value="">Select an Event</option>
+                                            @foreach ($events as $event)
+                                                <option value="{{ $event->id }}">{{ $event->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Announcement
-                            Date:</label>
-                        <input type="date" name="announcement_date"
-                            class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Title
+                                        </label>
+                                        <input type="text" name="title" required
+                                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-unimasblue focus:border-transparent">
+                                    </div>
 
-                    <button type="submit"
-                        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg shadow-md transition-transform transform hover:scale-105">Save</button>
-                </form>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Content
+                                        </label>
+                                        <textarea name="content" rows="4" required
+                                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-unimasblue focus:border-transparent"></textarea>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Announcement Date
+                                        </label>
+                                        <input type="datetime-local" name="announcement_date" required
+                                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-unimasblue focus:border-transparent">
+                                    </div>
+
+                                    <div class="flex gap-4 pt-4">
+                                        <a href="{{ route('announcements.index') }}"
+                                            class="inline-flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-unimasblue">
+                                            Cancel
+                                        </a>
+                                        <button type="submit"
+                                            class="inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-unimasblue hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-unimasblue">
+                                            Create Announcement
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </main>
+
         {{-- Footer --}}
         <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
