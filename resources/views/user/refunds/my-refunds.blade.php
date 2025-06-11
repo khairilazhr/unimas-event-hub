@@ -122,7 +122,7 @@
                                                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Reason for Refund</p>
                                                 <p class="text-gray-900 dark:text-white text-sm">{{ $refund->refund_reason }}</p>
                                                 @if($refund->notes)
-                                                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-3 mb-2">Additional Notes</p>
+                                                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mt-3 mb-2">Organizer Notes</p>
                                                     <p class="text-gray-900 dark:text-white text-sm">{{ $refund->notes }}</p>
                                                 @endif
                                             </div>
