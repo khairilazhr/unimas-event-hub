@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserEventController;
+use App\Http\Controllers\RefundsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -94,6 +95,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/verify-ticket/{id}', [App\Http\Controllers\UserEventController::class, 'verifyTicket'])
         ->name('user.events.verify-ticket');
 
+    // User Refunds routes
+    Route::get('/refunds', [App\Http\Controllers\RefundsController::class, 'index'])->name('user.refunds.index');
+    Route::post('/refunds', [App\Http\Controllers\RefundsController::class, 'store'])->name('user.refunds.store');
+    Route::get('/my-refunds', [RefundsController::class, 'myRefunds'])
+    ->name('user.refunds.my-refunds');
 });
 
 // Forum routes

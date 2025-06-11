@@ -34,39 +34,39 @@
                             </div>
                         @else
                         <div class="grid gap-6 md:gap-8">
-    @foreach($registrations as $registration)
-        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
-            <div class="p-6">
-                <!-- Top Section with Fixed Height -->
-                <div class="flex flex-col lg:flex-row min-h-[120px]">
-                    <!-- Left Content -->
-                    <div class="flex-1">
-                        <!-- Header with Fixed Status Position -->
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="flex-1 pr-4">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1 truncate">
-                                    {{ $registration->event->name }}
-                                </h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    {{ $registration->event->location }}
-                                </p>
-                            </div>
-                            <!-- Fixed Width Status Badge -->
-                            <div class="w-24 flex-shrink-0">
-                                <span class="px-3 py-1 inline-flex justify-center w-full text-xs leading-5 font-semibold rounded-full
-                                    @if($registration->status == 'approved')
-                                        bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100
-                                    @elseif($registration->status == 'pending')
-                                        bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100
-                                    @elseif($registration->status == 'rejected')
-                                        bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100
-                                    @else
-                                        bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100
-                                    @endif">
-                                    {{ ucfirst($registration->status ?? 'unknown') }}
-                                </span>
-                            </div>
-                        </div>
+                        @foreach($registrations as $registration)
+                            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+                                <div class="p-6">
+                                    <!-- Top Section with Fixed Height -->
+                                    <div class="flex flex-col lg:flex-row min-h-[120px]">
+                                        <!-- Left Content -->
+                                        <div class="flex-1">
+                                            <!-- Header with Fixed Status Position -->
+                                            <div class="flex justify-between items-start mb-4">
+                                                <div class="flex-1 pr-4">
+                                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1 truncate">
+                                                        {{ $registration->event->name }}
+                                                    </h3>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                                        {{ $registration->event->location }}
+                                                    </p>
+                                                </div>
+                                                <!-- Fixed Width Status Badge -->
+                                                <div class="w-24 flex-shrink-0">
+                                                    <span class="px-3 py-1 inline-flex justify-center w-full text-xs leading-5 font-semibold rounded-full
+                                                        @if($registration->status == 'approved')
+                                                            bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100
+                                                        @elseif($registration->status == 'pending')
+                                                            bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100
+                                                        @elseif($registration->status == 'rejected')
+                                                            bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100
+                                                        @else
+                                                            bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100
+                                                        @endif">
+                                                        {{ ucfirst($registration->status ?? 'unknown') }}
+                                                    </span>
+                                                </div>
+                                            </div>
 
                         <!-- Event Details Grid -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -97,45 +97,45 @@
                                                                 RM{{ number_format($registration->ticket->price, 2) }}
                                                             </span>
                                                         </div>
-                        </div>
-                    </div>
+                                                        </div>
+                                                    </div>
 
-                    <!-- Right Content - Fixed Width Actions Column -->
-                    <div class="lg:w-48 flex-shrink-0 lg:ml-6 mt-4 lg:mt-0">
-                        <div class="flex flex-col gap-2">
-                            <a href="{{ route('user.events.registration-details', $registration->id) }}" 
-                               class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30 transition-colors w-full">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                                View Details
-                            </a>
+                                                    <!-- Right Content - Fixed Width Actions Column -->
+                                                    <div class="lg:w-48 flex-shrink-0 lg:ml-6 mt-4 lg:mt-0">
+                                                        <div class="flex flex-col gap-2">
+                                                            <a href="{{ route('user.events.registration-details', $registration->id) }}" 
+                                                            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30 transition-colors w-full">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                                </svg>
+                                                                View Details
+                                                            </a>
 
-                            @if($registration->status == 'approved')
-                                <a href="{{ route('forum.index', ['eventId' => $registration->event->id]) }}" 
-                                   class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-blue-600 bg-blue-50 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors w-full">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h2m2-4h4a2 2 0 012 2v6a2 2 0 01-2 2h-4m0 0V8a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2h4z" />
-                                    </svg>
-                                    Forum
-                                </a>
+                                                            @if($registration->status == 'approved')
+                                                                <a href="{{ route('forum.index', ['eventId' => $registration->event->id]) }}" 
+                                                                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-blue-600 bg-blue-50 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors w-full">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h2m2-4h4a2 2 0 012 2v6a2 2 0 01-2 2h-4m0 0V8a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2h4z" />
+                                                                    </svg>
+                                                                    Forum
+                                                                </a>
 
-                                <a href="{{ route('forum.index', ['eventId' => $registration->event->id]) }}" 
-                                   class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-orange-600 bg-orange-50 hover:bg-orange-100 dark:text-orange-400 dark:bg-orange-900/20 dark:hover:bg-orange-900/30 transition-colors w-full">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
-                                    </svg>
-                                    Request Refund
-                                </a>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endforeach
-</div>
+                                                                <a href="{{ route('user.refunds.index', ['ticket_id' => $registration->ticket_id]) }}" 
+                                                                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-orange-600 bg-orange-50 hover:bg-orange-100 dark:text-orange-400 dark:bg-orange-900/20 dark:hover:bg-orange-900/30 transition-colors w-full">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
+                                                                    </svg>
+                                                                    Request Refund
+                                                                </a>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
                         @endif
                     </div>
                 </div>
