@@ -145,6 +145,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/organizer/bookings/{id}/reject', [OrganizerController::class, 'rejectBooking'])->name('organizer.reject.booking');
         Route::post('/organizer/bookings/{id}/reset', [OrganizerController::class, 'resetBooking'])->name('organizer.reset.booking');
         Route::get('/organizer/bookings/{id}', [OrganizerController::class, 'showBooking'])->name('organizer.bookings.show');
+
+        Route::get('/organizer/refunds', [App\Http\Controllers\RefundsController::class, 'organizerRefunds'])
+        ->name('organizer.refunds');
+        Route::put('/organizer/refunds/{refund}', [App\Http\Controllers\RefundsController::class, 'updateRefundStatus'])
+        ->name('organizer.refunds.update');
     });
 });
 

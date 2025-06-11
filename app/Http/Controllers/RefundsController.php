@@ -114,35 +114,41 @@ class RefundsController extends Controller
     return view('user.refunds.my-refunds', compact('refunds'));
 }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+public function organizerRefunds()
+{
+    $organizerId = Auth::id();
+    
+    $refunds = Refunds::whereHas('eventRegistration.event', function ($query) use ($organizerId) {
+        $query->where('organizer_id', $organizerId);
+    })
+    ->with(['ticket', 'eventRegistration.event', 'user'])
+    ->get()
+    ->groupBy('eventRegistration.event.id');
+
+    return view('organizer.refunds.index', compact('refunds'));
+}
+
+public function updateRefundStatus(Request $request, Refunds $refund)
+{
+    $request->validate([
+        'status' => 'required|in:approved,rejected',
+        'notes' => 'nullable|string|max:500',
+    ]);
+
+    // Verify organizer owns the event
+    $organizerId = Auth::id();
+    $eventOrganizerId = $refund->eventRegistration->event->organizer_id;
+
+    if ($organizerId !== $eventOrganizerId) {
+        return response()->json(['error' => 'Unauthorized'], 403);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+    $refund->update([
+        'status' => $request->status,
+        'notes' => $request->notes,
+    ]);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+    return redirect()->back()->with('success', 'Refund status updated successfully.');
+}
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }
