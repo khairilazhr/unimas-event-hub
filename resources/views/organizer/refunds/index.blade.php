@@ -161,7 +161,11 @@
                         @click.outside="closeModal()"
                         class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                         
-                        <form x-bind:action="`/organizer/refunds/${refundId}`" method="POST">
+                        <form 
+                            x-bind:action="`/organizer/refunds/${refundId}`" 
+                            method="POST" 
+                            enctype="multipart/form-data"
+                        >
                             @csrf
                             @method('PUT')
                             <input type="hidden" name="status" x-bind:value="action">
@@ -173,6 +177,12 @@
                                         <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white" x-text="action === 'approved' ? 'Approve Refund' : 'Reject Refund'"></h3>
                                         <div class="mt-2">
                                             <textarea name="notes" rows="4" class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white" placeholder="Add notes (optional)"></textarea>
+                                        </div>
+                                        <div class="mt-4" x-show="action === 'approved'">
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Upload Refund Proof (Image or PDF) <span class="text-red-500">*</span></label>
+                                            <input type="file" name="refund_proof" accept="image/*,application/pdf" 
+                                                class="block w-full text-sm text-gray-900 dark:text-gray-200 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-unimasblue file:text-white hover:file:bg-blue-700"
+                                                :required="action === 'approved'">
                                         </div>
                                     </div>
                                 </div>

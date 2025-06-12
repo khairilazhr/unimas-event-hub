@@ -133,6 +133,7 @@ public function updateRefundStatus(Request $request, Refunds $refund)
     $request->validate([
         'status' => 'required|in:approved,rejected',
         'notes' => 'nullable|string|max:500',
+        'refund_proof' => 'required_if:status,approved|file|mimes:jpg,jpeg,png,pdf|max:2048',
     ]);
 
     // Verify organizer owns the event
@@ -143,10 +144,18 @@ public function updateRefundStatus(Request $request, Refunds $refund)
         return response()->json(['error' => 'Unauthorized'], 403);
     }
 
-    $refund->update([
+    $data = [
         'status' => $request->status,
         'notes' => $request->notes,
-    ]);
+    ];
+
+    // Handle refund_proof upload if approved
+    if ($request->status === 'approved' && $request->hasFile('refund_proof') && $request->file('refund_proof')->isValid()) {
+        $refundProofPath = $request->file('refund_proof')->store('refund_proofs', 'public');
+        $data['refund_proof'] = $refundProofPath;
+    }
+
+    $refund->update($data);
 
     return redirect()->back()->with('success', 'Refund status updated successfully.');
 }
