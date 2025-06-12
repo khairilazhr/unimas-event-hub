@@ -7,6 +7,7 @@ use App\Models\EventRegistration;
 use App\Models\Refunds;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RefundsController extends Controller
 {
@@ -160,4 +161,70 @@ public function updateRefundStatus(Request $request, Refunds $refund)
     return redirect()->back()->with('success', 'Refund status updated successfully.');
 }
 
+public function refundsReport()
+{
+    $user = Auth::user();
+    
+    // Get all refunds for this organizer's events
+    $refunds = Refunds::whereHas('eventRegistration.event', function ($query) use ($user) {
+        $query->where('organizer_id', $user->id);
+    })
+    ->with(['eventRegistration.event', 'ticket', 'user'])
+    ->orderBy('status')
+    ->orderBy('created_at', 'desc')
+    ->get();
+
+    $statuses = ['pending', 'approved', 'rejected'];
+
+    $response = new StreamedResponse(function () use ($refunds, $statuses) {
+        $handle = fopen('php://output', 'w');
+        
+        // CSV Header
+        fputcsv($handle, [
+            'Status',
+            'Event',
+            'Event Date',
+            'Ticket Type',
+            'Section',
+            'Row',
+            'Seat',
+            'User Name',
+            'User Email',
+            'Refund Amount',
+            'Refund Reason',
+            'Notes',
+            'Requested At',
+            'Updated At'
+        ]);
+
+        foreach ($statuses as $status) {
+            $filtered = $refunds->where('status', $status);
+            foreach ($filtered as $refund) {
+                fputcsv($handle, [
+                    ucfirst($refund->status),
+                    $refund->eventRegistration->event->name ?? '',
+                    $refund->eventRegistration->event->date ?? '',
+                    $refund->ticket->type ?? '',
+                    $refund->ticket->section ?? '',
+                    $refund->ticket->row ?? '',
+                    $refund->ticket->seat ?? '',
+                    $refund->user->name ?? '',
+                    $refund->user->email ?? '',
+                    number_format($refund->refund_amount, 2),
+                    $refund->refund_reason,
+                    $refund->notes ?? '',
+                    $refund->created_at->format('Y-m-d H:i'),
+                    $refund->updated_at->format('Y-m-d H:i'),
+                ]);
+            }
+        }
+        fclose($handle);
+    });
+
+    $filename = 'refunds_report_' . now()->format('Ymd_His') . '.csv';
+    $response->headers->set('Content-Type', 'text/csv');
+    $response->headers->set('Content-Disposition', "attachment; filename=\"$filename\"");
+
+    return $response;
+}
 }

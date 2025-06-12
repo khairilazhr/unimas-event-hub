@@ -64,6 +64,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/organizer/announcements/{announcement}/edit', [AnnouncementController::class, 'edit'])->name('announcements.edit');
     Route::put('/organizer/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('announcements.update');
     Route::delete('/organizer/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
+    Route::get('/organizer/bookings/report', [OrganizerController::class, 'bookingsReport'])->name('organizer.bookings.report');
+    Route::get('/organizer/refunds/report', [App\Http\Controllers\RefundsController::class, 'refundsReport'])
+    ->name('organizer.refunds.report');
+    Route::get('/organizer/dashboard/report', [OrganizerController::class, 'dashboardReport'])
+    ->name('organizer.dashboard.report');
+
 });
 
 Route::get('/register/{role}', [RegisteredUserController::class, 'showRegistrationForm'])

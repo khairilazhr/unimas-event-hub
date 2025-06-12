@@ -9,6 +9,7 @@ use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class OrganizerController extends Controller
 {
@@ -444,5 +445,141 @@ class OrganizerController extends Controller
     }
 
     return view('organizer.bookings.show', compact('registration'));
+    }
+
+    public function bookingsReport(Request $request)
+    {
+        $user = Auth::user();
+
+        // Get all registrations for this organizer's events
+        $registrations = EventRegistration::whereHas('event', function ($query) use ($user) {
+            $query->where('organizer_id', $user->id);
+        })
+            ->with(['event', 'ticket', 'user'])
+            ->orderBy('status')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $statuses = ['approved', 'pending', 'rejected'];
+
+        $response = new StreamedResponse(function () use ($registrations, $statuses) {
+            $handle = fopen('php://output', 'w');
+            // CSV Header
+            fputcsv($handle, [
+                'Status', 'Event', 'Event Date', 'Ticket Type', 'Section', 'Row', 'Seat',
+                'Attendee Name', 'User ID', 'Email', 'Phone', 'Registered At'
+            ]);
+
+            foreach ($statuses as $status) {
+                $filtered = $registrations->where('status', $status);
+                foreach ($filtered as $reg) {
+                    fputcsv($handle, [
+                        ucfirst($reg->status),
+                        $reg->event->name ?? '',
+                        $reg->event->date ?? '',
+                        $reg->ticket->type ?? '',
+                        $reg->ticket->section ?? '',
+                        $reg->ticket->row ?? '',
+                        $reg->ticket->seat ?? '',
+                        $reg->name,
+                        $reg->user ? $reg->user->id : 'Guest',
+                        $reg->email,
+                        $reg->phone,
+                        $reg->created_at->format('Y-m-d H:i'),
+                    ]);
+                }
+            }
+            fclose($handle);
+        });
+
+        $filename = 'event_bookings_report_' . now()->format('Ymd_His') . '.csv';
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', "attachment; filename=\"$filename\"");
+
+        return $response;
+    }
+
+    public function dashboardReport()
+    {
+        $user = Auth::user();
+        
+        // Get organizer's events
+        $events = Event::where('organizer_id', $user->id)->get();
+        
+        // Calculate statistics
+        $totalEvents = $events->count();
+        $upcomingEvents = $events->where('date', '>', now())->count();
+        $completedEvents = $events->where('date', '<', now())->count();
+        $totalParticipants = EventRegistration::whereIn('event_id', $events->pluck('id'))->count();
+        $totalRevenue = EventRegistration::whereIn('event_id', $events->pluck('id'))
+            ->where('status', 'approved')
+            ->sum('amount_paid');
+        
+        // Generate CSV
+        $response = new StreamedResponse(function() use ($events, $totalEvents, $upcomingEvents, $completedEvents, $totalParticipants, $totalRevenue) {
+            $handle = fopen('php://output', 'w');
+            
+            // Write header
+            fputcsv($handle, ['Organizer Performance Report']);
+            fputcsv($handle, ['Generated at:', now()->format('Y-m-d H:i:s')]);
+            fputcsv($handle, []);
+            
+            // Summary Statistics
+            fputcsv($handle, ['Summary Statistics']);
+            fputcsv($handle, ['Total Events', $totalEvents]);
+            fputcsv($handle, ['Upcoming Events', $upcomingEvents]);
+            fputcsv($handle, ['Completed Events', $completedEvents]);
+            fputcsv($handle, ['Total Participants', $totalParticipants]);
+            fputcsv($handle, ['Total Revenue', 'RM ' . number_format($totalRevenue, 2)]);
+            fputcsv($handle, []);
+            
+            // Events Breakdown
+            fputcsv($handle, ['Event Details']);
+            fputcsv($handle, ['Event Name', 'Date', 'Status', 'Registrations', 'Revenue']);
+            
+            foreach ($events as $event) {
+                $eventRegistrations = $event->registrations()->count();
+                $eventRevenue = $event->registrations()
+                    ->where('status', 'approved')
+                    ->sum('amount_paid');
+                    
+                fputcsv($handle, [
+                    $event->name,
+                    $event->date,
+                    $event->status,
+                    $eventRegistrations,
+                    'RM ' . number_format($eventRevenue, 2)
+                ]);
+            }
+            
+            // Monthly Trends
+            fputcsv($handle, []);
+            fputcsv($handle, ['Monthly Registration Trends']);
+            fputcsv($handle, ['Month', 'Registrations', 'Revenue']);
+            
+            $monthlyStats = EventRegistration::whereIn('event_id', $events->pluck('id'))
+                ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month')
+                ->selectRaw('COUNT(*) as registrations')
+                ->selectRaw('SUM(amount_paid) as revenue')
+                ->groupBy('month')
+                ->orderBy('month', 'desc')
+                ->get();
+                
+            foreach ($monthlyStats as $stat) {
+                fputcsv($handle, [
+                    $stat->month,
+                    $stat->registrations,
+                    'RM ' . number_format($stat->revenue, 2)
+                ]);
+            }
+            
+            fclose($handle);
+        });
+
+        $filename = 'organizer_performance_report_' . now()->format('Ymd_His') . '.csv';
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', "attachment; filename=\"$filename\"");
+
+        return $response;
     }
 }

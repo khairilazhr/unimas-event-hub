@@ -27,6 +27,31 @@
                 </div>
 
                 <div class="p-4 sm:p-6 md:p-8">
+                    <!-- Report Button -->
+                    <div class="flex justify-end mb-4">
+                        <form action="{{ route('organizer.refunds.report') }}" method="GET" target="_blank">
+                            <button type="submit"
+                                class="inline-flex items-center px-4 py-2 bg-unimasblue text-white text-sm font-medium rounded hover:bg-blue-700 transition">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Generate Report
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Status Filter -->
+                    <div class="mb-6">
+                        <label for="statusFilter" class="block text-lg font-medium mb-2">Filter by Status:</label>
+                        <select id="statusFilter" class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200">
+                            <option value="all">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+
                     @if($refunds->isEmpty())
                         <div class="flex flex-col items-center justify-center py-12 text-center">
                             <div class="text-gray-400 dark:text-gray-500 mb-4">
@@ -65,7 +90,7 @@
                                         </thead>
                                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                             @foreach($eventRefunds as $refund)
-                                                <tr>
+                                                <tr data-status="{{ $refund->status }}">
                                                     <td class="px-4 py-4">
                                                         <div class="text-sm font-medium text-gray-900 dark:text-white">
                                                             {{ $refund->user->name }}
@@ -210,4 +235,24 @@
             </div>
         </template>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusFilter = document.getElementById('statusFilter');
+            const rows = document.querySelectorAll('tr[data-status]');
+
+            statusFilter.addEventListener('change', function() {
+                const selectedStatus = this.value;
+                
+                rows.forEach(row => {
+                    const rowStatus = row.getAttribute('data-status');
+                    if (selectedStatus === 'all' || rowStatus === selectedStatus) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
 </x-app-layout>

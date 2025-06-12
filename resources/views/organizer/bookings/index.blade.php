@@ -44,6 +44,20 @@
                             </select>
                         </div>
 
+                        <!-- Report Button -->
+                        <div class="flex justify-end mb-4">
+                            <form action="{{ route('organizer.bookings.report') }}" method="GET" target="_blank">
+                                <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 bg-unimasblue text-white text-sm font-medium rounded hover:bg-blue-700 transition">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Generate Report
+                                </button>
+                            </form>
+                        </div>
+
                         <!-- Bookings Table -->
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -114,11 +128,11 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-    <a href="{{ route('organizer.bookings.show', $registration->id) }}" 
-       class="text-blue-600 hover:text-blue-900">
-        View Details
-    </a>
-</td>
+                                                <a href="{{ route('organizer.bookings.show', $registration->id) }}" 
+                                                class="text-blue-600 hover:text-blue-900">
+                                                    View Details
+                                                </a>
+                                            </td>
                                         </tr>
                                     @empty
                                         <tr>

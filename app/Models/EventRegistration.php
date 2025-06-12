@@ -18,6 +18,7 @@ class EventRegistration extends Model
         'phone',
         'notes',
         'status',
+        'amount_paid',
     ];
 
     /**

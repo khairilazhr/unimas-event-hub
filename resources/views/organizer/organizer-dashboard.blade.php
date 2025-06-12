@@ -12,9 +12,21 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- Dashboard Overview -->
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
-                        <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3">
-                            Dashboard Overview
-                        </h2>
+                        <div class="flex justify-between items-center mb-3">
+                            <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                                Dashboard Overview
+                            </h2>
+                            <form action="{{ route('organizer.dashboard.report') }}" method="GET" target="_blank">
+                                <button type="submit"
+                                    class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-unimasblue hover:bg-blue-700 rounded transition">
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Download Report
+                                </button>
+                            </form>
+                        </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 text-center">
                                 <div class="text-gray-600 dark:text-gray-400 text-xs">Total Events</div>
