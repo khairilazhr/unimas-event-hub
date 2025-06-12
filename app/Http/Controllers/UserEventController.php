@@ -34,7 +34,6 @@ class UserEventController extends Controller
     {
         // Validate the request
         $validated = $request->validate([
-            // Keep existing validation rules
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:20',
@@ -45,43 +44,65 @@ class UserEventController extends Controller
             'seat' => 'required|string',
             'receipt' => 'required_if:ticket_price,gt,0|file|mimes:jpg,png,pdf|max:2048'
         ]);
-    
+
         // Get the ticket
         $ticket = Ticket::findOrFail($request->ticket_id);
-    
+
+        // Check if ticket is already booked
+        if ($ticket->status === 'booked') {
+            return back()->withErrors(['ticket' => 'This ticket has already been booked.']);
+        }
+
         // Validate receipt requirement
         if ($ticket->price > 0 && !$request->hasFile('receipt')) {
             return back()->withErrors(['receipt' => 'Payment receipt is required for paid tickets']);
         }
-    
+
         // Store the receipt
         $receiptPath = null;
         if ($request->hasFile('receipt') && $request->file('receipt')->isValid()) {
             $receiptPath = $request->file('receipt')->store('receipts', 'public');
         }
-    
-        // Create registration
-        $registration = EventRegistration::create([
-            'event_id' => $event->id,
-            'ticket_id' => $request->ticket_id,
-            'user_id' => auth()->id(),
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'status' => $ticket->price > 0 ? 'pending' : 'approved', 
-        ]);
-    
-        // Create payment record if needed
-        if ($ticket->price > 0) {
-            Payment::create([
-                'event_reg_id' => $registration->id,
+
+        // Begin transaction
+        \DB::beginTransaction();
+
+        try {
+            // Create registration
+            $registration = EventRegistration::create([
+                'event_id' => $event->id,
+                'ticket_id' => $request->ticket_id,
                 'user_id' => auth()->id(),
-                'receipt' => $receiptPath,
-                'ref_no' => 'PAY-'.strtoupper(uniqid())
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'status' => $ticket->price > 0 ? 'pending' : 'approved',
+                'amount_paid' => $ticket->price // Add the ticket price as amount paid
             ]);
+
+            // Update ticket status to booked
+            $ticket->update([
+                'status' => 'booked'
+            ]);
+
+            // Create payment record if needed
+            if ($ticket->price > 0) {
+                Payment::create([
+                    'event_reg_id' => $registration->id,
+                    'user_id' => auth()->id(),
+                    'receipt' => $receiptPath,
+                    'ref_no' => 'PAY-'.strtoupper(uniqid())
+                ]);
+            }
+
+            \DB::commit();
+
+            return redirect()->route('user.events.registration-success', $registration->id);
+
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return back()->withErrors(['error' => 'An error occurred while processing your registration. Please try again.']);
         }
-    
-        return redirect()->route('user.events.registration-success', $registration->id);
     }
 
     public function registrationSuccess(EventRegistration $registration)
@@ -90,24 +111,24 @@ class UserEventController extends Controller
         if ($registration->user_id != auth()->id()) {
             abort(403, 'Unauthorized action.');
         }
-    
+
         // Load the payment relationship
         $registration->load(['event', 'ticket', 'payment']);
-    
+
         return view('events.registration-success', compact('registration'));
     }
 
     public function myBookings()
     {
         $user = auth()->user();
-    
+
         $registrations = \App\Models\EventRegistration::where('user_id', $user->id)
             ->with(['event', 'ticket', 'ticket.refunds' => function($q) use ($user) {
                 $q->where('user_id', $user->id);
             }])
             ->latest()
             ->get();
-    
+
         return view('events.my-bookings', compact('registrations'));
     }
 
