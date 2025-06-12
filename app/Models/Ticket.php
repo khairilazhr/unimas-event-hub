@@ -35,4 +35,9 @@ class Ticket extends Model
     {
         return $this->hasMany(EventRegistration::class, 'ticket_id');
     }
+
+    public function refunds()
+    {
+    return $this->hasMany(\App\Models\Refunds::class, 'ticket_id');
+    }
 }

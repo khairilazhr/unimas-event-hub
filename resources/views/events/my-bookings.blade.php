@@ -121,13 +121,28 @@
                                                                     Forum
                                                                 </a>
 
-                                                                <a href="{{ route('user.refunds.index', ['ticket_id' => $registration->ticket_id]) }}" 
-                                                                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-orange-600 bg-orange-50 hover:bg-orange-100 dark:text-orange-400 dark:bg-orange-900/20 dark:hover:bg-orange-900/30 transition-colors w-full">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
-                                                                    </svg>
-                                                                    Request Refund
-                                                                </a>
+                                                                @php
+                                                                    $refund = $registration->ticket->refunds->first();
+                                                                @endphp
+
+                                                                @if($refund)
+                                                                    <div class="inline-flex flex-col items-start px-4 py-2 text-sm rounded-lg bg-orange-50 dark:bg-orange-900/20 w-full">
+                                                                        <span class="font-semibold text-orange-600 dark:text-orange-400">Refund Requested</span>
+                                                                        <span class="text-gray-700 dark:text-gray-200">Status: 
+                                                                            <span class="font-bold">
+                                                                                {{ ucfirst($refund->status) }}
+                                                                            </span>
+                                                                        </span>
+                                                                    </div>
+                                                                @else
+                                                                    <a href="{{ route('user.refunds.index', ['ticket_id' => $registration->ticket_id]) }}" 
+                                                                        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-orange-600 bg-orange-50 hover:bg-orange-100 dark:text-orange-400 dark:bg-orange-900/20 dark:hover:bg-orange-900/30 transition-colors w-full">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
+                                                                        </svg>
+                                                                        Request Refund
+                                                                    </a>
+                                                                @endif
                                                             @endif
                                                         </div>
                                                     </div>

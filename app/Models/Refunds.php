@@ -16,6 +16,7 @@ class Refunds extends Model
         'refund_amount',
         'refund_reason',
         'status',
+        'refund_proof', 
         'notes',
     ];
 

@@ -99,15 +99,15 @@ class UserEventController extends Controller
 
     public function myBookings()
     {
-        // Get the authenticated user
         $user = auth()->user();
-
-        // Get all registrations for this user with related event and ticket data
-        $registrations = EventRegistration::where('user_id', $user->id)
-            ->with(['event', 'ticket'])
+    
+        $registrations = \App\Models\EventRegistration::where('user_id', $user->id)
+            ->with(['event', 'ticket', 'ticket.refunds' => function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            }])
             ->latest()
             ->get();
-
+    
         return view('events.my-bookings', compact('registrations'));
     }
 

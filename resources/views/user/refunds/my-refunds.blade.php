@@ -126,6 +126,33 @@
                                                     <p class="text-gray-900 dark:text-white text-sm">{{ $refund->notes }}</p>
                                                 @endif
                                             </div>
+
+                                            <!-- Refund Proof Section - Shown Only for Approved Requests with Proof -->
+                                            @if($refund->status === 'approved' && $refund->refund_proof)
+                                            <div class="mt-3">
+                                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Refund Proof</p>
+                                                @php
+                                                    $ext = pathinfo($refund->refund_proof, PATHINFO_EXTENSION);
+                                                @endphp
+
+                                                @if(in_array($ext, ['jpg', 'jpeg', 'png']))
+                                                    <a href="{{ asset('storage/' . $refund->refund_proof) }}" target="_blank">
+                                                        <img src="{{ asset('storage/' . $refund->refund_proof) }}" alt="Refund Proof" class="max-w-xs rounded border border-gray-300 dark:border-gray-700 shadow">
+                                                    </a>
+                                                @elseif($ext === 'pdf')
+                                                    <a href="{{ asset('storage/' . $refund->refund_proof) }}" target="_blank" 
+                                                    class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow-sm hover:bg-blue-700 transition">
+                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                        </svg>
+                                                        View PDF
+                                                    </a>
+                                                @else
+                                                    <a href="{{ asset('storage/' . $refund->refund_proof) }}" target="_blank" class="text-blue-600 underline">Download Refund Proof</a>
+                                                @endif
+                                            </div>
+
+                                            @endif
                                         </div>
                                     </div>
                                 @endforeach
