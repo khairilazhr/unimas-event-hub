@@ -93,6 +93,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/registration/{registration}', [UserEventController::class, 'registrationDetails'])->name('user.events.registration-details');
     Route::delete('/registration/{registration}/cancel', [UserEventController::class, 'cancelRegistration'])->name('user.events.cancel-registration');
 
+    Route::get('/generate-ticket/{registration}', [UserEventController::class, 'generateTicket'])
+    ->name('user.events.generate-ticket');
+
+    Route::post('/mark-attendance/{registration}', [UserEventController::class, 'markAttendance'])
+    ->name('user.events.mark-attendance');
+    
     // For future implementation - placeholder route
     Route::get('/registration/{registration}/payment', function () {
         return redirect()->back()->with('info', 'Payment functionality will be implemented soon.');

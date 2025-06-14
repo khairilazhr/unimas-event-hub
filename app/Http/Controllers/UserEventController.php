@@ -6,7 +6,9 @@ use App\Models\Event;
 use App\Models\Payment;
 use App\Models\EventRegistration;
 use App\Models\Ticket;
+use App\Models\Attendance;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 // Add Ticket model import
 
@@ -65,7 +67,7 @@ class UserEventController extends Controller
         }
 
         // Begin transaction
-        \DB::beginTransaction();
+        DB::beginTransaction();
 
         try {
             // Create registration
@@ -95,12 +97,12 @@ class UserEventController extends Controller
                 ]);
             }
 
-            \DB::commit();
+            DB::commit();
 
             return redirect()->route('user.events.registration-success', $registration->id);
 
         } catch (\Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             return back()->withErrors(['error' => 'An error occurred while processing your registration. Please try again.']);
         }
     }
@@ -196,5 +198,70 @@ class UserEventController extends Controller
                 ],
             ],
         ]);
+    }
+
+    public function generateTicket(EventRegistration $registration)
+    {
+        if ($registration->user_id != auth()->id() || $registration->status !== 'approved') {
+            abort(403);
+        }
+
+        // Create or get attendance record
+        $attendance = Attendance::firstOrCreate([
+            'event_registration_id' => $registration->id,
+            'event_id' => $registration->event_id,
+            'ticket_id' => $registration->ticket_id,
+            'user_id' => $registration->user_id,
+        ]);
+
+        // Generate QR code data
+        $qrData = [
+            'type' => 'attendance',
+            'registration_id' => $registration->id,
+            'attendance_id' => $attendance->id,
+            'timestamp' => now()->timestamp
+        ];
+
+        return response()->json([
+            'success' => true,
+            'qrData' => base64_encode(json_encode($qrData)),
+            'ticket' => [
+                'event_name' => $registration->event->name,
+                'date' => $registration->event->date,
+                'location' => $registration->event->location,
+                'attendee_name' => $registration->name,
+                'section' => $registration->ticket->section,
+                'row' => $registration->ticket->row,
+                'seat' => $registration->ticket->seat,
+            ]
+        ]);
+    }
+
+    public function markAttendance(Request $request, EventRegistration $registration)
+    {
+        try {
+            $qrData = json_decode(base64_decode($request->qr_data), true);
+            
+            if ($qrData['type'] !== 'attendance' || $qrData['registration_id'] !== $registration->id) {
+                throw new \Exception('Invalid QR code');
+            }
+
+            $attendance = Attendance::find($qrData['attendance_id']);
+            
+            if (!$attendance) {
+                throw new \Exception('Attendance record not found');
+            }
+
+            // Update attendance status
+            $attendance->update([
+                'status' => Attendance::STATUS_ATTENDED,
+                'attended_at' => now(),
+            ]);
+
+            return response()->json(['success' => true, 'message' => 'Attendance marked successfully']);
+            
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
+        }
     }
 }

@@ -121,7 +121,7 @@
                                                     stroke-linecap="round"
                                                     stroke-linejoin="round"
                                                     stroke-width="2"
-                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-3 3v8a3 3 0 003 3z"
                                                 />
                                             </svg>
                                         </div>
@@ -477,14 +477,10 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div
-                            class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 animate-fadeIn"
-                            style="animation-delay: 600ms"
-                        >
+                        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 animate-fadeIn" style="animation-delay: 600ms">
                             <div class="flex flex-wrap gap-3">
                                 <!-- Cancel Booking Button - Only shown when status is pending -->
-                                @if($registration->status == 'pending' &&
-                                \Carbon\Carbon::parse($registration->event->date)->isFuture())
+                                @if($registration->status == 'pending' && \Carbon\Carbon::parse($registration->event->date)->isFuture())
                                 <form
                                     method="POST"
                                     action="{{ route('user.events.cancel-registration', $registration->id) }}"
@@ -515,29 +511,18 @@
                                 </form>
                                 @endif
 
-                                <!-- Digital Ticket Button - Only shown when status is confirmed -->
-                                @if($registration->status == 'confirmed' &&
-                                \Carbon\Carbon::parse($registration->event->date)->isFuture())
+                                <!-- Digital Ticket Button - Only shown when status is approved -->
+                                @if($registration->status == 'approved' && \Carbon\Carbon::parse($registration->event->date)->isFuture())
                                 <button
                                     type="button"
-                                    id="showTicketBtn"
+                                    id="generateTicketBtn"
                                     class="px-5 py-2.5 bg-unimasblue text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-300 hover:shadow-md transform hover:translate-y-[-1px] flex items-center"
+                                    data-registration-id="{{ $registration->id }}"
                                 >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        class="h-4 w-4 mr-2"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"
-                                        />
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
                                     </svg>
-                                    Digital Ticket
+                                    Generate Digital Ticket
                                 </button>
                                 @endif
                             </div>
@@ -836,7 +821,7 @@
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
                                                 stroke-width="2"
-                                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v-4a2 2 0 002-2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
                                             />
                                         </svg>
                                         Print Ticket
@@ -1111,6 +1096,38 @@
                         // Regenerate QR code
                         generateQRCode();
                     }, 1000);
+                });
+            }
+
+            const generateTicketBtn = document.getElementById('generateTicketBtn');
+    
+            if (generateTicketBtn) {
+                generateTicketBtn.addEventListener('click', async function() {
+                    try {
+                        const registrationId = this.dataset.registrationId;
+                        const response = await fetch(`/generate-ticket/${registrationId}`);
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            // Generate QR code
+                            const qrContainer = document.getElementById('qrCode');
+                            qrContainer.innerHTML = '';
+                            new QRCode(qrContainer, {
+                                text: data.qrData,
+                                width: 128,
+                                height: 128,
+                                colorDark: "#000000",
+                                colorLight: "#ffffff",
+                                correctLevel: QRCode.CorrectLevel.H
+                            });
+                            
+                            // Show the ticket modal
+                            document.getElementById('ticketModal').classList.remove('hidden');
+                        }
+                    } catch (error) {
+                        console.error('Error generating ticket:', error);
+                        alert('Failed to generate ticket. Please try again.');
+                    }
                 });
             }
         });
