@@ -207,12 +207,10 @@ class UserEventController extends Controller
         }
 
         // Create or get attendance record
-        $attendance = Attendance::firstOrCreate([
-            'event_registration_id' => $registration->id,
-            'event_id' => $registration->event_id,
-            'ticket_id' => $registration->ticket_id,
-            'user_id' => $registration->user_id,
-        ]);
+        $attendance = Attendance::firstOrCreate(
+            ['event_registration_id' => $registration->id],
+            ['status' => Attendance::STATUS_REGISTERED]
+        );
 
         // Generate QR code data
         $qrData = [

@@ -388,12 +388,7 @@ class OrganizerController extends Controller
         // Create attendance record with initial status
         Attendance::firstOrCreate(
             ['event_registration_id' => $registration->id],
-            [
-                'event_id' => $registration->event_id,
-                'ticket_id' => $registration->ticket_id,
-                'user_id' => $registration->user_id,
-                'status' => Attendance::STATUS_REGISTERED,
-            ]
+            ['status' => Attendance::STATUS_REGISTERED]
         );
 
         return redirect()->back()->with('success', 'Booking approved.');
@@ -609,12 +604,10 @@ class OrganizerController extends Controller
             }
 
             // Check if attendance record exists
-            $attendance = Attendance::firstOrCreate([
-                'event_registration_id' => $registration->id,
-                'event_id' => $registration->event_id,
-                'ticket_id' => $registration->ticket_id,
-                'user_id' => $registration->user_id,
-            ]);
+            $attendance = Attendance::firstOrCreate(
+                ['event_registration_id' => $registration->id],
+                ['status' => Attendance::STATUS_REGISTERED]
+            );
 
             // Update attendance status
             $attendance->update([
