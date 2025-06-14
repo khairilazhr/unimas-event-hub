@@ -74,6 +74,9 @@
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
                             {{ __('My Refunds') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('user.events.my-attendances')" :active="request()->routeIs('user.events.my-attendances')">
+                            {{ __('My Attendances') }}
+                        </x-nav-link>
                     @endif
                 @endif
             </div>

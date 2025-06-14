@@ -239,4 +239,19 @@ class UserEventController extends Controller
         ]);
     }
 
+    public function myAttendances()
+    {
+        $user = auth()->user();
+        
+        $attendances = Attendance::whereHas('eventRegistration', function($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+        ->where('status', 'attended')  // Only get attended records
+        ->with(['eventRegistration.event', 'eventRegistration.ticket'])
+        ->latest('attended_at')  // Sort by attendance date
+        ->get();
+
+        return view('user.attendances.index', compact('attendances'));
+    }
+
 }

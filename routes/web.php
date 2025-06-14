@@ -114,6 +114,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/refunds', [App\Http\Controllers\RefundsController::class, 'store'])->name('user.refunds.store');
     Route::get('/my-refunds', [RefundsController::class, 'myRefunds'])
     ->name('user.refunds.my-refunds');
+
+    // My Attendances route
+    Route::get('/my-attendances', [UserEventController::class, 'myAttendances'])
+    ->name('user.events.my-attendances');
 });
 
 // Forum routes
