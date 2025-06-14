@@ -16,15 +16,19 @@ class UserEventController extends Controller
 {
     public function index()
     {
-        $events = Event::latest()->paginate(6); // Show 6 events per page
+        $events = Event::where('status', 'approved')
+            ->latest()
+            ->paginate(6); // Show 6 events per page
 
         return view('events.index', compact('events'));
     }
 
     public function showRegistrationForm(Event $event)
     {
-        // Fetch tickets associated with this event
-        $tickets = Ticket::where('eventId', $event->id)->get();
+        // Fetch only available tickets associated with this event
+        $tickets = Ticket::where('eventId', $event->id)
+                        ->where('status', 'available')
+                        ->get();
 
         // Get authenticated user
         $user = auth()->user();
@@ -51,7 +55,7 @@ class UserEventController extends Controller
         $ticket = Ticket::findOrFail($request->ticket_id);
 
         // Check if ticket is already booked
-        if ($ticket->status === 'booked') {
+        if ($ticket->status === 'comfirmed') {
             return back()->withErrors(['ticket' => 'This ticket has already been booked.']);
         }
 
@@ -82,9 +86,9 @@ class UserEventController extends Controller
                 'amount_paid' => $ticket->price // Add the ticket price as amount paid
             ]);
 
-            // Update ticket status to booked
+            // Update ticket status to pending
             $ticket->update([
-                'status' => 'booked'
+                'status' => 'pending'
             ]);
 
             // Create payment record if needed

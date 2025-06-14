@@ -140,6 +140,7 @@ class OrganizerController extends Controller
                         $ticket->section = $ticketData['section'];
                         $ticket->row = $row;
                         $ticket->seat = $seat;
+                        $ticket->status = 'available'; // Set initial status to available
                         $ticket->save();
                     }
                 }
@@ -374,42 +375,40 @@ class OrganizerController extends Controller
     /**
      * Approve a booking.
      */
-    public function approveBooking($id)
+    public function approveBooking($registrationId)
     {
-        $registration = EventRegistration::findOrFail($id);
-
-        if ($registration->event->organizer_id != Auth::id()) {
-            return redirect()->back()->with('error', 'Unauthorized action.');
-        }
-
+        $registration = EventRegistration::findOrFail($registrationId);
+        
+        // Update registration status
         $registration->status = 'approved';
         $registration->save();
 
-        // Create attendance record with initial status
-        Attendance::firstOrCreate(
-            ['event_registration_id' => $registration->id],
-            ['status' => Attendance::STATUS_REGISTERED]
-        );
-
-        return redirect()->back()->with('success', 'Booking approved.');
-    }
-
-    /**
-     * Reject a booking.
-     */
-    public function rejectBooking($id)
-    {
-        $registration = EventRegistration::findOrFail($id);
-
-        // Check if the event belongs to the current organizer
-        if ($registration->event->organizer_id != Auth::id()) {
-            return redirect()->back()->with('error', 'You are not authorized to manage this booking.');
+        // Update associated ticket status
+        if ($registration->ticket) {
+            $ticket = Ticket::find($registration->ticket_id);
+            $ticket->status = 'confirmed';
+            $ticket->save();
         }
 
+        return redirect()->back()->with('success', 'Booking approved successfully');
+    }
+
+    public function rejectBooking($registrationId)
+    {
+        $registration = EventRegistration::findOrFail($registrationId);
+        
+        // Update registration status
         $registration->status = 'rejected';
         $registration->save();
 
-        return redirect()->back()->with('success', 'Booking has been rejected.');
+        // Update associated ticket status
+        if ($registration->ticket) {
+            $ticket = Ticket::find($registration->ticket_id);
+            $ticket->status = 'available';
+            $ticket->save();
+        }
+
+        return redirect()->back()->with('success', 'Booking rejected successfully');
     }
 
     /**
