@@ -53,6 +53,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['auth', 'verified', 'role:organizer'])->group(function () {
         Route::get('/organizer/dashboard', [OrganizerController::class, 'dashboard'])
             ->name('organizer.dashboard');
+        Route::get('/organizer/attendances', [OrganizerController::class, 'manageAttendances'])
+        ->name('organizer.attendances');
     });
 
 });
@@ -96,15 +98,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/generate-ticket/{registration}', [UserEventController::class, 'generateTicket'])
     ->name('user.events.generate-ticket');
 
-    Route::post('/mark-attendance/{registration}', [UserEventController::class, 'markAttendance'])
-    ->name('user.events.mark-attendance');
+    Route::post('/mark-attendance/{registration}', [OrganizerController::class, 'markAttendance'])
+    ->name('organizer.mark-attendance');
     
     // For future implementation - placeholder route
     Route::get('/registration/{registration}/payment', function () {
         return redirect()->back()->with('info', 'Payment functionality will be implemented soon.');
     })->name('user.events.payment');
 
-    Route::get('/verify-ticket/{id}', [App\Http\Controllers\UserEventController::class, 'verifyTicket'])
+    Route::get('/verify-ticket/{registration}', [UserEventController::class, 'verifyTicket'])
         ->name('user.events.verify-ticket');
 
     // User Refunds routes

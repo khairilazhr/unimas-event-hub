@@ -582,4 +582,56 @@ class OrganizerController extends Controller
 
         return $response;
     }
+
+    public function manageAttendances()
+    {
+        $user = Auth::user();
+        
+        // Get all events for this organizer
+        $events = Event::where('organizer_id', $user->id)
+            ->orderBy('date', 'desc')
+            ->get();
+        
+        return view('organizer.attendances.index', compact('events'));
+    }
+
+    public function markAttendance(Request $request, $registrationId)
+    {
+        try {
+            $registration = EventRegistration::findOrFail($registrationId);
+            
+            // Check if the event belongs to the current organizer
+            if ($registration->event->organizer_id != auth()->id()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized action'
+                ], 403);
+            }
+
+            // Check if attendance record exists
+            $attendance = Attendance::firstOrCreate([
+                'event_registration_id' => $registration->id,
+                'event_id' => $registration->event_id,
+                'ticket_id' => $registration->ticket_id,
+                'user_id' => $registration->user_id,
+            ]);
+
+            // Update attendance status
+            $attendance->update([
+                'status' => Attendance::STATUS_ATTENDED,
+                'attended_at' => now(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Attendance marked successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to mark attendance: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

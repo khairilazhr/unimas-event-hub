@@ -237,31 +237,4 @@ class UserEventController extends Controller
         ]);
     }
 
-    public function markAttendance(Request $request, EventRegistration $registration)
-    {
-        try {
-            $qrData = json_decode(base64_decode($request->qr_data), true);
-            
-            if ($qrData['type'] !== 'attendance' || $qrData['registration_id'] !== $registration->id) {
-                throw new \Exception('Invalid QR code');
-            }
-
-            $attendance = Attendance::find($qrData['attendance_id']);
-            
-            if (!$attendance) {
-                throw new \Exception('Attendance record not found');
-            }
-
-            // Update attendance status
-            $attendance->update([
-                'status' => Attendance::STATUS_ATTENDED,
-                'attended_at' => now(),
-            ]);
-
-            return response()->json(['success' => true, 'message' => 'Attendance marked successfully']);
-            
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
-        }
-    }
 }

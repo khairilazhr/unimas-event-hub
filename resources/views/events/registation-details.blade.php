@@ -1109,13 +1109,13 @@
                         const data = await response.json();
                         
                         if (data.success) {
-                            // Generate QR code
+                            // Generate QR code with the correct format
                             const qrContainer = document.getElementById('qrCode');
                             qrContainer.innerHTML = '';
                             new QRCode(qrContainer, {
-                                text: data.qrData,
-                                width: 128,
-                                height: 128,
+                                text: data.qrData, // This now contains base64 encoded JSON from server
+                                width: 150,
+                                height: 150,
                                 colorDark: "#000000",
                                 colorLight: "#ffffff",
                                 correctLevel: QRCode.CorrectLevel.H
