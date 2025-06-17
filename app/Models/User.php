@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -42,14 +41,13 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'password'          => 'hashed',
     ];
 
     public function eventRegistrations()
     {
         return $this->hasMany(EventRegistration::class);
     }
-
     public function events()
     {
         return $this->hasMany(Event::class, 'organizer_id');

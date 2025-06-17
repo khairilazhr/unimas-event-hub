@@ -5,8 +5,9 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserEventController;
+use App\Http\Controllers\QuestionnaireController;
 use App\Http\Controllers\RefundsController;
+use App\Http\Controllers\UserEventController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -54,7 +55,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/organizer/dashboard', [OrganizerController::class, 'dashboard'])
             ->name('organizer.dashboard');
         Route::get('/organizer/attendances', [OrganizerController::class, 'manageAttendances'])
-        ->name('organizer.attendances');
+            ->name('organizer.attendances');
+
+        // Questionnaire routes
+        Route::prefix('organizer/questionnaires')->name('organizer.questionnaires.')->group(function () {
+            Route::get('/', [QuestionnaireController::class, 'index'])->name('index');
+            Route::get('/create', [QuestionnaireController::class, 'create'])->name('create');
+            Route::post('/', [QuestionnaireController::class, 'store'])->name('store');
+            Route::get('/{questionnaire}', [QuestionnaireController::class, 'show'])->name('show');
+            Route::get('/{questionnaire}/edit', [QuestionnaireController::class, 'edit'])->name('edit');
+            Route::put('/{questionnaire}', [QuestionnaireController::class, 'update'])->name('update');
+            Route::delete('/{questionnaire}', [QuestionnaireController::class, 'destroy'])->name('destroy');
+            Route::post('/{questionnaire}/publish', [QuestionnaireController::class, 'publish'])->name('publish');
+        });
     });
 
 });
@@ -68,9 +81,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/organizer/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
     Route::get('/organizer/bookings/report', [OrganizerController::class, 'bookingsReport'])->name('organizer.bookings.report');
     Route::get('/organizer/refunds/report', [App\Http\Controllers\RefundsController::class, 'refundsReport'])
-    ->name('organizer.refunds.report');
+        ->name('organizer.refunds.report');
     Route::get('/organizer/dashboard/report', [OrganizerController::class, 'dashboardReport'])
-    ->name('organizer.dashboard.report');
+        ->name('organizer.dashboard.report');
 
 });
 
@@ -96,11 +109,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/registration/{registration}/cancel', [UserEventController::class, 'cancelRegistration'])->name('user.events.cancel-registration');
 
     Route::get('/generate-ticket/{registration}', [UserEventController::class, 'generateTicket'])
-    ->name('user.events.generate-ticket');
+        ->name('user.events.generate-ticket');
 
     Route::post('/mark-attendance/{registration}', [OrganizerController::class, 'markAttendance'])
-    ->name('organizer.mark-attendance');
-    
+        ->name('organizer.mark-attendance');
+
     // For future implementation - placeholder route
     Route::get('/registration/{registration}/payment', function () {
         return redirect()->back()->with('info', 'Payment functionality will be implemented soon.');
@@ -113,11 +126,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/refunds', [App\Http\Controllers\RefundsController::class, 'index'])->name('user.refunds.index');
     Route::post('/refunds', [App\Http\Controllers\RefundsController::class, 'store'])->name('user.refunds.store');
     Route::get('/my-refunds', [RefundsController::class, 'myRefunds'])
-    ->name('user.refunds.my-refunds');
+        ->name('user.refunds.my-refunds');
 
     // My Attendances route
     Route::get('/my-attendances', [UserEventController::class, 'myAttendances'])
-    ->name('user.events.my-attendances');
+        ->name('user.events.my-attendances');
 });
 
 // Forum routes
@@ -165,10 +178,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/organizer/bookings/{id}', [OrganizerController::class, 'showBooking'])->name('organizer.bookings.show');
 
         Route::get('/organizer/refunds', [App\Http\Controllers\RefundsController::class, 'organizerRefunds'])
-        ->name('organizer.refunds');
+            ->name('organizer.refunds');
         Route::put('/organizer/refunds/{refund}', [App\Http\Controllers\RefundsController::class, 'updateRefundStatus'])
-        ->name('organizer.refunds.update');
+            ->name('organizer.refunds.update');
     });
 });
 
-require __DIR__.'/auth.php';
+// Add this temporary debug route to verify the route is working
+Route::get('/debug/routes', function () {
+    dd(Route::getRoutes()->getRoutesByName());
+});
+
+require __DIR__ . '/auth.php';

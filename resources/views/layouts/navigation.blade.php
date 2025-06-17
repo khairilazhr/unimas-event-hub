@@ -54,6 +54,11 @@
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
                             {{ __('Manage Attendances') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('organizer.questionnaires.index')"
+                            :active="request()->routeIs('organizer.questionnaires.index')"
+                            class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
+                            {{ __('Questionnaires') }}
+                        </x-nav-link>
                     @else
                         <!-- Regular user navigation -->
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
