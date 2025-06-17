@@ -1,8 +1,11 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Event;
+use App\Models\EventRegistration;
 use App\Models\Question;
 use App\Models\Questionnaire;
+use App\Models\QuestionResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -174,5 +177,71 @@ class QuestionnaireController extends Controller
 
         return redirect()->route('organizer.questionnaires.index')
             ->with('success', 'Questionnaire deleted successfully');
+    }
+
+    public function userQuestionnaires($eventId)
+    {
+        $event = Event::findOrFail($eventId);
+
+        // Check if user is registered for this event
+        $isRegistered = EventRegistration::where('event_id', $eventId)
+            ->where('user_id', Auth::id())
+            ->where('status', 'approved')
+            ->exists();
+
+        if (! $isRegistered) {
+            return redirect()->route('user.events')->with('error', 'You must be registered for this event to view questionnaires.');
+        }
+
+        $questionnaires = Questionnaire::where('event_id', $eventId)
+            ->where('status', 'published')
+            ->whereNull('expires_at')
+            ->orWhere('expires_at', '>', now())
+            ->get();
+
+        return view('user.questionnaires.index', compact('questionnaires', 'event'));
+    }
+
+    public function showResponseForm(Questionnaire $questionnaire)
+    {
+        // Check if user is registered for this event
+        $isRegistered = EventRegistration::where('event_id', $questionnaire->event_id)
+            ->where('user_id', Auth::id())
+            ->where('status', 'approved')
+            ->exists();
+
+        if (! $isRegistered) {
+            return redirect()->route('user.events')->with('error', 'You must be registered for this event to respond to questionnaires.');
+        }
+
+        // Check if user has already responded
+        $hasResponded = QuestionResponse::whereIn('question_id', $questionnaire->questions->pluck('id'))
+            ->where('user_id', Auth::id())
+            ->exists();
+
+        if ($hasResponded) {
+            return back()->with('warning', 'You have already submitted your response for this questionnaire.');
+        }
+
+        return view('user.questionnaires.respond', compact('questionnaire'));
+    }
+
+    public function storeResponse(Request $request, Questionnaire $questionnaire)
+    {
+        $validated = $request->validate([
+            'responses'   => 'required|array',
+            'responses.*' => 'required',
+        ]);
+
+        foreach ($validated['responses'] as $questionId => $response) {
+            QuestionResponse::create([
+                'question_id'    => $questionId,
+                'user_id'        => Auth::id(),
+                'response_value' => is_array($response) ? json_encode($response) : $response,
+            ]);
+        }
+
+        return redirect()->route('user.questionnaires.index', $questionnaire->event_id)
+            ->with('success', 'Thank you for your response!');
     }
 }

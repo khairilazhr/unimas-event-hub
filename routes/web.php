@@ -131,6 +131,14 @@ Route::middleware('auth')->group(function () {
     // My Attendances route
     Route::get('/my-attendances', [UserEventController::class, 'myAttendances'])
         ->name('user.events.my-attendances');
+
+    // Questionnaire response routes
+    Route::get('/events/{event}/questionnaires', [QuestionnaireController::class, 'userQuestionnaires'])
+        ->name('user.questionnaires.index');
+    Route::get('/questionnaires/{questionnaire}/respond', [QuestionnaireController::class, 'showResponseForm'])
+        ->name('user.questionnaires.respond');
+    Route::post('/questionnaires/{questionnaire}/respond', [QuestionnaireController::class, 'storeResponse'])
+        ->name('user.questionnaires.store-response');
 });
 
 // Forum routes

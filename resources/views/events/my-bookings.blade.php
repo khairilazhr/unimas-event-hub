@@ -103,7 +103,7 @@
                                                     <!-- Right Content - Fixed Width Actions Column -->
                                                     <div class="lg:w-48 flex-shrink-0 lg:ml-6 mt-4 lg:mt-0">
                                                         <div class="flex flex-col gap-2">
-                                                            <a href="{{ route('user.events.registration-details', $registration->id) }}" 
+                                                            <a href="{{ route('user.events.registration-details', $registration->id) }}"
                                                             class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-900/20 dark:hover:bg-indigo-900/30 transition-colors w-full">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -113,12 +113,20 @@
                                                             </a>
 
                                                             @if($registration->status == 'approved')
-                                                                <a href="{{ route('forum.index', ['eventId' => $registration->event->id]) }}" 
+                                                                <a href="{{ route('forum.index', ['eventId' => $registration->event->id]) }}"
                                                                 class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-blue-600 bg-blue-50 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors w-full">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-6a2 2 0 012-2h2m2-4h4a2 2 0 012 2v6a2 2 0 01-2 2h-4m0 0V8a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2h4z" />
                                                                     </svg>
                                                                     Forum
+                                                                </a>
+
+                                                                <a href="{{ route('user.questionnaires.index', $registration->event->id) }}"
+                                                                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-purple-600 bg-purple-50 hover:bg-purple-100 dark:text-purple-400 dark:bg-purple-900/20 dark:hover:bg-purple-900/30 transition-colors w-full">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                                    </svg>
+                                                                    Questionnaires
                                                                 </a>
 
                                                                 @php
@@ -128,14 +136,14 @@
                                                                 @if($refund)
                                                                     <div class="inline-flex flex-col items-start px-4 py-2 text-sm rounded-lg bg-orange-50 dark:bg-orange-900/20 w-full">
                                                                         <span class="font-semibold text-orange-600 dark:text-orange-400">Refund Requested</span>
-                                                                        <span class="text-gray-700 dark:text-gray-200">Status: 
+                                                                        <span class="text-gray-700 dark:text-gray-200">Status:
                                                                             <span class="font-bold">
                                                                                 {{ ucfirst($refund->status) }}
                                                                             </span>
                                                                         </span>
                                                                     </div>
                                                                 @else
-                                                                    <a href="{{ route('user.refunds.index', ['ticket_id' => $registration->ticket_id]) }}" 
+                                                                    <a href="{{ route('user.refunds.index', ['ticket_id' => $registration->ticket_id]) }}"
                                                                         class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg text-orange-600 bg-orange-50 hover:bg-orange-100 dark:text-orange-400 dark:bg-orange-900/20 dark:hover:bg-orange-900/30 transition-colors w-full">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
