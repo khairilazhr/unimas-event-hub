@@ -67,6 +67,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/{questionnaire}', [QuestionnaireController::class, 'update'])->name('update');
             Route::delete('/{questionnaire}', [QuestionnaireController::class, 'destroy'])->name('destroy');
             Route::post('/{questionnaire}/publish', [QuestionnaireController::class, 'publish'])->name('publish');
+            Route::get('/{questionnaire}/responses', [QuestionnaireController::class, 'showResponses'])->name('responses');
+            Route::get('/{questionnaire}/export', [QuestionnaireController::class, 'exportResponses'])
+                ->name('export');
         });
     });
 

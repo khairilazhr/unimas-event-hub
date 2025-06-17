@@ -27,7 +27,7 @@
                                             <p class="text-sm text-gray-500">Status: {{ ucfirst($questionnaire->status) }}</p>
                                         </div>
                                         <div class="flex space-x-2">
-                                            <a href="{{ route('organizer.questionnaires.edit', $questionnaire) }}" 
+                                            <a href="{{ route('organizer.questionnaires.edit', $questionnaire) }}"
                                                class="text-blue-600 hover:text-blue-800">Edit</a>
                                             @if($questionnaire->status === 'draft')
                                                 <form action="{{ route('organizer.questionnaires.publish', $questionnaire) }}" method="POST">

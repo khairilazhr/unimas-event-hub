@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CheckRole
 {
@@ -16,9 +16,9 @@ class CheckRole
     public function handle(Request $request, Closure $next, ...$roles)
     {
         // Debugging: Log the current user and requested roles
-        \Log::info('Current User:', [
-            'authenticated' => Auth::check(),
-            'user' => Auth::user(),
+        Log::info('Current User:', [
+            'authenticated'   => Auth::check(),
+            'user'            => Auth::user(),
             'requested_roles' => $roles,
         ]);
 
@@ -29,10 +29,10 @@ class CheckRole
         $user = Auth::user();
 
         // Debugging: Log the user's role
-        \Log::info('User Role Check:', [
-            'user_role' => $user->role,
+        Log::info('User Role Check:', [
+            'user_role'     => $user->role,
             'allowed_roles' => $roles,
-            'role_match' => in_array($user->role, $roles),
+            'role_match'    => in_array($user->role, $roles),
         ]);
 
         if (in_array($user->role, $roles)) {

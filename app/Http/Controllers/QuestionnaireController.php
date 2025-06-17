@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Exports\QuestionnaireResponsesExport;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\Question;
@@ -8,6 +9,7 @@ use App\Models\Questionnaire;
 use App\Models\QuestionResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class QuestionnaireController extends Controller
 {
@@ -243,5 +245,32 @@ class QuestionnaireController extends Controller
 
         return redirect()->route('user.questionnaires.index', $questionnaire->event_id)
             ->with('success', 'Thank you for your response!');
+    }
+
+    public function showResponses(Questionnaire $questionnaire)
+    {
+        $this->authorize('view', $questionnaire);
+
+        $questionnaire->load(['questions.options', 'event.registrations']);
+        $responses = QuestionResponse::with('user')
+            ->whereIn('question_id', $questionnaire->questions->pluck('id'))
+            ->get();
+
+        return view('organizer.questionnaires.responses', compact('questionnaire', 'responses'));
+    }
+
+    public function exportResponses(Questionnaire $questionnaire)
+    {
+        $this->authorize('view', $questionnaire);
+
+        $questionnaire->load(['questions']);
+        $responses = QuestionResponse::with('user')
+            ->whereIn('question_id', $questionnaire->questions->pluck('id'))
+            ->get();
+
+        return Excel::download(
+            new QuestionnaireResponsesExport($questionnaire, $responses),
+            $questionnaire->title . '_responses.xlsx'
+        );
     }
 }
