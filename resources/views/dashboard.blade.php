@@ -1,17 +1,31 @@
 @php
     use Carbon\Carbon;
     $today = Carbon::now();
-    $startOfMonth = $today->copy()->startOfMonth();
-    $endOfMonth = $today->copy()->endOfMonth();
-    $startDayOfWeek = $startOfMonth->dayOfWeek;
-    $daysInMonth = $today->daysInMonth;
 
     // Get announcements for the current user
-    $userAnnouncements = \App\Models\Announcement::whereIn('eventId', function($query) {
-        $query->select('event_id')
-              ->from('event_registrations')
-              ->where('user_id', auth()->id());
-    })->latest()->get();
+    $userAnnouncements = \App\Models\Announcement::whereIn('eventId', function ($query) {
+        $query
+            ->select('event_id')
+            ->from('event_registrations')
+            ->where('user_id', auth()->id());
+    })
+        ->latest()
+        ->get();
+
+    // Get user's event registrations and stats
+$userRegistrations = \App\Models\EventRegistration::where('user_id', auth()->id())
+    ->with('event')
+        ->latest()
+        ->get();
+
+    $totalEvents = $userRegistrations->count();
+    $upcomingEvents = $userRegistrations
+        ->filter(function ($registration) {
+            return $registration->event && Carbon::parse($registration->event->event_date)->isFuture();
+        })
+        ->count();
+
+    $recentRegistrations = $userRegistrations->take(3);
 @endphp
 
 <x-app-layout>
@@ -21,67 +35,199 @@
 
                 <!-- Dashboard Title -->
                 <div class="text-center">
-                    <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">Dashboard Overview</h1>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Your monthly overview, events, and
-                        resources</p>
+                    <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">Welcome back,
+                        {{ auth()->user()->name }}!</h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Here's what's happening with your events</p>
                 </div>
 
-                <!-- Calendar Widget -->
-                <div
-                    class="rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
-                        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Monthly Calendar</h2>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Events for {{ $today->format('F Y') }}</p>
-                    </div>
-
-                    <div class="p-6 bg-gray-50 dark:bg-gray-950">
-                        <!-- Week Headers -->
-                        <div
-                            class="grid grid-cols-7 text-center text-sm text-gray-500 dark:text-gray-400 font-medium mb-2">
-                            @foreach(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as $day)
-                                <div class="py-1">{{ $day }}</div>
-                            @endforeach
-                        </div>
-
-                        <!-- Days Grid -->
-                        <div class="grid grid-cols-7 gap-1 text-xs text-center">
-                            @for ($i = 0; $i < $startDayOfWeek; $i++)
-                                <div class="p-2"></div>
-                            @endfor
-
-                            @for ($day = 1; $day <= $daysInMonth; $day++)
-                                @php
-                                    $date = Carbon::create($today->year, $today->month, $day);
-                                    $isToday = $date->isToday();
-                                    $eventText = $events[$date->toDateString()] ?? null;
-                                @endphp
-
-                                <div
-                                    class="p-2 rounded-md transition-all {{ $isToday ? 'bg-indigo-100 dark:bg-indigo-600 font-semibold text-indigo-900 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300' }}">
-                                    <div>{{ $day }}</div>
-                                    @if($eventText)
-                                        <div class="mt-1 text-[0.65rem] text-blue-600 dark:text-blue-400 font-medium truncate">
-                                            {{ $eventText }}</div>
-                                    @endif
-                                </div>
-                            @endfor
-                        </div>
-                    </div>
-
-                    <!-- Calendar Legend -->
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div
-                        class="flex flex-col md:flex-row md:items-center md:justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400 gap-3">
-                        <div class="flex flex-wrap items-center space-x-4">
-                            <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 bg-indigo-300 dark:bg-indigo-600 rounded-full"></span>
-                                <span>Today</span>
+                        class="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                                <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span class="w-3 h-3 bg-blue-400 dark:bg-blue-500 rounded-full"></span>
-                                <span>Event</span>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Events</p>
+                                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalEvents }}</p>
                             </div>
                         </div>
-                        <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">View Full Calendar →</a>
+                    </div>
+
+                    <div
+                        class="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
+                                <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Upcoming Events</p>
+                                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $upcomingEvents }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center">
+                            <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                                <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 17h5l-5 5v-5zM4 19h6v-2H4v2zM4 15h6v-2H4v2zM4 11h6V9H4v2zM4 7h6V5H4v2zM10 7h10V5H10v2zM10 11h10V9H10v2zM10 15h10v-2H10v2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Announcements</p>
+                                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                                    {{ $userAnnouncements->count() }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Quick Actions -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Recent Activity -->
+                    <div
+                        class="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Recent Activity</h3>
+                            <a href="{{ route('user.events.my-bookings') }}"
+                                class="text-sm text-blue-600 dark:text-blue-400 hover:underline">View All</a>
+                        </div>
+
+                        <div class="space-y-4">
+                            @forelse ($recentRegistrations as $registration)
+                                <div class="flex items-center space-x-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                    <div class="flex-shrink-0">
+                                        <div
+                                            class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                            {{ $registration->event->title ?? 'Event' }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                                            Registered on
+                                            {{ Carbon::parse($registration->created_at)->format('M d, Y') }}
+                                        </p>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                            Registered
+                                        </span>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-8">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">No recent activity</p>
+                                    <a href="{{ route('events.index') }}"
+                                        class="mt-2 inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                                        Browse events
+                                    </a>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div
+                        class="bg-white dark:bg-gray-900 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-6">Quick Actions</h3>
+
+                        <div class="grid grid-cols-1 gap-4">
+                            <a href="{{ route('user.events') }}"
+                                class="flex items-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
+                                <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Browse Events</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Discover new events to attend
+                                    </p>
+                                </div>
+                            </a>
+
+                            <a href="{{ route('user.events.my-bookings') }}"
+                                class="flex items-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">
+                                <div class="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                                    <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">My Bookings</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">View your event registrations
+                                    </p>
+                                </div>
+                            </a>
+
+                            <a href="{{ route('user.events.my-attendances') }}"
+                                class="flex items-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors">
+                                <div class="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                                    <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">My Attendances</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">View your event attendance
+                                        history</p>
+                                </div>
+                            </a>
+
+                            <a href="{{ route('profile.edit') }}"
+                                class="flex items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <div class="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                                    <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Profile Settings</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Update your account information
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -105,20 +251,27 @@
                                         <span class="text-2xl font-bold text-unimasblue">Event</span>
                                     </div>
                                     <div class="md:w-3/4 p-5 space-y-2">
-                                        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100">{{ $announcement->title }}</h4>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $announcement->content }}</p>
-                                        @if($announcement->announcement_date)
-                                            <p class="text-sm text-gray-500 dark:text-gray-400">Date: {{ \Carbon\Carbon::parse($announcement->announcement_date)->format('d/m/Y') }}</p>
+                                        <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                                            {{ $announcement->title }}</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                                            {{ $announcement->content }}
+                                        </p>
+                                        @if ($announcement->announcement_date)
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">Date:
+                                                {{ \Carbon\Carbon::parse($announcement->announcement_date)->format('d/m/Y') }}
+                                            </p>
                                         @endif
-                                        @if($announcement->created_by)
-                                            <p class="text-sm text-gray-500 dark:text-gray-400">By: {{ $announcement->created_by }}</p>
+                                        @if ($announcement->created_by)
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">By:
+                                                {{ $announcement->created_by }}</p>
                                         @endif
                                     </div>
                                 </div>
                             </div>
                         @empty
                             <div class="col-span-2 text-center py-6 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                                <p class="text-gray-500 dark:text-gray-400">No announcements available for your registered events.</p>
+                                <p class="text-gray-500 dark:text-gray-400">No announcements available for your
+                                    registered events.</p>
                             </div>
                         @endforelse
                     </div>
@@ -162,25 +315,6 @@
                             </a>
                         </div>
                     </div>
-<!--                     <div>
-                        <h3 class="text-base font-semibold text-gray-800 dark:text-white mb-4">Resources</h3>
-                        <div class="grid grid-cols-2 gap-2">
-                            <a href="#"
-                                class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">FAQ</a>
-                            <a href="#"
-                                class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Help
-                                Center</a>
-                            <a href="#"
-                                class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">User
-                                Guide</a>
-                            <a href="#"
-                                class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Terms</a>
-                            <a href="#"
-                                class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Privacy</a>
-                            <a href="#"
-                                class="text-sm text-gray-600 dark:text-gray-400 hover:text-unimasblue dark:hover:text-unimasblue transition">Contact</a>
-                        </div>
-                    </div> -->
                     <div>
                         <h3 class="text-base font-semibold text-gray-800 dark:text-white mb-4">Need Help?</h3>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
