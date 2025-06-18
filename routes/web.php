@@ -44,9 +44,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Event Management
         Route::get('/admin/events', [AdminController::class, 'events'])->name('admin.events');
+        Route::get('/admin/events/{event}', [AdminController::class, 'showEvent'])->name('admin.events.show');
         Route::post('/admin/events/{event}/approve', [AdminController::class, 'approveEvent'])->name('admin.events.approve');
         Route::post('/admin/events/{event}/reject', [AdminController::class, 'rejectEvent'])->name('admin.events.reject');
-        Route::get('/admin/events/{event}', [AdminController::class, 'showEvent'])->name('admin.events.show');
 
     });
 

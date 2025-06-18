@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -55,5 +54,10 @@ class Event extends Model
     public function forumTopics()
     {
         return $this->hasMany(ForumTopic::class);
+    }
+
+    public function questionnaires()
+    {
+        return $this->hasMany(Questionnaire::class);
     }
 }
