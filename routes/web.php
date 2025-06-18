@@ -64,7 +64,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/', [QuestionnaireController::class, 'store'])->name('store');
             Route::get('/{questionnaire}', [QuestionnaireController::class, 'show'])->name('show');
             Route::get('/{questionnaire}/edit', [QuestionnaireController::class, 'edit'])->name('edit');
-            Route::put('/questionnaires/{questionnaire}', [QuestionnaireController::class, 'update'])->name('update');
+            Route::put('/{questionnaire}', [QuestionnaireController::class, 'update'])->name('update');
             Route::delete('/{questionnaire}', [QuestionnaireController::class, 'destroy'])->name('destroy');
             Route::post('/{questionnaire}/publish', [QuestionnaireController::class, 'publish'])->name('publish');
             Route::get('/{questionnaire}/responses', [QuestionnaireController::class, 'showResponses'])->name('responses');
@@ -199,5 +199,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('/debug/routes', function () {
     dd(Route::getRoutes()->getRoutesByName());
 });
+
+// Temporary debug route for questionnaire update
+Route::get('/debug/questionnaire-update/{questionnaire}', function ($questionnaire) {
+    $questionnaire = App\Models\Questionnaire::findOrFail($questionnaire);
+    return response()->json([
+        'questionnaire' => $questionnaire,
+        'questions'     => $questionnaire->questions,
+        'route'         => route('organizer.questionnaires.update', $questionnaire),
+    ]);
+})->name('debug.questionnaire.update');
+
+// Temporary test route for form submission debugging
+Route::post('/debug/form-test', function (Illuminate\Http\Request $request) {
+    \Illuminate\Support\Facades\Log::info('Form test received:', $request->all());
+    return response()->json(['message' => 'Form received', 'data' => $request->all()]);
+})->name('debug.form.test');
+
+// Temporary route to test questionnaire update with any method
+Route::match(['GET', 'POST', 'PUT', 'PATCH'], '/debug/questionnaire-update-test/{questionnaire}', function (Illuminate\Http\Request $request, $questionnaire) {
+    \Illuminate\Support\Facades\Log::info('Questionnaire update test received');
+    \Illuminate\Support\Facades\Log::info('Method: ' . $request->method());
+    \Illuminate\Support\Facades\Log::info('URL: ' . $request->url());
+    \Illuminate\Support\Facades\Log::info('Data: ', $request->all());
+    return response()->json(['message' => 'Update test received', 'method' => $request->method(), 'data' => $request->all()]);
+})->name('debug.questionnaire.update.test');
 
 require __DIR__ . '/auth.php';

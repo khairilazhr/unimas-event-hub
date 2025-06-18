@@ -28,6 +28,26 @@
                             @csrf
                             @method('PUT')
 
+                            <!-- Debug info -->
+                            <div class="mb-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
+                                <p><strong>Debug Info:</strong></p>
+                                <p>Form Action: {{ route('organizer.questionnaires.update', $questionnaire) }}</p>
+                                <p>Questionnaire ID: {{ $questionnaire->id }}</p>
+                                <p>Questions Count: {{ $questionnaire->questions->count() }}</p>
+                            </div>
+
+                            <!-- Display any validation errors -->
+                            @if ($errors->any())
+                                <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                                    <p><strong>Validation Errors:</strong></p>
+                                    <ul class="list-disc list-inside">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
                             <!-- Basic Information Card -->
                             <div
                                 class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm mb-6">
@@ -87,6 +107,19 @@
                             <div
                                 class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm mb-6">
                                 <div class="p-6">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Questions
+                                        </h2>
+                                        <button type="button" id="add-question"
+                                            class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-unimasblue hover:bg-blue-600 transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5"
+                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 4v16m8-8H4" />
+                                            </svg>
+                                            Add Question
+                                        </button>
+                                    </div>
                                     <div id="questions-container" class="space-y-4">
                                         @foreach ($questionnaire->questions as $index => $question)
                                             <div
@@ -133,8 +166,12 @@
                                                             <label
                                                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">&nbsp;</label>
                                                             <label class="inline-flex items-center">
+                                                                <input type="hidden"
+                                                                    name="questions[{{ $index }}][is_required]"
+                                                                    value="0">
                                                                 <input type="checkbox"
                                                                     name="questions[{{ $index }}][is_required]"
+                                                                    value="1"
                                                                     class="rounded border-gray-300 dark:border-gray-600 text-unimasblue shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50"
                                                                     {{ $question->is_required ? 'checked' : '' }}>
                                                                 <span
@@ -160,7 +197,8 @@
                                                                             class="h-5 w-5" fill="none"
                                                                             viewBox="0 0 24 24" stroke="currentColor">
                                                                             <path stroke-linecap="round"
-                                                                                stroke-linejoin="round" stroke-width="2"
+                                                                                stroke-linejoin="round"
+                                                                                stroke-width="2"
                                                                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                                         </svg>
                                                                     </button>
@@ -195,19 +233,6 @@
                                                 </div>
                                             </div>
                                         @endforeach
-                                        <div class="flex justify-between items-center mb-4">
-                                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Questions
-                                            </h2>
-                                            <button type="button" id="add-question"
-                                                class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-unimasblue hover:bg-blue-600 transition-colors">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5"
-                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M12 4v16m8-8H4" />
-                                                </svg>
-                                                Add Question
-                                            </button>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -235,6 +260,37 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 let questionCounter = {{ $questionnaire->questions->count() }};
+
+                // Form submission debugging
+                document.getElementById('questionnaireForm').addEventListener('submit', function(e) {
+                    console.log('Form submission started');
+                    console.log('Form action:', this.action);
+                    console.log('Form method:', this.method);
+
+                    // Log form data
+                    const formData = new FormData(this);
+                    for (let [key, value] of formData.entries()) {
+                        console.log(key + ': ' + value);
+                    }
+
+                    // Check if there are any validation errors
+                    const requiredFields = this.querySelectorAll('[required]');
+                    let hasErrors = false;
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            console.error('Required field empty:', field.name);
+                            hasErrors = true;
+                        }
+                    });
+
+                    if (hasErrors) {
+                        console.error('Form has validation errors, preventing submission');
+                        e.preventDefault();
+                        return false;
+                    }
+
+                    console.log('Form validation passed, proceeding with submission');
+                });
 
                 // Add Question handler
                 document.getElementById('add-question').addEventListener('click', function() {
@@ -264,7 +320,8 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">&nbsp;</label>
                                     <label class="inline-flex items-center">
-                                        <input type="checkbox" name="questions[${questionCounter}][is_required]" 
+                                        <input type="hidden" name="questions[${questionCounter}][is_required]" value="0">
+                                        <input type="checkbox" name="questions[${questionCounter}][is_required]" value="1" 
                                             class="rounded border-gray-300 dark:border-gray-600 text-unimasblue shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50">
                                         <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Required</span>
                                     </label>
@@ -324,12 +381,28 @@
                 // Add Option handler
                 document.addEventListener('click', function(e) {
                     if (e.target.classList.contains('add-option') || e.target.closest('.add-option')) {
+                        console.log('Add Option button clicked');
+
                         const button = e.target.classList.contains('add-option') ? e.target : e.target.closest(
                             '.add-option');
                         const optionsList = button.previousElementSibling;
-                        const questionIndex = button.closest('.question-block').querySelector(
-                                'input[name*="[question_text]"]')
-                            .name.match(/questions\[(\d+)\]/)[1];
+
+                        console.log('Options list found:', optionsList);
+
+                        // Get the question index from the question block
+                        const questionBlock = button.closest('.question-block');
+                        const questionTextInput = questionBlock.querySelector('input[name*="[question_text]"]');
+                        let questionIndex = 0;
+
+                        console.log('Question text input found:', questionTextInput);
+
+                        if (questionTextInput) {
+                            const match = questionTextInput.name.match(/questions\[(\d+)\]/);
+                            if (match) {
+                                questionIndex = match[1];
+                                console.log('Question index extracted:', questionIndex);
+                            }
+                        }
 
                         const template = `
                         <div class="flex items-center option-row">
@@ -343,7 +416,9 @@
                         </div>
                     `;
 
+                        console.log('Adding template:', template);
                         optionsList.insertAdjacentHTML('beforeend', template);
+                        console.log('Template added successfully');
                     }
                 });
 

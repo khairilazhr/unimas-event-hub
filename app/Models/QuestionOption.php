@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,7 +11,7 @@ class QuestionOption extends Model
     protected $fillable = [
         'question_id',
         'option_text',
-        'order'
+        'order',
     ];
 
     public function question()

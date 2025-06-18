@@ -6,6 +6,7 @@ use App\Models\EventRegistration;
 use App\Models\Question;
 use App\Models\Questionnaire;
 use App\Models\QuestionResponse;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -77,6 +78,7 @@ class QuestionnaireController extends Controller
                             'option_text' => $optionText,
                             'order'       => $optionIndex + 1,
                         ]);
+                        Log::info('Option created:', ['question_id' => $question->id, 'option_text' => $optionText]);
                     }
                 }
             }
@@ -118,10 +120,18 @@ class QuestionnaireController extends Controller
     public function update(Request $request, Questionnaire $questionnaire)
     {
         try {
+            Log::info('=== QUESTIONNAIRE UPDATE START ===');
+            Log::info('Questionnaire ID: ' . $questionnaire->id);
+            Log::info('User ID: ' . Auth::id());
+
             $this->authorize('update', $questionnaire);
+            Log::info('Authorization passed');
 
             // Add request debugging
-            Log::info('Questionnaire update request:', $request->all());
+            Log::info('Questionnaire update request received for ID: ' . $questionnaire->id);
+            Log::info('Request method: ' . $request->method());
+            Log::info('Request URL: ' . $request->url());
+            Log::info('Request data:', $request->all());
 
             $validated = $request->validate([
                 'title'                     => 'required|string|max:255',
@@ -132,51 +142,87 @@ class QuestionnaireController extends Controller
                 'questions.*.question_text' => 'required|string',
                 'questions.*.question_type' => 'required|in:multiple_choice,checkbox,text,rating',
                 'questions.*.is_required'   => 'boolean',
-                'questions.*.options'       => 'required_if:questions.*.question_type,multiple_choice,checkbox|array',
-                'questions.*.options.*'     => 'required_if:questions.*.question_type,multiple_choice,checkbox|string',
+                'questions.*.options'       => 'nullable|array',
+                'questions.*.options.*'     => 'nullable|string|max:255',
             ]);
 
             // Add validation debugging
+            Log::info('Validation passed successfully');
             Log::info('Validated data:', $validated);
 
-            $questionnaire->update([
+            // Update questionnaire basic info
+            $updateData = [
                 'title'       => $validated['title'],
                 'description' => $validated['description'],
                 'event_id'    => $validated['event_id'],
-            ]);
+            ];
+
+            Log::info('Updating questionnaire with data:', $updateData);
+            $result = $questionnaire->update($updateData);
+            Log::info('Questionnaire update result: ' . ($result ? 'success' : 'failed'));
 
             // Delete questions not present in the update
             $questionIds = collect($validated['questions'])->pluck('id')->filter();
-            $questionnaire->questions()->whereNotIn('id', $questionIds)->delete();
+            Log::info('Question IDs to keep: ' . $questionIds->implode(', '));
+            $deletedCount = $questionnaire->questions()->whereNotIn('id', $questionIds)->delete();
+            Log::info('Deleted ' . $deletedCount . ' questions');
+
+            Log::info('Processing ' . count($validated['questions']) . ' questions');
 
             foreach ($validated['questions'] as $index => $questionData) {
+                Log::info('Processing question ' . ($index + 1) . ':', $questionData);
+
                 $question = isset($questionData['id'])
                 ? Question::find($questionData['id'])
                 : new Question();
 
-                $question->fill([
+                $questionData = [
                     'questionnaire_id' => $questionnaire->id,
                     'question_text'    => $questionData['question_text'],
                     'question_type'    => $questionData['question_type'],
                     'is_required'      => $questionData['is_required'] ?? false,
                     'order'            => $index + 1,
-                ])->save();
+                ];
 
-                if (in_array($questionData['question_type'], ['multiple_choice', 'checkbox'])) {
+                Log::info('Saving question with data:', $questionData);
+                $question->fill($questionData);
+                $saved = $question->save();
+                Log::info('Question ' . ($index + 1) . ' saved: ' . ($saved ? 'success' : 'failed') . ' with ID: ' . $question->id);
+
+                if (in_array($questionData['question_type'], ['multiple_choice', 'checkbox']) && isset($questionData['options'])) {
+                    Log::info('Saving options for question', [
+                        'question_id' => $question->id,
+                        'options'     => $questionData['options'] ?? null,
+                    ]);
                     $question->options()->delete();
                     foreach ($questionData['options'] as $optionIndex => $optionText) {
-                        $question->options()->create([
-                            'option_text' => $optionText,
-                            'order'       => $optionIndex + 1,
-                        ]);
+                        if (! empty(trim($optionText))) {
+                            $option = $question->options()->create([
+                                'option_text' => $optionText,
+                                'order'       => $optionIndex + 1,
+                            ]);
+                            Log::info('Option ' . ($optionIndex + 1) . ' created with ID: ' . $option->id);
+                            Log::info('Option created:', ['question_id' => $question->id, 'option_text' => $optionText]);
+                        }
                     }
+                    Log::info('Options created for question', [
+                        'question_id'  => $question->id,
+                        'option_count' => isset($questionData['options']) ? count($questionData['options']) : 0,
+                    ]);
                 }
             }
+
+            Log::info('Questionnaire update completed successfully');
+            Log::info('=== QUESTIONNAIRE UPDATE END ===');
 
             return redirect()->route('organizer.questionnaires.index')
                 ->with('success', 'Questionnaire updated successfully');
         } catch (\Exception $e) {
+            Log::error('=== QUESTIONNAIRE UPDATE ERROR ===');
             Log::error('Questionnaire update error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            Log::error('=== END ERROR ===');
+
             return back()
                 ->withErrors(['error' => 'Failed to update questionnaire: ' . $e->getMessage()])
                 ->withInput();
