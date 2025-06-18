@@ -173,6 +173,24 @@ class AdminController extends Controller
     {
         $event->load(['organizer', 'tickets.registrations', 'tickets.refunds', 'registrations.user', 'forumTopics.user', 'questionnaires']);
 
-        return view('admin.events.show', compact('event'));
+        // Group tickets by type
+        $groupedTickets = $event->tickets->groupBy('type')->map(function ($tickets) {
+            $firstTicket = $tickets->first();
+            return [
+                'type'                => $firstTicket->type,
+                'price'               => $firstTicket->price,
+                'description'         => $firstTicket->description,
+                'count'               => $tickets->count(),
+                'total_registrations' => $tickets->sum(function ($ticket) {
+                    return $ticket->registrations->count();
+                }),
+                'total_refunds'       => $tickets->sum(function ($ticket) {
+                    return $ticket->refunds->count();
+                }),
+                'sections'            => $tickets->unique('section')->pluck('section')->toArray(),
+            ];
+        });
+
+        return view('admin.events.show', compact('event', 'groupedTickets'));
     }
 }

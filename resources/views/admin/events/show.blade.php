@@ -242,41 +242,48 @@
                                     <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Tickets
                                         Information</h2>
                                     <div class="space-y-4">
-                                        @forelse($event->tickets as $ticket)
+                                        @forelse($groupedTickets as $ticketGroup)
                                             <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
                                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                                     <div>
                                                         <dt class="text-sm text-gray-500 dark:text-gray-400">Type</dt>
                                                         <dd class="mt-1 text-gray-900 dark:text-white font-medium">
-                                                            {{ $ticket->type }}</dd>
+                                                            {{ $ticketGroup['type'] }}</dd>
                                                     </div>
                                                     <div>
                                                         <dt class="text-sm text-gray-500 dark:text-gray-400">Price</dt>
                                                         <dd class="mt-1 text-gray-900 dark:text-white font-medium">
-                                                            RM{{ number_format($ticket->price, 2) }}</dd>
+                                                            RM{{ number_format($ticketGroup['price'], 2) }}</dd>
                                                     </div>
                                                     <div>
-                                                        <dt class="text-sm text-gray-500 dark:text-gray-400">Section
+                                                        <dt class="text-sm text-gray-500 dark:text-gray-400">Available
                                                         </dt>
                                                         <dd class="mt-1 text-gray-900 dark:text-white">
-                                                            {{ $ticket->section }} - Row {{ $ticket->row }} - Seat
-                                                            {{ $ticket->seat }}</dd>
+                                                            {{ $ticketGroup['count'] }} tickets</dd>
                                                     </div>
                                                 </div>
-                                                @if ($ticket->description)
+                                                @if ($ticketGroup['description'])
                                                     <div class="mt-3">
                                                         <dt class="text-sm text-gray-500 dark:text-gray-400">
                                                             Description</dt>
                                                         <dd class="mt-1 text-gray-900 dark:text-white text-sm">
-                                                            {{ $ticket->description }}</dd>
+                                                            {{ $ticketGroup['description'] }}</dd>
+                                                    </div>
+                                                @endif
+                                                @if (!empty($ticketGroup['sections']))
+                                                    <div class="mt-3">
+                                                        <dt class="text-sm text-gray-500 dark:text-gray-400">
+                                                            Sections</dt>
+                                                        <dd class="mt-1 text-gray-900 dark:text-white text-sm">
+                                                            {{ implode(', ', $ticketGroup['sections']) }}</dd>
                                                     </div>
                                                 @endif
                                                 <div class="mt-3 flex justify-between items-center">
                                                     <span class="text-sm text-gray-500 dark:text-gray-400">
-                                                        Registrations: {{ $ticket->registrations->count() }}
+                                                        Registrations: {{ $ticketGroup['total_registrations'] }}
                                                     </span>
                                                     <span class="text-sm text-gray-500 dark:text-gray-400">
-                                                        Refunds: {{ $ticket->refunds->count() }}
+                                                        Refunds: {{ $ticketGroup['total_refunds'] }}
                                                     </span>
                                                 </div>
                                             </div>
