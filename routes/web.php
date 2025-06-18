@@ -56,6 +56,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('organizer.dashboard');
         Route::get('/organizer/attendances', [OrganizerController::class, 'manageAttendances'])
             ->name('organizer.attendances');
+        Route::get('/organizer/attendances/history', [OrganizerController::class, 'attendanceHistory'])
+            ->name('organizer.attendances.history');
 
         // Questionnaire routes
         Route::prefix('organizer/questionnaires')->name('organizer.questionnaires.')->group(function () {

@@ -4,8 +4,8 @@
         <div class="flex justify-between items-center h-16">
             <!-- Logo with dynamic route based on user role -->
             <div class="flex items-center">
-                @if(Auth::check())
-                    @if(Auth::user()->role === 'admin')
+                @if (Auth::check())
+                    @if (Auth::user()->role === 'admin')
                         <a href="{{ route('admin.dashboard') }}" class="transition hover:opacity-80">
                             <x-application-logo class="h-9 w-auto text-gray-800 dark:text-white" />
                         </a>
@@ -27,8 +27,8 @@
 
             <!-- Desktop Navigation - Role-based Content -->
             <div class="hidden lg:flex items-center space-x-6">
-                @if(Auth::check())
-                    @if(Auth::user()->role === 'admin')
+                @if (Auth::check())
+                    @if (Auth::user()->role === 'admin')
                         <!-- Admin navigation links will be added later -->
                     @elseif(Auth::user()->role === 'organizer')
                         <x-nav-link :href="route('organizer.dashboard')" :active="request()->routeIs('organizer.dashboard')"
@@ -39,23 +39,19 @@
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
                             {{ __('My Events') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('organizer.bookings')"
-                            :active="request()->routeIs('organizer.bookings')"
+                        <x-nav-link :href="route('organizer.bookings')" :active="request()->routeIs('organizer.bookings')"
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
                             {{ __('Manage Bookings') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('organizer.refunds')"
-                            :active="request()->routeIs('organizer.refunds')"
+                        <x-nav-link :href="route('organizer.refunds')" :active="request()->routeIs('organizer.refunds')"
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
                             {{ __('Manage Refund Request') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('organizer.attendances')"
-                            :active="request()->routeIs('organizer.attendances')"
+                        <x-nav-link :href="route('organizer.attendances')" :active="request()->routeIs('organizer.attendances')"
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
                             {{ __('Manage Attendances') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('organizer.questionnaires.index')"
-                            :active="request()->routeIs('organizer.questionnaires.index')"
+                        <x-nav-link :href="route('organizer.questionnaires.index')" :active="request()->routeIs('organizer.questionnaires.index')"
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
                             {{ __('Questionnaires') }}
                         </x-nav-link>
@@ -69,13 +65,11 @@
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
                             {{ __('Event') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('user.events.my-bookings')"
-                            :active="request()->routeIs('user.events.my-bookings')"
+                        <x-nav-link :href="route('user.events.my-bookings')" :active="request()->routeIs('user.events.my-bookings')"
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
                             {{ __('My Bookings') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('user.refunds.my-refunds')"
-                            :active="request()->routeIs('user.refunds.my-refunds')"
+                        <x-nav-link :href="route('user.refunds.my-refunds')" :active="request()->routeIs('user.refunds.my-refunds')"
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
                             {{ __('My Refunds') }}
                         </x-nav-link>
@@ -88,7 +82,7 @@
 
             <!-- User Dropdown -->
             <div class="hidden lg:flex items-center space-x-4">
-                @if(Auth::check())
+                @if (Auth::check())
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button
@@ -152,8 +146,8 @@
         x-transition:leave-end="opacity-0 scale-y-95"
         class="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 origin-top overflow-hidden">
         <div class="space-y-1 px-4 py-4">
-            @if(Auth::check())
-                @if(Auth::user()->role === 'admin')
+            @if (Auth::check())
+                @if (Auth::user()->role === 'admin')
                     <!-- Admin mobile navigation will be added later -->
                 @elseif(Auth::user()->role === 'organizer')
                     <x-responsive-nav-link :href="route('organizer.dashboard')"
@@ -176,7 +170,7 @@
             @endif
         </div>
 
-        @if(Auth::check())
+        @if (Auth::check())
             <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-4">
                 <div class="text-sm text-gray-600 dark:text-gray-300 font-medium mb-2">{{ Auth::user()->name }}</div>
                 <div class="space-y-1">

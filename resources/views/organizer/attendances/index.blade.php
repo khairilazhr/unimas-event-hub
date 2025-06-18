@@ -7,12 +7,24 @@
                     <div class="bg-unimasblue p-6 sm:p-8">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                             <h1 class="text-2xl sm:text-3xl font-bold text-white">Manage Attendance</h1>
-                            <a href="{{ route('organizer.dashboard') }}" class="text-white hover:text-gray-200 transition-colors duration-200">
-                                <span class="sr-only">Back to Dashboard</span>
-                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                                </svg>
-                            </a>
+                            <div class="flex gap-2">
+                                <a href="{{ route('organizer.attendances.history') }}"
+                                    class="inline-flex items-center px-4 py-2 bg-white text-unimasblue font-semibold rounded-lg shadow hover:bg-gray-100 transition-colors">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 17l4 4 4-4m0-5V3m-8 4h8" />
+                                    </svg>
+                                    Attendance History
+                                </a>
+                                <a href="{{ route('organizer.dashboard') }}"
+                                    class="inline-flex items-center px-4 py-2 bg-white text-unimasblue font-semibold rounded-lg shadow hover:bg-gray-100 transition-colors">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                    </svg>
+                                    Dashboard
+                                </a>
+                            </div>
                         </div>
                     </div>
 
@@ -20,33 +32,41 @@
                     <div class="p-6 sm:p-8">
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             <!-- QR Scanner -->
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
-                                <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">QR Code Scanner</h2>
-                                
-                                <div class="aspect-square bg-black rounded-lg overflow-hidden mb-4 w-full max-w-[400px] mx-auto">
+                            <div
+                                class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
+                                <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">QR Code Scanner
+                                </h2>
+
+                                <div
+                                    class="aspect-square bg-black rounded-lg overflow-hidden mb-4 w-full max-w-[400px] mx-auto">
                                     <div id="qr-video" class="w-full h-full"></div>
                                 </div>
 
                                 <div class="flex justify-center space-x-4">
-                                    <button id="startButton" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <button id="startButton"
+                                        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                                         Start Scanner
                                     </button>
-                                    <button id="stopButton" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors" disabled>
+                                    <button id="stopButton"
+                                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                        disabled>
                                         Stop Scanner
                                     </button>
                                 </div>
                             </div>
 
                             <!-- Scan Result -->
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
+                            <div
+                                class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600">
                                 <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Scan Result</h2>
-                                
+
                                 <div id="scanResult" class="hidden">
                                     <div class="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4">
                                         <div class="space-y-3">
                                             <div>
                                                 <label class="text-sm text-gray-500">Attendee Name</label>
-                                                <p id="attendeeName" class="font-medium text-gray-900 dark:text-white"></p>
+                                                <p id="attendeeName" class="font-medium text-gray-900 dark:text-white">
+                                                </p>
                                             </div>
                                             <div>
                                                 <label class="text-sm text-gray-500">Event</label>
@@ -55,15 +75,18 @@
                                             <div class="grid grid-cols-3 gap-4">
                                                 <div>
                                                     <label class="text-sm text-gray-500">Section</label>
-                                                    <p id="section" class="font-medium text-gray-900 dark:text-white"></p>
+                                                    <p id="section" class="font-medium text-gray-900 dark:text-white">
+                                                    </p>
                                                 </div>
                                                 <div>
                                                     <label class="text-sm text-gray-500">Row</label>
-                                                    <p id="row" class="font-medium text-gray-900 dark:text-white"></p>
+                                                    <p id="row" class="font-medium text-gray-900 dark:text-white">
+                                                    </p>
                                                 </div>
                                                 <div>
                                                     <label class="text-sm text-gray-500">Seat</label>
-                                                    <p id="seat" class="font-medium text-gray-900 dark:text-white"></p>
+                                                    <p id="seat" class="font-medium text-gray-900 dark:text-white">
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -71,7 +94,8 @@
 
                                     <div id="statusBadge" class="mb-4"></div>
 
-                                    <button id="markAttendanceBtn" class="w-full px-4 py-2 bg-unimasblue text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    <button id="markAttendanceBtn"
+                                        class="w-full px-4 py-2 bg-unimasblue text-white rounded-lg hover:bg-blue-700 transition-colors">
                                         Mark Attendance
                                     </button>
                                 </div>
@@ -92,7 +116,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             let html5QrcodeScanner = null;
             let currentRegistrationId = null;
-            
+
             const startButton = document.getElementById('startButton');
             const stopButton = document.getElementById('stopButton');
             const scanResult = document.getElementById('scanResult');
@@ -104,11 +128,14 @@
                     const devices = await Html5Qrcode.getCameras();
                     if (devices && devices.length) {
                         const html5QrCode = new Html5Qrcode("qr-video");
-                        await html5QrCode.start(
-                            { facingMode: "environment" },
-                            {
+                        await html5QrCode.start({
+                                facingMode: "environment"
+                            }, {
                                 fps: 10,
-                                qrbox: { width: 250, height: 250 },
+                                qrbox: {
+                                    width: 250,
+                                    height: 250
+                                },
                                 aspectRatio: 1.0
                             },
                             (decodedText) => {
@@ -119,7 +146,7 @@
                                 // Handle errors silently
                             }
                         );
-                        
+
                         html5QrcodeScanner = html5QrCode;
                         startButton.disabled = true;
                         stopButton.disabled = false;
@@ -136,7 +163,7 @@
                 try {
                     // Decode the base64 string to get the JSON
                     const decodedData = JSON.parse(atob(decodedText));
-                    
+
                     if (!decodedData.type || !decodedData.registration_id) {
                         throw new Error('Invalid QR code format');
                     }
@@ -151,10 +178,11 @@
                                 // Update the UI with the registration information
                                 document.getElementById('attendeeName').textContent = data.registration.name;
                                 document.getElementById('eventName').textContent = data.registration.event.name;
-                                document.getElementById('section').textContent = data.registration.ticket.section;
+                                document.getElementById('section').textContent = data.registration.ticket
+                                    .section;
                                 document.getElementById('row').textContent = data.registration.ticket.row;
                                 document.getElementById('seat').textContent = data.registration.ticket.seat;
-                                
+
                                 // Add status badge
                                 const statusBadge = document.getElementById('statusBadge');
                                 statusBadge.innerHTML = `
@@ -164,7 +192,7 @@
                                         ${data.registration.status.charAt(0).toUpperCase() + data.registration.status.slice(1)}
                                     </span>
                                 `;
-                                
+
                                 // Show the scan result
                                 scanResult.classList.remove('hidden');
                                 noScanResult.classList.add('hidden');
@@ -203,30 +231,33 @@
             markAttendanceBtn.addEventListener('click', function() {
                 if (currentRegistrationId) {
                     fetch(`/mark-attendance/${currentRegistrationId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({ registration_id: currentRegistrationId })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Attendance marked successfully!');
-                            scanResult.classList.add('hidden');
-                            noScanResult.classList.remove('hidden');
-                            if (html5QrcodeScanner) {
-                                html5QrcodeScanner.resume();
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                registration_id: currentRegistrationId
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Attendance marked successfully!');
+                                scanResult.classList.add('hidden');
+                                noScanResult.classList.remove('hidden');
+                                if (html5QrcodeScanner) {
+                                    html5QrcodeScanner.resume();
+                                }
+                            } else {
+                                throw new Error(data.message || 'Failed to mark attendance');
                             }
-                        } else {
-                            throw new Error(data.message || 'Failed to mark attendance');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert(error.message || 'Failed to mark attendance');
-                    });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert(error.message || 'Failed to mark attendance');
+                        });
                 }
             });
         });

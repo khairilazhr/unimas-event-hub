@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -48,5 +47,10 @@ class EventRegistration extends Model
     public function payment()
     {
         return $this->hasOne(Payment::class, 'event_reg_id');
+    }
+
+    public function attendance()
+    {
+        return $this->hasOne(Attendance::class, 'event_registration_id');
     }
 }
