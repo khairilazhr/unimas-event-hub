@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Exports\QuestionnaireResponsesExport;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\Question;
@@ -9,7 +8,7 @@ use App\Models\Questionnaire;
 use App\Models\QuestionResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
 
 class QuestionnaireController extends Controller
 {
@@ -118,58 +117,70 @@ class QuestionnaireController extends Controller
 
     public function update(Request $request, Questionnaire $questionnaire)
     {
-        $this->authorize('update', $questionnaire);
+        try {
+            $this->authorize('update', $questionnaire);
 
-        // Similar validation as store method
-        $validated = $request->validate([
-            'title'                     => 'required|string|max:255',
-            'description'               => 'nullable|string',
-            'event_id'                  => 'required|exists:events,id',
-            'questions'                 => 'required|array|min:1',
-            'questions.*.id'            => 'nullable|exists:questions,id',
-            'questions.*.question_text' => 'required|string',
-            'questions.*.question_type' => 'required|in:multiple_choice,checkbox,text,rating',
-            'questions.*.is_required'   => 'boolean',
-            'questions.*.options'       => 'required_if:questions.*.question_type,multiple_choice,checkbox|array',
-            'questions.*.options.*'     => 'required_if:questions.*.question_type,multiple_choice,checkbox|string',
-        ]);
+            // Add request debugging
+            Log::info('Questionnaire update request:', $request->all());
 
-        $questionnaire->update([
-            'title'       => $validated['title'],
-            'description' => $validated['description'],
-            'event_id'    => $validated['event_id'],
-        ]);
+            $validated = $request->validate([
+                'title'                     => 'required|string|max:255',
+                'description'               => 'nullable|string',
+                'event_id'                  => 'required|exists:events,id',
+                'questions'                 => 'required|array|min:1',
+                'questions.*.id'            => 'nullable|exists:questions,id',
+                'questions.*.question_text' => 'required|string',
+                'questions.*.question_type' => 'required|in:multiple_choice,checkbox,text,rating',
+                'questions.*.is_required'   => 'boolean',
+                'questions.*.options'       => 'required_if:questions.*.question_type,multiple_choice,checkbox|array',
+                'questions.*.options.*'     => 'required_if:questions.*.question_type,multiple_choice,checkbox|string',
+            ]);
 
-        // Delete questions not present in the update
-        $questionIds = collect($validated['questions'])->pluck('id')->filter();
-        $questionnaire->questions()->whereNotIn('id', $questionIds)->delete();
+            // Add validation debugging
+            Log::info('Validated data:', $validated);
 
-        foreach ($validated['questions'] as $index => $questionData) {
-            $question = isset($questionData['id'])
-            ? Question::find($questionData['id'])
-            : new Question();
+            $questionnaire->update([
+                'title'       => $validated['title'],
+                'description' => $validated['description'],
+                'event_id'    => $validated['event_id'],
+            ]);
 
-            $question->fill([
-                'questionnaire_id' => $questionnaire->id,
-                'question_text'    => $questionData['question_text'],
-                'question_type'    => $questionData['question_type'],
-                'is_required'      => $questionData['is_required'] ?? false,
-                'order'            => $index + 1,
-            ])->save();
+            // Delete questions not present in the update
+            $questionIds = collect($validated['questions'])->pluck('id')->filter();
+            $questionnaire->questions()->whereNotIn('id', $questionIds)->delete();
 
-            if (in_array($questionData['question_type'], ['multiple_choice', 'checkbox'])) {
-                $question->options()->delete();
-                foreach ($questionData['options'] as $optionIndex => $optionText) {
-                    $question->options()->create([
-                        'option_text' => $optionText,
-                        'order'       => $optionIndex + 1,
-                    ]);
+            foreach ($validated['questions'] as $index => $questionData) {
+                $question = isset($questionData['id'])
+                ? Question::find($questionData['id'])
+                : new Question();
+
+                $question->fill([
+                    'questionnaire_id' => $questionnaire->id,
+                    'question_text'    => $questionData['question_text'],
+                    'question_type'    => $questionData['question_type'],
+                    'is_required'      => $questionData['is_required'] ?? false,
+                    'order'            => $index + 1,
+                ])->save();
+
+                if (in_array($questionData['question_type'], ['multiple_choice', 'checkbox'])) {
+                    $question->options()->delete();
+                    foreach ($questionData['options'] as $optionIndex => $optionText) {
+                        $question->options()->create([
+                            'option_text' => $optionText,
+                            'order'       => $optionIndex + 1,
+                        ]);
+                    }
                 }
             }
-        }
 
-        return redirect()->route('organizer.questionnaires.index')
-            ->with('success', 'Questionnaire updated successfully');
+            return redirect()->route('organizer.questionnaires.index')
+                ->with('success', 'Questionnaire updated successfully');
+        } catch (\Exception $e) {
+            Log::error('Questionnaire update error: ' . $e->getMessage());
+            return back()
+                ->withErrors(['error' => 'Failed to update questionnaire: ' . $e->getMessage()])
+                ->withInput();
+        }
     }
 
     public function destroy(Questionnaire $questionnaire)
@@ -259,18 +270,4 @@ class QuestionnaireController extends Controller
         return view('organizer.questionnaires.responses', compact('questionnaire', 'responses'));
     }
 
-    public function exportResponses(Questionnaire $questionnaire)
-    {
-        $this->authorize('view', $questionnaire);
-
-        $questionnaire->load(['questions']);
-        $responses = QuestionResponse::with('user')
-            ->whereIn('question_id', $questionnaire->questions->pluck('id'))
-            ->get();
-
-        return Excel::download(
-            new QuestionnaireResponsesExport($questionnaire, $responses),
-            $questionnaire->title . '_responses.xlsx'
-        );
-    }
 }

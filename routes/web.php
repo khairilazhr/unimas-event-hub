@@ -64,7 +64,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/', [QuestionnaireController::class, 'store'])->name('store');
             Route::get('/{questionnaire}', [QuestionnaireController::class, 'show'])->name('show');
             Route::get('/{questionnaire}/edit', [QuestionnaireController::class, 'edit'])->name('edit');
-            Route::put('/{questionnaire}', [QuestionnaireController::class, 'update'])->name('update');
+            Route::put('/questionnaires/{questionnaire}', [QuestionnaireController::class, 'update'])->name('update');
             Route::delete('/{questionnaire}', [QuestionnaireController::class, 'destroy'])->name('destroy');
             Route::post('/{questionnaire}/publish', [QuestionnaireController::class, 'publish'])->name('publish');
             Route::get('/{questionnaire}/responses', [QuestionnaireController::class, 'showResponses'])->name('responses');

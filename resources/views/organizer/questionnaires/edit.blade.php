@@ -1,220 +1,371 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Edit Questionnaire') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <form action="{{ route('organizer.questionnaires.update', $questionnaire) }}" method="POST" id="questionnaireForm">
-                        @csrf
-                        @method('PUT')
-
-                        <!-- Basic Information -->
-                        <div class="mb-6">
-                            <label for="title" class="block mb-2 text-sm font-medium text-gray-700">Title</label>
-                            <input type="text" name="title" id="title" class="w-full rounded-md"
-                                value="{{ old('title', $questionnaire->title) }}" required>
-                            @error('title')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+    <div
+        class="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+        <main class="flex-grow py-6 sm:py-8 md:py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white dark:bg-gray-800 shadow-lg sm:rounded-xl overflow-hidden">
+                    <div class="relative bg-unimasblue dark:bg-unimasblue p-6">
+                        <div class="absolute inset-0 opacity-10 bg-pattern-grid pointer-events-none"></div>
+                        <div class="flex justify-between items-center">
+                            <h1 class="text-2xl sm:text-3xl font-bold text-white">
+                                Edit Questionnaire
+                            </h1>
+                            <a href="{{ route('organizer.questionnaires.index') }}"
+                                class="inline-flex items-center px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium rounded-lg transition duration-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                                </svg>
+                                Back to Questionnaires
+                            </a>
                         </div>
+                    </div>
 
-                        <div class="mb-6">
-                            <label for="description" class="block mb-2 text-sm font-medium text-gray-700">Description</label>
-                            <textarea name="description" id="description" rows="3" class="w-full rounded-md">{{ old('description', $questionnaire->description) }}</textarea>
-                            @error('description')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
+                    <div class="p-4 sm:p-6 md:p-8">
+                        <form action="{{ route('organizer.questionnaires.update', $questionnaire) }}" method="POST"
+                            id="questionnaireForm">
+                            @csrf
+                            @method('PUT')
 
-                        <div class="mb-6">
-                            <label for="event_id" class="block mb-2 text-sm font-medium text-gray-700">Event</label>
-                            <select name="event_id" id="event_id" class="w-full rounded-md" required>
-                                <option value="">Select an event</option>
-                                @foreach($events as $event)
-                                    <option value="{{ $event->id }}" {{ old('event_id', $questionnaire->event_id) == $event->id ? 'selected' : '' }}>
-                                        {{ $event->name }} ({{ \Carbon\Carbon::parse($event->date)->format('Y-m-d') }})
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('event_id')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
+                            <!-- Basic Information Card -->
+                            <div
+                                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm mb-6">
+                                <div class="p-6">
+                                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Basic
+                                        Information</h2>
 
-                        <!-- Questions Section -->
-                        <div class="mb-6">
-                            <h3 class="mb-4 text-lg font-medium">Questions</h3>
-                            <div id="questions-container">
-                                @foreach($questionnaire->questions as $index => $question)
-                                    <div class="p-4 mb-4 border rounded question-block">
-                                        <input type="hidden" name="questions[{{ $index }}][id]" value="{{ $question->id }}">
-
-                                        <div class="mb-3">
-                                            <label class="block mb-2 text-sm font-medium text-gray-700">Question Text</label>
-                                            <input type="text" name="questions[{{ $index }}][question_text]"
-                                                class="w-full rounded-md" value="{{ $question->question_text }}" required>
+                                    <div class="grid gap-6 mb-6">
+                                        <div>
+                                            <label for="title"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
+                                            <input type="text" name="title" id="title"
+                                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50"
+                                                value="{{ old('title', $questionnaire->title) }}" required>
+                                            @error('title')
+                                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}
+                                                </p>
+                                            @enderror
                                         </div>
 
-                                        <div class="mb-3">
-                                            <label class="block mb-2 text-sm font-medium text-gray-700">Question Type</label>
-                                            <select name="questions[{{ $index }}][question_type]" class="w-full rounded-md question-type" required>
-                                                <option value="text" {{ $question->question_type == 'text' ? 'selected' : '' }}>Text</option>
-                                                <option value="multiple_choice" {{ $question->question_type == 'multiple_choice' ? 'selected' : '' }}>Multiple Choice</option>
-                                                <option value="checkbox" {{ $question->question_type == 'checkbox' ? 'selected' : '' }}>Checkbox</option>
-                                                <option value="rating" {{ $question->question_type == 'rating' ? 'selected' : '' }}>Rating</option>
-                                            </select>
+                                        <div>
+                                            <label for="description"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+                                            <textarea name="description" id="description" rows="3"
+                                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50">{{ old('description', $questionnaire->description) }}</textarea>
+                                            @error('description')
+                                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}
+                                                </p>
+                                            @enderror
                                         </div>
 
-                                        <div class="mb-3">
-                                            <label class="inline-flex items-center">
-                                                <input type="checkbox" name="questions[{{ $index }}][is_required]"
-                                                    class="rounded" {{ $question->is_required ? 'checked' : '' }}>
-                                                <span class="ml-2 text-sm">Required</span>
-                                            </label>
-                                        </div>
-
-                                        <div class="options-container {{ in_array($question->question_type, ['multiple_choice', 'checkbox']) ? '' : 'hidden' }}">
-                                            <label class="block mb-2 text-sm font-medium text-gray-700">Options</label>
-                                            <div class="options-list">
-                                                @foreach($question->options as $option)
-                                                    <div class="flex mb-2 option-row">
-                                                        <input type="text" name="questions[{{ $index }}][options][]"
-                                                            class="flex-1 rounded-md" value="{{ $option->option_text }}">
-                                                        <button type="button" class="px-2 ml-2 text-red-600 remove-option">&times;</button>
-                                                    </div>
+                                        <div>
+                                            <label for="event_id"
+                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Event</label>
+                                            <select name="event_id" id="event_id"
+                                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50"
+                                                required>
+                                                <option value="">Select an event</option>
+                                                @foreach ($events as $event)
+                                                    <option value="{{ $event->id }}"
+                                                        {{ old('event_id', $questionnaire->event_id) == $event->id ? 'selected' : '' }}>
+                                                        {{ $event->name }}
+                                                        ({{ Carbon\Carbon::parse($event->date)->format('Y-m-d') }})
+                                                    </option>
                                                 @endforeach
-                                            </div>
-                                            <button type="button" class="px-3 py-1 mt-2 text-sm text-white bg-blue-500 rounded add-option">
-                                                Add Option
-                                            </button>
+                                            </select>
+                                            @error('event_id')
+                                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}
+                                                </p>
+                                            @enderror
                                         </div>
-
-                                        <button type="button" class="px-3 py-1 mt-3 text-sm text-white bg-red-500 rounded remove-question">
-                                            Remove Question
-                                        </button>
                                     </div>
-                                @endforeach
+                                </div>
                             </div>
 
-                            <button type="button" id="add-question" class="px-4 py-2 text-white bg-green-500 rounded">
-                                Add Question
-                            </button>
-                        </div>
+                            <!-- Questions Section -->
+                            <div
+                                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm mb-6">
+                                <div class="p-6">
+                                    <div id="questions-container" class="space-y-4">
+                                        @foreach ($questionnaire->questions as $index => $question)
+                                            <div
+                                                class="bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg p-4 question-block">
+                                                <input type="hidden" name="questions[{{ $index }}][id]"
+                                                    value="{{ $question->id }}">
 
-                        <div class="flex justify-end mt-6">
-                            <button type="submit" class="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">
-                                Update Questionnaire
-                            </button>
-                        </div>
-                    </form>
+                                                <div class="grid gap-4">
+                                                    <div>
+                                                        <label
+                                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Question
+                                                            Text</label>
+                                                        <input type="text"
+                                                            name="questions[{{ $index }}][question_text]"
+                                                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50"
+                                                            value="{{ $question->question_text }}" required>
+                                                    </div>
+
+                                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label
+                                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Question
+                                                                Type</label>
+                                                            <select
+                                                                name="questions[{{ $index }}][question_type]"
+                                                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 question-type"
+                                                                required>
+                                                                <option value="text"
+                                                                    {{ $question->question_type == 'text' ? 'selected' : '' }}>
+                                                                    Text</option>
+                                                                <option value="multiple_choice"
+                                                                    {{ $question->question_type == 'multiple_choice' ? 'selected' : '' }}>
+                                                                    Multiple Choice</option>
+                                                                <option value="checkbox"
+                                                                    {{ $question->question_type == 'checkbox' ? 'selected' : '' }}>
+                                                                    Checkbox</option>
+                                                                <option value="rating"
+                                                                    {{ $question->question_type == 'rating' ? 'selected' : '' }}>
+                                                                    Rating</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div>
+                                                            <label
+                                                                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">&nbsp;</label>
+                                                            <label class="inline-flex items-center">
+                                                                <input type="checkbox"
+                                                                    name="questions[{{ $index }}][is_required]"
+                                                                    class="rounded border-gray-300 dark:border-gray-600 text-unimasblue shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50"
+                                                                    {{ $question->is_required ? 'checked' : '' }}>
+                                                                <span
+                                                                    class="ml-2 text-sm text-gray-600 dark:text-gray-400">Required</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+
+                                                    <div
+                                                        class="options-container {{ in_array($question->question_type, ['multiple_choice', 'checkbox']) ? '' : 'hidden' }}">
+                                                        <label
+                                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Options</label>
+                                                        <div class="options-list space-y-2">
+                                                            @foreach ($question->options as $option)
+                                                                <div class="flex items-center option-row">
+                                                                    <input type="text"
+                                                                        name="questions[{{ $index }}][options][]"
+                                                                        class="flex-1 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50"
+                                                                        value="{{ $option->option_text }}">
+                                                                    <button type="button"
+                                                                        class="ml-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 remove-option">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            class="h-5 w-5" fill="none"
+                                                                            viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round"
+                                                                                stroke-linejoin="round" stroke-width="2"
+                                                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                        <button type="button"
+                                                            class="mt-2 inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg text-unimasblue bg-blue-50 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors add-option">
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                class="h-4 w-4 mr-1.5" fill="none"
+                                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2" d="M12 4v16m8-8H4" />
+                                                            </svg>
+                                                            Add Option
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="flex justify-end">
+                                                        <button type="button"
+                                                            class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg text-red-600 bg-red-50 hover:bg-red-100 dark:text-red-400 dark:bg-red-900/20 dark:hover:bg-red-900/30 transition-colors remove-question">
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                class="h-4 w-4 mr-1.5" fill="none"
+                                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
+                                                            Remove Question
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                        <div class="flex justify-between items-center mb-4">
+                                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Questions
+                                            </h2>
+                                            <button type="button" id="add-question"
+                                                class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-unimasblue hover:bg-blue-600 transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5"
+                                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M12 4v16m8-8H4" />
+                                                </svg>
+                                                Add Question
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end gap-4">
+                                <a href="{{ route('organizer.questionnaires.index') }}"
+                                    class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 dark:text-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                                    Cancel
+                                </a>
+                                <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg text-white bg-unimasblue hover:bg-blue-600 transition-colors">
+                                    Update Questionnaire
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
+
+        <x-footer />
     </div>
 
     @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let questionCounter = {{ $questionnaire->questions->count() }};
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let questionCounter = {{ $questionnaire->questions->count() }};
 
-            // Add Question
-            document.getElementById('add-question').addEventListener('click', function() {
-                const template = `
-                    <div class="p-4 mb-4 border rounded question-block">
-                        <div class="mb-3">
-                            <label class="block mb-2 text-sm font-medium text-gray-700">Question Text</label>
-                            <input type="text" name="questions[${questionCounter}][question_text]" class="w-full rounded-md" required>
-                        </div>
+                // Add Question handler
+                document.getElementById('add-question').addEventListener('click', function() {
+                    const template = `
+                    <div class="bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg p-4 question-block">
+                        <div class="grid gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Question Text</label>
+                                <input type="text" name="questions[${questionCounter}][question_text]" 
+                                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50" 
+                                    required>
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="block mb-2 text-sm font-medium text-gray-700">Question Type</label>
-                            <select name="questions[${questionCounter}][question_type]" class="w-full rounded-md question-type" required>
-                                <option value="text">Text</option>
-                                <option value="multiple_choice">Multiple Choice</option>
-                                <option value="checkbox">Checkbox</option>
-                                <option value="rating">Rating</option>
-                            </select>
-                        </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Question Type</label>
+                                    <select name="questions[${questionCounter}][question_type]" 
+                                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 question-type" 
+                                        required>
+                                        <option value="text">Text</option>
+                                        <option value="multiple_choice">Multiple Choice</option>
+                                        <option value="checkbox">Checkbox</option>
+                                        <option value="rating">Rating</option>
+                                    </select>
+                                </div>
 
-                        <div class="mb-3">
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="questions[${questionCounter}][is_required]" class="rounded">
-                                <span class="ml-2 text-sm">Required</span>
-                            </label>
-                        </div>
-
-                        <div class="hidden options-container">
-                            <label class="block mb-2 text-sm font-medium text-gray-700">Options</label>
-                            <div class="options-list">
-                                <div class="flex mb-2 option-row">
-                                    <input type="text" name="questions[${questionCounter}][options][]" class="flex-1 rounded-md">
-                                    <button type="button" class="px-2 ml-2 text-red-600 remove-option">&times;</button>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">&nbsp;</label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="questions[${questionCounter}][is_required]" 
+                                            class="rounded border-gray-300 dark:border-gray-600 text-unimasblue shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50">
+                                        <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">Required</span>
+                                    </label>
                                 </div>
                             </div>
-                            <button type="button" class="px-3 py-1 mt-2 text-sm text-white bg-blue-500 rounded add-option">
-                                Add Option
-                            </button>
-                        </div>
 
-                        <button type="button" class="px-3 py-1 mt-3 text-sm text-white bg-red-500 rounded remove-question">
-                            Remove Question
-                        </button>
+                            <div class="hidden options-container">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Options</label>
+                                <div class="options-list space-y-2">
+                                    <div class="flex items-center option-row">
+                                        <input type="text" name="questions[${questionCounter}][options][]" 
+                                            class="flex-1 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50">
+                                        <button type="button" class="ml-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 remove-option">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="button" class="mt-2 inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg text-unimasblue bg-blue-50 hover:bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 transition-colors add-option">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                    Add Option
+                                </button>
+                            </div>
+
+                            <div class="flex justify-end">
+                                <button type="button" class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg text-red-600 bg-red-50 hover:bg-red-100 dark:text-red-400 dark:bg-red-900/20 dark:hover:bg-red-900/30 transition-colors remove-question">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                    Remove Question
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 `;
 
-                document.getElementById('questions-container').insertAdjacentHTML('beforeend', template);
-                questionCounter++;
-            });
+                    document.getElementById('questions-container').insertAdjacentHTML('beforeend', template);
+                    questionCounter++;
+                });
 
-            // Handle question type changes
-            document.addEventListener('change', function(e) {
-                if (e.target.classList.contains('question-type')) {
-                    const optionsContainer = e.target.closest('.question-block').querySelector('.options-container');
-                    if (['multiple_choice', 'checkbox'].includes(e.target.value)) {
-                        optionsContainer.classList.remove('hidden');
-                    } else {
-                        optionsContainer.classList.add('hidden');
+                // Question type change handler
+                document.addEventListener('change', function(e) {
+                    if (e.target.classList.contains('question-type')) {
+                        const optionsContainer = e.target.closest('.question-block').querySelector(
+                            '.options-container');
+                        if (['multiple_choice', 'checkbox'].includes(e.target.value)) {
+                            optionsContainer.classList.remove('hidden');
+                        } else {
+                            optionsContainer.classList.add('hidden');
+                        }
                     }
-                }
-            });
+                });
 
-            // Add Option
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('add-option')) {
-                    const optionsList = e.target.previousElementSibling;
-                    const questionIndex = e.target.closest('.question-block').querySelector('input[name*="[question_text]"]')
-                        .name.match(/questions\[(\d+)\]/)[1];
+                // Add Option handler
+                document.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('add-option') || e.target.closest('.add-option')) {
+                        const button = e.target.classList.contains('add-option') ? e.target : e.target.closest(
+                            '.add-option');
+                        const optionsList = button.previousElementSibling;
+                        const questionIndex = button.closest('.question-block').querySelector(
+                                'input[name*="[question_text]"]')
+                            .name.match(/questions\[(\d+)\]/)[1];
 
-                    const optionTemplate = `
-                        <div class="flex mb-2 option-row">
-                            <input type="text" name="questions[${questionIndex}][options][]" class="flex-1 rounded-md">
-                            <button type="button" class="px-2 ml-2 text-red-600 remove-option">&times;</button>
+                        const template = `
+                        <div class="flex items-center option-row">
+                            <input type="text" name="questions[${questionIndex}][options][]" 
+                                class="flex-1 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50">
+                            <button type="button" class="ml-2 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 remove-option">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
                         </div>
                     `;
 
-                    optionsList.insertAdjacentHTML('beforeend', optionTemplate);
-                }
-            });
+                        optionsList.insertAdjacentHTML('beforeend', template);
+                    }
+                });
 
-            // Remove Option
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-option')) {
-                    e.target.closest('.option-row').remove();
-                }
-            });
+                // Remove Option handler
+                document.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('remove-option') || e.target.closest('.remove-option')) {
+                        const button = e.target.classList.contains('remove-option') ? e.target : e.target
+                            .closest('.remove-option');
+                        button.closest('.option-row').remove();
+                    }
+                });
 
-            // Remove Question
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-question')) {
-                    e.target.closest('.question-block').remove();
-                }
+                // Remove Question handler
+                document.addEventListener('click', function(e) {
+                    if (e.target.classList.contains('remove-question') || e.target.closest(
+                            '.remove-question')) {
+                        const button = e.target.classList.contains('remove-question') ? e.target : e.target
+                            .closest('.remove-question');
+                        button.closest('.question-block').remove();
+                    }
+                });
             });
-        });
-    </script>
+        </script>
     @endpush
 </x-app-layout>
