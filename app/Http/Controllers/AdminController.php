@@ -100,6 +100,26 @@ class AdminController extends Controller
         return redirect()->route('admin.users')->with('success', 'User updated successfully.');
     }
 
+    public function destroyUser(User $user)
+    {
+        // Prevent admin from deleting themselves
+        if ($user->id === auth()->id()) {
+            return redirect()->route('admin.users')->with('error', 'You cannot delete your own account.');
+        }
+
+        // Check if user has any related data
+        $hasEvents        = $user->events()->exists();
+        $hasRegistrations = $user->eventRegistrations()->exists();
+
+        if ($hasEvents || $hasRegistrations) {
+            return redirect()->route('admin.users')->with('error', 'Cannot delete user. User has associated events or registrations.');
+        }
+
+        $user->delete();
+
+        return redirect()->route('admin.users')->with('success', 'User deleted successfully.');
+    }
+
     // Event Management Methods
     public function events(Request $request)
     {

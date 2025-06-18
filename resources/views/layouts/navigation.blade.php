@@ -29,7 +29,19 @@
             <div class="hidden lg:flex items-center space-x-6">
                 @if (Auth::check())
                     @if (Auth::user()->role === 'admin')
-                        <!-- Admin navigation links will be added later -->
+                        <!-- Admin navigation links -->
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')"
+                            class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users*')"
+                            class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
+                            {{ __('Manage Users') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.events')" :active="request()->routeIs('admin.events*')"
+                            class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
+                            {{ __('Manage Events') }}
+                        </x-nav-link>
                     @elseif(Auth::user()->role === 'organizer')
                         <x-nav-link :href="route('organizer.dashboard')" :active="request()->routeIs('organizer.dashboard')"
                             class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-unimasblue dark:hover:text-unimasblue transition-all duration-200">
