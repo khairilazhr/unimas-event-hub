@@ -334,7 +334,10 @@ class OrganizerController extends Controller
             return redirect()->route('organizer.events')->with('error', 'Event not found.');
         }
 
-        return view('organizer.events.view-event', compact('event'));
+        // Group tickets by type
+        $groupedTickets = $event->tickets->groupBy('type');
+
+        return view('organizer.events.view-event', compact('event', 'groupedTickets'));
     }
 
     public function cancelEvent($id)

@@ -1,3 +1,7 @@
+@php
+    $ticketSections = $event->tickets->groupBy('section');
+@endphp
+
 <x-app-layout>
     <div class="min-h-screen flex flex-col">
         <main class="flex-grow py-3">
@@ -24,7 +28,7 @@
                         @endif
 
                         <form action="{{ route('organizer.update.event', $event->id) }}" method="POST"
-                            enctype="multipart/form-data" class="space-y-3">
+                            enctype="multipart/form-data">
                             @csrf
                             @method('PATCH')
 
@@ -265,7 +269,7 @@
 
                                 <!-- Current Ticket Sections Tab - Initially Visible -->
                                 <div id="current-tickets" class="tab-content">
-                                    @if ($ticketSections = $event->tickets->groupBy('section'))
+                                    @if ($ticketSections)
                                         <div class="overflow-x-auto">
                                             <table
                                                 class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-xs">
@@ -339,15 +343,6 @@
                                                                         class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
                                                                         Delete
                                                                     </button>
-                                                                    <form
-                                                                        id="delete-section-{{ str_replace(' ', '-', $section) }}"
-                                                                        action="{{ route('organizer.delete.section', $event->id) }}"
-                                                                        method="POST" class="hidden">
-                                                                        @csrf
-                                                                        @method('DELETE')
-                                                                        <input type="hidden" name="section"
-                                                                            value="{{ $section }}">
-                                                                    </form>
                                                                 @else
                                                                     <span class="text-gray-500 dark:text-gray-400">Some
                                                                         tickets sold</span>
@@ -475,6 +470,16 @@
             </div>
         </footer>
     </div>
+
+    <!-- Place all delete forms here, OUTSIDE the main form -->
+    @foreach ($ticketSections as $section => $tickets)
+        <form id="delete-section-{{ str_replace(' ', '-', $section) }}"
+            action="{{ route('organizer.delete.section', $event->id) }}" method="POST" class="hidden">
+            @csrf
+            @method('DELETE')
+            <input type="hidden" name="section" value="{{ $section }}">
+        </form>
+    @endforeach
 
     <script>
         // JavaScript for adding ticket sections dynamically

@@ -138,7 +138,7 @@ $userRegistrations = \App\Models\EventRegistration::where('user_id', auth()->id(
                                         </path>
                                     </svg>
                                     <p>No recent activity</p>
-                                    <a href="{{ route('events.index') }}" class="dashboard-link">
+                                    <a href="{{ route('user.events') }}" class="dashboard-link">
                                         Browse events
                                     </a>
                                 </div>

@@ -160,7 +160,12 @@
         <div class="space-y-1 px-4 py-4">
             @if (Auth::check())
                 @if (Auth::user()->role === 'admin')
-                    <!-- Admin mobile navigation will be added later -->
+                    <x-responsive-nav-link :href="route('admin.dashboard')"
+                        :active="request()->routeIs('admin.dashboard')">{{ __('Dashboard') }}</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.users')"
+                        :active="request()->routeIs('admin.users*')">{{ __('Manage Users') }}</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.events')"
+                        :active="request()->routeIs('admin.events*')">{{ __('Manage Events') }}</x-responsive-nav-link>
                 @elseif(Auth::user()->role === 'organizer')
                     <x-responsive-nav-link :href="route('organizer.dashboard')"
                         :active="request()->routeIs('organizer.dashboard')">{{ __('Dashboard') }}</x-responsive-nav-link>
@@ -168,6 +173,12 @@
                         :active="request()->routeIs('organizer.events')">{{ __('My Events') }}</x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('organizer.bookings')"
                         :active="request()->routeIs('organizer.bookings')">{{ __('Manage Bookings') }}</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('organizer.refunds')"
+                        :active="request()->routeIs('organizer.refunds')">{{ __('Manage Refund Request') }}</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('organizer.attendances')"
+                        :active="request()->routeIs('organizer.attendances')">{{ __('Manage Attendances') }}</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('organizer.questionnaires.index')"
+                        :active="request()->routeIs('organizer.questionnaires.index')">{{ __('Questionnaires') }}</x-responsive-nav-link>
                 @else
                     <x-responsive-nav-link :href="route('dashboard')"
                         :active="request()->routeIs('dashboard')">{{ __('Dashboard') }}</x-responsive-nav-link>
@@ -175,6 +186,10 @@
                         :active="request()->routeIs('user.events')">{{ __('Event') }}</x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('user.events.my-bookings')"
                         :active="request()->routeIs('user.events.my-bookings')">{{ __('My Bookings') }}</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('user.refunds.my-refunds')"
+                        :active="request()->routeIs('user.refunds.my-refunds')">{{ __('My Refunds') }}</x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('user.events.my-attendances')"
+                        :active="request()->routeIs('user.events.my-attendances')">{{ __('My Attendances') }}</x-responsive-nav-link>
                 @endif
             @else
                 <x-responsive-nav-link :href="route('login')">{{ __('Login') }}</x-responsive-nav-link>
