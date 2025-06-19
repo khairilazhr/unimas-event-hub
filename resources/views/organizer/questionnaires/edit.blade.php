@@ -27,15 +27,6 @@
                             id="questionnaireForm">
                             @csrf
                             @method('PUT')
-
-                            <!-- Debug info -->
-                            <div class="mb-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-700 rounded">
-                                <p><strong>Debug Info:</strong></p>
-                                <p>Form Action: {{ route('organizer.questionnaires.update', $questionnaire) }}</p>
-                                <p>Questionnaire ID: {{ $questionnaire->id }}</p>
-                                <p>Questions Count: {{ $questionnaire->questions->count() }}</p>
-                            </div>
-
                             <!-- Display any validation errors -->
                             @if ($errors->any())
                                 <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">

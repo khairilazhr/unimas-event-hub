@@ -28,7 +28,6 @@ class QuestionnaireController extends Controller
         $events = Auth::user()->events()
             ->select('id', 'name', 'date', 'location', 'status')
             ->where('status', 'approved')
-            ->whereDate('date', '>=', now())
             ->orderBy('date', 'asc')
             ->get();
 
