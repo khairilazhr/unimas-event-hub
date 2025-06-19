@@ -14,6 +14,8 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/userDashboard.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/css/userDashboard.css', 'resources/css/userAttendance.css', 'resources/js/app.js'])
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
@@ -30,7 +32,7 @@
             </header>
         @endif
 
-        <!-- Add this after your navigation and before the main content -->
+
         @if (session('warning'))
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
