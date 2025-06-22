@@ -6,7 +6,7 @@
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 shadow-lg sm:rounded-xl overflow-hidden">
                     <div class="relative bg-unimasblue dark:bg-unimasblue p-6">
-                        <div class="absolute inset-0 opacity-10 bg-pattern-grid"></div>
+                        <div class="absolute inset-0 opacity-10 bg-pattern-grid pointer-events-none"></div>
                         <div class="flex items-center justify-between">
                             <h1 class="text-2xl sm:text-3xl font-bold text-white">
                                 Ask a Question
