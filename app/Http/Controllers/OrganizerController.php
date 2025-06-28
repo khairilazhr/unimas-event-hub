@@ -1,12 +1,14 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Mail\RegistrationStatusUpdateNotification;
 use App\Models\Attendance;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -392,6 +394,13 @@ class OrganizerController extends Controller
             $ticket->save();
         }
 
+        // Send email notification to the user
+        try {
+            Mail::to($registration->email)->send(new RegistrationStatusUpdateNotification($registration, 'approved'));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send approval email: ' . $e->getMessage());
+        }
+
         return redirect()->back()->with('success', 'Booking approved successfully');
     }
 
@@ -408,6 +417,13 @@ class OrganizerController extends Controller
             $ticket         = Ticket::find($registration->ticket_id);
             $ticket->status = 'available';
             $ticket->save();
+        }
+
+        // Send email notification to the user
+        try {
+            Mail::to($registration->email)->send(new RegistrationStatusUpdateNotification($registration, 'rejected'));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send rejection email: ' . $e->getMessage());
         }
 
         return redirect()->back()->with('success', 'Booking rejected successfully');

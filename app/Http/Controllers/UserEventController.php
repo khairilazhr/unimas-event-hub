@@ -1,14 +1,16 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Event;
-use App\Models\Payment;
-use App\Models\EventRegistration;
-use App\Models\Ticket;
+use App\Mail\EventRegistrationNotification;
+use App\Mail\OrganizerRegistrationNotification;
 use App\Models\Attendance;
+use App\Models\Event;
+use App\Models\EventRegistration;
+use App\Models\Payment;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 // Add Ticket model import
 
@@ -27,8 +29,8 @@ class UserEventController extends Controller
     {
         // Fetch only available tickets associated with this event
         $tickets = Ticket::where('eventId', $event->id)
-                        ->where('status', 'available')
-                        ->get();
+            ->where('status', 'available')
+            ->get();
 
         // Get authenticated user
         $user = auth()->user();
@@ -40,15 +42,15 @@ class UserEventController extends Controller
     {
         // Validate the request
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'ticket_id' => 'required|exists:tickets,id',
+            'name'        => 'required|string|max:255',
+            'email'       => 'required|email|max:255',
+            'phone'       => 'nullable|string|max:20',
+            'ticket_id'   => 'required|exists:tickets,id',
             'ticket_type' => 'required|string',
-            'section' => 'required|string',
-            'row' => 'required|string',
-            'seat' => 'required|string',
-            'receipt' => 'required_if:ticket_price,gt,0|file|mimes:jpg,png,pdf|max:2048'
+            'section'     => 'required|string',
+            'row'         => 'required|string',
+            'seat'        => 'required|string',
+            'receipt'     => 'required_if:ticket_price,gt,0|file|mimes:jpg,png,pdf|max:2048',
         ]);
 
         // Get the ticket
@@ -60,7 +62,7 @@ class UserEventController extends Controller
         }
 
         // Validate receipt requirement
-        if ($ticket->price > 0 && !$request->hasFile('receipt')) {
+        if ($ticket->price > 0 && ! $request->hasFile('receipt')) {
             return back()->withErrors(['receipt' => 'Payment receipt is required for paid tickets']);
         }
 
@@ -76,32 +78,46 @@ class UserEventController extends Controller
         try {
             // Create registration
             $registration = EventRegistration::create([
-                'event_id' => $event->id,
-                'ticket_id' => $request->ticket_id,
-                'user_id' => auth()->id(),
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'status' => $ticket->price > 0 ? 'pending' : 'approved',
-                'amount_paid' => $ticket->price // Add the ticket price as amount paid
+                'event_id'    => $event->id,
+                'ticket_id'   => $request->ticket_id,
+                'user_id'     => auth()->id(),
+                'name'        => $request->name,
+                'email'       => $request->email,
+                'phone'       => $request->phone,
+                'status'      => $ticket->price > 0 ? 'pending' : 'approved',
+                'amount_paid' => $ticket->price, // Add the ticket price as amount paid
             ]);
 
             // Update ticket status to pending
             $ticket->update([
-                'status' => 'pending'
+                'status' => 'pending',
             ]);
 
             // Create payment record if needed
             if ($ticket->price > 0) {
                 Payment::create([
                     'event_reg_id' => $registration->id,
-                    'user_id' => auth()->id(),
-                    'receipt' => $receiptPath,
-                    'ref_no' => 'PAY-'.strtoupper(uniqid())
+                    'user_id'      => auth()->id(),
+                    'receipt'      => $receiptPath,
+                    'ref_no'       => 'PAY-' . strtoupper(uniqid()),
                 ]);
             }
 
             DB::commit();
+
+            // Send email notifications
+            try {
+                // Send email to the user
+                Mail::to($request->email)->send(new EventRegistrationNotification($registration));
+
+                // Send email to the organizer if they have an email
+                if ($event->organizer && $event->organizer->email) {
+                    Mail::to($event->organizer->email)->send(new OrganizerRegistrationNotification($registration));
+                }
+            } catch (\Exception $e) {
+                // Log the email error but don't fail the registration
+                \Log::error('Failed to send registration emails: ' . $e->getMessage());
+            }
 
             return redirect()->route('user.events.registration-success', $registration->id);
 
@@ -129,7 +145,7 @@ class UserEventController extends Controller
         $user = auth()->user();
 
         $registrations = \App\Models\EventRegistration::where('user_id', $user->id)
-            ->with(['event', 'ticket', 'ticket.refunds' => function($q) use ($user) {
+            ->with(['event', 'ticket', 'ticket.refunds' => function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             }])
             ->latest()
@@ -184,21 +200,21 @@ class UserEventController extends Controller
         $eventInFuture = \Carbon\Carbon::parse($registration->event->date)->isFuture();
 
         return response()->json([
-            'valid' => $isValid,
+            'valid'        => $isValid,
             'registration' => [
-                'id' => $registration->id,
+                'id'     => $registration->id,
                 'status' => $registration->status,
-                'name' => $registration->name,
-                'event' => [
-                    'name' => $registration->event->name,
-                    'date' => \Carbon\Carbon::parse($registration->event->date)->format('d M Y, h:i A'),
+                'name'   => $registration->name,
+                'event'  => [
+                    'name'     => $registration->event->name,
+                    'date'     => \Carbon\Carbon::parse($registration->event->date)->format('d M Y, h:i A'),
                     'location' => $registration->event->location,
                 ],
                 'ticket' => [
-                    'type' => $registration->ticket->type,
+                    'type'    => $registration->ticket->type,
                     'section' => $registration->ticket->section,
-                    'row' => $registration->ticket->row,
-                    'seat' => $registration->ticket->seat,
+                    'row'     => $registration->ticket->row,
+                    'seat'    => $registration->ticket->seat,
                 ],
             ],
         ]);
@@ -218,38 +234,38 @@ class UserEventController extends Controller
 
         // Generate QR code data
         $qrData = [
-            'type' => 'attendance',
+            'type'            => 'attendance',
             'registration_id' => $registration->id,
-            'attendance_id' => $attendance->id,
-            'timestamp' => now()->timestamp
+            'attendance_id'   => $attendance->id,
+            'timestamp'       => now()->timestamp,
         ];
 
         return response()->json([
             'success' => true,
-            'qrData' => base64_encode(json_encode($qrData)),
-            'ticket' => [
-                'event_name' => $registration->event->name,
-                'date' => $registration->event->date,
-                'location' => $registration->event->location,
+            'qrData'  => base64_encode(json_encode($qrData)),
+            'ticket'  => [
+                'event_name'    => $registration->event->name,
+                'date'          => $registration->event->date,
+                'location'      => $registration->event->location,
                 'attendee_name' => $registration->name,
-                'section' => $registration->ticket->section,
-                'row' => $registration->ticket->row,
-                'seat' => $registration->ticket->seat,
-            ]
+                'section'       => $registration->ticket->section,
+                'row'           => $registration->ticket->row,
+                'seat'          => $registration->ticket->seat,
+            ],
         ]);
     }
 
     public function myAttendances()
     {
         $user = auth()->user();
-        
-        $attendances = Attendance::whereHas('eventRegistration', function($query) use ($user) {
+
+        $attendances = Attendance::whereHas('eventRegistration', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })
-        ->where('status', 'attended')  // Only get attended records
-        ->with(['eventRegistration.event', 'eventRegistration.ticket'])
-        ->latest('attended_at')  // Sort by attendance date
-        ->get();
+            ->where('status', 'attended') // Only get attended records
+            ->with(['eventRegistration.event', 'eventRegistration.ticket'])
+            ->latest('attended_at') // Sort by attendance date
+            ->get();
 
         return view('user.attendances.index', compact('attendances'));
     }
