@@ -137,9 +137,9 @@
 
         <div class="status-banner status-{{ $status }}">
             @if ($status === 'approved')
-                ✅ Your registration has been <strong>APPROVED</strong>!
+                Your registration has been <strong>APPROVED</strong>!
             @else
-                ❌ Your registration has been <strong>REJECTED</strong>
+                Your registration has been <strong>REJECTED</strong>
             @endif
         </div>
 

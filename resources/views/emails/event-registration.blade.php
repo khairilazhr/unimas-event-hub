@@ -121,7 +121,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎉 Registration Confirmed!</h1>
+            <h1>Registration Confirmed!</h1>
             <p>Thank you for registering for our event</p>
         </div>
 
@@ -212,7 +212,7 @@
         @if ($registration->status === 'approved')
             <div
                 style="background-color: #d4edda; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #28a745;">
-                <h4>✅ Ticket Approved</h4>
+                <h4>icket Approved</h4>
                 <p>Your ticket has been approved! You can now access your ticket details and QR code from your
                     dashboard.</p>
             </div>

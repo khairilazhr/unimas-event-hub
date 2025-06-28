@@ -140,7 +140,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎫 New Registration Received!</h1>
+            <h1>New Registration Received!</h1>
             <p>Someone has registered for your event</p>
         </div>
 
@@ -225,7 +225,7 @@
 
         @if ($registration->status === 'pending' && $ticket->price > 0)
             <div class="action-required">
-                <h4>⚠️ Action Required</h4>
+                <h4>Action Required</h4>
                 <p>This registration requires payment verification. Please review the payment receipt and approve or
                     reject the registration.</p>
             </div>

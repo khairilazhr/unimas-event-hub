@@ -138,7 +138,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>💬 New Forum Reply</h1>
+            <h1>New Forum Reply</h1>
             <p>Someone has replied to your topic</p>
         </div>
 
@@ -178,9 +178,9 @@
                 <span class="detail-label">Status:</span>
                 <span class="detail-value">
                     @if ($topic->is_resolved)
-                        <span style="color: #28a745; font-weight: bold;">✅ Resolved</span>
+                        <span style="color: #28a745; font-weight: bold;">Resolved</span>
                     @else
-                        <span style="color: #ffc107; font-weight: bold;">⏳ Open</span>
+                        <span style="color: #ffc107; font-weight: bold;">Open</span>
                     @endif
                 </span>
             </div>
