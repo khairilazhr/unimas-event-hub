@@ -398,7 +398,7 @@ class OrganizerController extends Controller
         try {
             Mail::to($registration->email)->send(new RegistrationStatusUpdateNotification($registration, 'approved'));
         } catch (\Exception $e) {
-            \Log::error('Failed to send approval email: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Failed to send approval email: ' . $e->getMessage());
         }
 
         return redirect()->back()->with('success', 'Booking approved successfully');
@@ -423,7 +423,7 @@ class OrganizerController extends Controller
         try {
             Mail::to($registration->email)->send(new RegistrationStatusUpdateNotification($registration, 'rejected'));
         } catch (\Exception $e) {
-            \Log::error('Failed to send rejection email: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Failed to send rejection email: ' . $e->getMessage());
         }
 
         return redirect()->back()->with('success', 'Booking rejected successfully');
