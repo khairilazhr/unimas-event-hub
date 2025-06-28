@@ -16,8 +16,8 @@
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required
-                autocomplete="username" />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')"
+                required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
@@ -76,14 +76,13 @@
         </div>
 
         <!-- Role Selection (only show if not pre-set) -->
-        @if(!isset($role))
+        @if (!isset($role))
             <div class="mt-4">
                 <x-input-label for="role" :value="__('Register As')" />
                 <select name="role" id="role"
                     class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                     <option value="user">Regular User</option>
                     <option value="organizer">Event Organizer</option>
-                    <option value="admin">Administrator</option>
                 </select>
                 <x-input-error :messages="$errors->get('role')" class="mt-2" />
             </div>
