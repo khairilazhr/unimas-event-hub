@@ -51,10 +51,11 @@ class AdminController extends Controller
     // User Management Methods
     public function users(Request $request)
     {
-        $query = User::query();
+        // Only allow 'user' and 'organizer' roles to be listed
+        $query = User::whereIn('role', ['user', 'organizer']);
 
         // Filter by role
-        if ($request->has('role')) {
+        if ($request->has('role') && in_array($request->role, ['user', 'organizer'])) {
             $query->where('role', $request->role);
         }
 
@@ -69,10 +70,10 @@ class AdminController extends Controller
 
         $users = $query->latest()->paginate(10);
 
-        // Get counts for filter badges (unfiltered)
-        $totalCount       = User::count();
+        // Get counts for filter badges (only user and organizer)
+        $totalCount       = User::whereIn('role', ['user', 'organizer'])->count();
         $organizerCount   = User::where('role', 'organizer')->count();
-        $regularUserCount = $totalCount - $organizerCount;
+        $regularUserCount = User::where('role', 'user')->count();
 
         return view('admin.users.index', compact(
             'users',
