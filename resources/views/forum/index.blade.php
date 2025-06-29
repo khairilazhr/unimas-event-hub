@@ -6,7 +6,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 shadow-lg sm:rounded-xl overflow-hidden">
                     <div class="relative bg-unimasblue dark:bg-unimasblue p-6">
-                        <div class="absolute inset-0 opacity-10 bg-pattern-grid"></div>
+                        <div class="absolute inset-0 opacity-10 bg-pattern-grid pointer-events-none"></div>
                         <div class="flex flex-col sm:flex-row justify-between items-center">
                             <div>
                                 <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">
@@ -25,7 +25,13 @@
                             </div>
                             @if (auth()->user()->role !== 'admin')
                                 <div class="mt-4 sm:mt-0">
-                                    <a href="{{ route('forum.create-topic', $event->id) }}" class="...">
+                                    <a href="{{ route('forum.create-topic', $event->id) }}"
+                                        class="inline-flex items-center px-3 py-2 bg-white/10 hover:bg-white/20 text-white text-sm font-medium rounded-lg transition duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                        </svg>
                                         Ask a Question
                                     </a>
                                 </div>
@@ -157,8 +163,8 @@
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     class="h-4 w-4 mr-1" fill="none"
                                                                     viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                                        stroke-width="2"
+                                                                    <path stroke-linecap="round"
+                                                                        stroke-linejoin="round" stroke-width="2"
                                                                         d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                                 </svg>
                                                                 Unsolved
