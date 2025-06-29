@@ -147,7 +147,7 @@
                     </h2>
 
                     @if ($errors->any())
-                        <div
+<div
                             class="bg-red-50 dark:bg-red-900/10 border-l-4 border-red-400 dark:border-red-600 text-red-700 dark:text-red-400 p-4 mb-6">
                             <ul class="list-disc list-inside text-sm">
                                 @foreach ($errors->all() as $error)
@@ -155,257 +155,226 @@
 @endforeach
                             </ul>
                         </div>
-                    @endif
-
-                    <form action="{{ route('user.events.process-registration', $event->id) }}" method="POST"
-                        enctype="multipart/form-data" class="space-y-4">
-                        @csrf
-
-                        <div>
-                            <label for="name" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                Full Name
-                            </label>
-                            <input type="text" name="name" id="name"
-                                value="{{ old('name', $user->name ?? '') }}" required
-                                class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
-                        </div>
-
-                        <div class="flex flex-col md:flex-row gap-4">
-                            <div class="w-full md:w-1/2">
-                                <label for="email" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                    Email Address
-                                </label>
-                                <input type="email" name="email" id="email"
-                                    value="{{ old('email', $user->email ?? '') }}" required
-                                    class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
-                            </div>
-
-                            <div class="w-full md:w-1/2">
-                                <label for="phone" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                    Phone Number
-                                </label>
-                                <input type="tel" name="phone" id="phone" value="{{ old('phone') }}"
-                                    class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col md:flex-row gap-4">
-                            <div class="w-full md:w-1/2">
-                                <label for="ticket_type" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                    Ticket Type
-                                </label>
-                                <div class="relative">
-                                    <select name="ticket_type" id="ticket_type" required
-                                        class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm">
-                                        <option value="">Select ticket type</option>
-                                        @php
-                                            $ticketTypes = $tickets->pluck('type')->unique();
-                                        @endphp
-                                        @foreach ($ticketTypes as $type)
-<option value="{{ $type }}"
-                                                {{ old('ticket_type') == $type ? 'selected' : '' }}>
-                                                {{ $type }}
-                                                (RM{{ number_format($tickets->where('type', $type)->first()->price, 2) }})
-</option>
-@endforeach
-                                    </select>
-                                    <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500"
-                                            viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div>
-                                <label for="section" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                    Section
-                                </label>
-                                <div class="relative">
-                                    <select name="section" id="section" required
-                                        class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-700"
-                                        disabled>
-                                        <option value="">Select section</option>
-                                    </select>
-                                    <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500"
-                                            viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label for="row" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                    Row
-                                </label>
-                                <div class="relative">
-                                    <select name="row" id="row" required
-                                        class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-700"
-                                        disabled>
-                                        <option value="">Select row</option>
-                                    </select>
-                                    <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500"
-                                            viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label for="seat" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                    Seat
-                                </label>
-                                <div class="relative">
-                                    <select name="seat" id="seat" required
-                                        class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-700"
-                                        disabled>
-                                        <option value="">Select seat</option>
-                                    </select>
-                                    <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500"
-                                            viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="space-y-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-                            <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">
-                                Payment Information
-                            </h3>
-
-                            @if ($event->qr_code)
-<div
-                                    class="w-full flex justify-center items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                    <div class="relative max-w-md w-full">
-                                        <img src="{{ Storage::url($event->qr_code) }}" alt="QR Code"
-                                            class="w-auto h-auto max-w-full object-contain rounded-lg shadow-md">
-                                    </div>
-                                </div>
 @endif
 
-                            <div>
-                                <label for="payment_details"
-                                    class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                    Payment Details
-                                </label>
-                                <div
-                                    class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
-                                    <p class="whitespace-pre-wrap text-sm">
-                                        {{ trim($event->payment_details ?? 'No payment instructions provided.') }}</p>
-                                </div>
-                            </div>
+                    <form action="{{ route('user.events.process-registration', $event->id) }}" method="POST"
+    enctype="multipart/form-data" class="space-y-4" id="registrationForm" novalidate>
+    @csrf
 
-                            <div class="mt-6">
-                                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                    Payment Receipt
-                                </label>
+    <div>
+        <label for="name" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+            Full Name
+        </label>
+        <input type="text" name="name" id="name"
+            value="{{ old('name', $user->name ?? '') }}" required minlength="2" maxlength="255"
+            class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
+        <span class="text-red-500 text-xs hidden" id="nameError">Please enter your full name.</span>
+    </div>
 
-                                <div
-                                    class="w-full p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 transition-all hover:border-blue-500 dark:hover:border-blue-400">
-                                    <div class="flex flex-col items-center justify-center">
-                                        <div class="mb-3">
-                                            <svg class="w-10 h-10 text-gray-400 dark:text-gray-500" fill="none"
-                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                            </svg>
-                                        </div>
+    <div class="flex flex-col md:flex-row gap-4">
+        <div class="w-full md:w-1/2">
+            <label for="email" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                Email Address
+            </label>
+            <input type="email" name="email" id="email"
+                value="{{ old('email', $user->email ?? '') }}" required maxlength="255"
+                class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
+            <span class="text-red-500 text-xs hidden" id="emailError">Please enter a valid email address.</span>
+        </div>
 
-                                        <div class="text-center mb-4">
-                                            <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                Upload Payment Receipt
-                                            </h4>
-                                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                                Required for paid tickets
-                                            </p>
-                                        </div>
+        <div class="w-full md:w-1/2">
+            <label for="phone" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                Phone Number
+            </label>
+            <input type="tel" name="phone" id="phone" value="{{ old('phone') }}"
+                pattern="^[0-9+\-\s()]{7,20}$" maxlength="20"
+                class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all dark:text-white text-sm">
+            <span class="text-red-500 text-xs hidden" id="phoneError">Please enter a valid phone number.</span>
+        </div>
+    </div>
 
-                                        <div class="relative w-full">
-                                            <input type="file" name="receipt" id="receipt"
-                                                accept=".jpg,.jpeg,.png,.pdf"
-                                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                                required>
-                                            <button type="button"
-                                                class="w-full px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
-                                                Choose File
-                                            </button>
-                                        </div>
-
-                                        <div class="mt-3">
-                                            <div
-                                                class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                <span>Supported formats: JPG, PNG, PDF (Max 2MB)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div id="file-preview"
-                                        class="hidden mt-4 p-3 bg-white dark:bg-gray-600 rounded-md">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center space-x-2">
-                                                <svg class="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24"
-                                                    stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                </svg>
-                                                <div>
-                                                    <p class="text-sm font-medium text-gray-900 dark:text-white"
-                                                        id="file-name"></p>
-                                                    <p class="text-xs text-gray-500 dark:text-gray-400"
-                                                        id="file-size"></p>
-                                                </div>
-                                            </div>
-                                            <button type="button" id="remove-file"
-                                                class="text-red-500 hover:text-red-700 dark:hover:text-red-400">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <input type="hidden" name="ticket_id" id="ticket_id" value="{{ old('ticket_id') }}">
-
-                        <div class="pt-6">
-                            <button type="submit"
-                                class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
-                                Complete Registration
-                            </button>
-                        </div>
-                    </form>
+    <div class="flex flex-col md:flex-row gap-4">
+        <div class="w-full md:w-1/2">
+            <label for="ticket_type" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                Ticket Type
+            </label>
+            <div class="relative">
+                <select name="ticket_type" id="ticket_type" required
+                    class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm">
+                    <option value="">Select ticket type</option>
+                    @php
+                        $ticketTypes = $tickets->pluck('type')->unique();
+                    @endphp
+                    @foreach ($ticketTypes as $type)
+<option value="{{ $type }}"
+                            {{ old('ticket_type') == $type ? 'selected' : '' }}>
+                            {{ $type }}
+                            (RM{{ number_format($tickets->where('type', $type)->first()->price, 2) }})
+</option>
+@endforeach
+                </select>
+                <span class="text-red-500 text-xs hidden" id="ticketTypeError">Please select a ticket type.</span>
+                <!-- ...existing code... -->
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                    <label for="section" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                        Section
+                    </label>
+                    <div class="relative">
+                        <select name="section" id="section" required
+                            class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-700"
+                            disabled>
+                            <option value="">Select section</option>
+                        </select>
+                        <span class="text-red-500 text-xs hidden" id="sectionError">Please select a section.</span>
+                        <!-- ...existing code... -->
+                    </div>
+                </div>
+                <div>
+                    <label for="row" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                        Row
+                    </label>
+                    <div class="relative">
+                        <select name="row" id="row" required
+                            class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-700"
+                            disabled>
+                            <option value="">Select row</option>
+                        </select>
+                        <span class="text-red-500 text-xs hidden" id="rowError">Please select a row.</span>
+                        <!-- ...existing code... -->
+                    </div>
+                </div>
+                <div>
+                    <label for="seat" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                        Seat
+                    </label>
+                    <div class="relative">
+                        <select name="seat" id="seat" required
+                            class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:border-blue-400 bg-white dark:bg-gray-800 transition-all appearance-none dark:text-white text-sm disabled:opacity-50 disabled:bg-gray-100 dark:disabled:bg-gray-700"
+                            disabled>
+                            <option value="">Select seat</option>
+                        </select>
+                        <span class="text-red-500 text-xs hidden" id="seatError">Please select a seat.</span>
+                        <!-- ...existing code... -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">
+                    Payment Information
+                </h3>
+
+                @if ($event->qr_code)
+                    <div class="w-full flex justify-center items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div class="relative max-w-md w-full">
+                            <img src="{{ Storage::url($event->qr_code) }}" alt="QR Code"
+                                class="w-auto h-auto max-w-full object-contain rounded-lg shadow-md">
+                        </div>
+                    </div>
+                @endif
+
+                <div>
+                    <label for="payment_details" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+                        Payment Details
+                    </label>
+                    <div
+                        class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                        <p class="whitespace-pre-wrap text-sm">
+                            {{ trim($event->payment_details ?? 'No payment instructions provided.') }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        Payment Receipt
+                    </label>
+
+                    <div
+                        class="w-full p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 transition-all hover:border-blue-500 dark:hover:border-blue-400">
+                        <div class="flex flex-col items-center justify-center">
+                            <div class="mb-3">
+                                <svg class="w-10 h-10 text-gray-400 dark:text-gray-500" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                </svg>
+                            </div>
+
+                            <div class="text-center mb-4">
+                                <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Upload Payment Receipt
+                                </h4>
+                                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                    Required for paid tickets
+                                </p>
+                            </div>
+
+                            <div class="relative w-full">
+                                <input type="file" name="receipt" id="receipt" accept=".jpg,.jpeg,.png,.pdf"
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required>
+                                <button type="button"
+                                    class="w-full px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
+                                    Choose File
+                                </button>
+                                <span class="text-red-500 text-xs hidden" id="receiptError">Please upload a valid
+                                    receipt (JPG, PNG, PDF, max 2MB).</span>
+                            </div>
+
+                            <div class="mt-3">
+                                <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>Supported formats: JPG, PNG, PDF (Max 2MB)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="file-preview" class="hidden mt-4 p-3 bg-white dark:bg-gray-600 rounded-md">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900 dark:text-white" id="file-name">
+                                        </p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400" id="file-size"></p>
+                                    </div>
+                                </div>
+                                <button type="button" id="remove-file"
+                                    class="text-red-500 hover:text-red-700 dark:hover:text-red-400">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" name="ticket_id" id="ticket_id" value="{{ old('ticket_id') }}">
+
+            <div class="pt-6">
+                <button type="submit"
+                    class="w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                    Complete Registration
+                </button>
+            </div>
+            </form>
+    </div>
+    </div>
+    </div>
     </div>
     <style>
         @keyframes fadeUp {
@@ -485,7 +454,45 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Form functionality (existing code)
+            // --- Modal functionality ---
+            const modal = document.getElementById('registrationModal');
+            const modalContent = document.getElementById('modalContent');
+            const getTicketButton = document.getElementById('getTicketButton');
+            const closeModal = document.getElementById('closeModal');
+
+            function showModal() {
+                modal.classList.remove('hidden');
+                document.body.classList.add('modal-open');
+                setTimeout(() => {
+                    modalContent.classList.add('modal-show');
+                    modalContent.classList.remove('opacity-0', 'translate-y-10', 'scale-95');
+                }, 10);
+            }
+
+            function hideModal() {
+                modalContent.classList.remove('modal-show');
+                modalContent.classList.add('modal-hide');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.body.classList.remove('modal-open');
+                    modalContent.classList.remove('modal-hide');
+                    modalContent.classList.add('opacity-0', 'translate-y-10', 'scale-95');
+                }, 300);
+            }
+            getTicketButton.addEventListener('click', showModal);
+            closeModal.addEventListener('click', hideModal);
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) hideModal();
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) hideModal();
+            });
+
+            @if ($errors->any())
+                showModal();
+            @endif
+
+            // --- Ticket selection logic (existing code) ---
             const typeSelect = document.getElementById('ticket_type');
             const sectionSelect = document.getElementById('section');
             const rowSelect = document.getElementById('row');
@@ -631,82 +638,200 @@
                 }, 100);
             }
 
-            // Enhanced modal functionality
-            const modal = document.getElementById('registrationModal');
-            const modalContent = document.getElementById('modalContent');
-            const getTicketButton = document.getElementById('getTicketButton');
-            const closeModal = document.getElementById('closeModal');
+            // --- File preview logic (existing code) ---
+            const fileInput = document.getElementById('receipt');
+            const filePreview = document.getElementById('file-preview');
+            const fileName = document.getElementById('file-name');
+            const fileSize = document.getElementById('file-size');
+            const removeFile = document.getElementById('remove-file');
 
-            // Function to show modal with smooth animation
-            function showModal() {
-                modal.classList.remove('hidden');
-                document.body.classList.add('modal-open');
-
-                // Start the animation after a tiny delay to ensure the display change has taken effect
-                setTimeout(() => {
-                    modalContent.classList.add('modal-show');
-                    modalContent.classList.remove('opacity-0', 'translate-y-10', 'scale-95');
-                }, 10);
-            }
-
-            // Function to hide modal with smooth animation
-            function hideModal() {
-                modalContent.classList.remove('modal-show');
-                modalContent.classList.add('modal-hide');
-
-                // Wait for animation to complete before hiding the modal
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    document.body.classList.remove('modal-open');
-                    modalContent.classList.remove('modal-hide');
-                    modalContent.classList.add('opacity-0', 'translate-y-10', 'scale-95');
-                }, 300);
-            }
-
-            // Show modal when Get Ticket button is clicked
-            getTicketButton.addEventListener('click', showModal);
-
-            // Hide modal when close button is clicked
-            closeModal.addEventListener('click', hideModal);
-
-            // Hide modal when clicking outside the modal content
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    hideModal();
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    fileName.textContent = file.name;
+                    fileSize.textContent = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+                    filePreview.classList.remove('hidden');
                 }
             });
 
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-                    hideModal();
-                }
+            removeFile.addEventListener('click', function() {
+                fileInput.value = '';
+                filePreview.classList.add('hidden');
             });
 
-            @if ($errors->any())
-                document.addEventListener('DOMContentLoaded', function() {
-                    showModal();
-                });
-            @endif
-        });
+            // --- Validation logic ---
+            const form = document.getElementById('registrationForm');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const name = document.getElementById('name');
+            const nameError = document.getElementById('nameError');
+            const email = document.getElementById('email');
+            const emailError = document.getElementById('emailError');
+            const phone = document.getElementById('phone');
+            const phoneError = document.getElementById('phoneError');
+            const ticketType = document.getElementById('ticket_type');
+            const ticketTypeError = document.getElementById('ticketTypeError');
+            const section = document.getElementById('section');
+            const sectionError = document.getElementById('sectionError');
+            const row = document.getElementById('row');
+            const rowError = document.getElementById('rowError');
+            const seat = document.getElementById('seat');
+            const seatError = document.getElementById('seatError');
+            const receipt = document.getElementById('receipt');
+            const receiptError = document.getElementById('receiptError');
 
-        const fileInput = document.getElementById('receipt');
-        const filePreview = document.getElementById('file-preview');
-        const fileName = document.getElementById('file-name');
-        const fileSize = document.getElementById('file-size');
-        const removeFile = document.getElementById('remove-file');
-
-        fileInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                fileName.textContent = file.name;
-                fileSize.textContent = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
-                filePreview.classList.remove('hidden');
+            function validateName() {
+                if (!name.value.trim() || name.value.length < 2 || name.value.length > 255) {
+                    nameError.classList.remove('hidden');
+                    return false;
+                } else {
+                    nameError.classList.add('hidden');
+                    return true;
+                }
             }
-        });
 
-        removeFile.addEventListener('click', function() {
-            fileInput.value = '';
-            filePreview.classList.add('hidden');
+            function validateEmail() {
+                const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!email.value.trim() || !pattern.test(email.value) || email.value.length > 255) {
+                    emailError.classList.remove('hidden');
+                    return false;
+                } else {
+                    emailError.classList.add('hidden');
+                    return true;
+                }
+            }
+
+            function validatePhone() {
+                if (phone.value && !/^[0-9+\-\s()]{7,20}$/.test(phone.value)) {
+                    phoneError.classList.remove('hidden');
+                    return false;
+                } else {
+                    phoneError.classList.add('hidden');
+                    return true;
+                }
+            }
+
+            function validateTicketType() {
+                if (!ticketType.value) {
+                    ticketTypeError.classList.remove('hidden');
+                    return false;
+                } else {
+                    ticketTypeError.classList.add('hidden');
+                    return true;
+                }
+            }
+
+            function validateSection() {
+                if (!section.value) {
+                    sectionError.classList.remove('hidden');
+                    return false;
+                } else {
+                    sectionError.classList.add('hidden');
+                    return true;
+                }
+            }
+
+            function validateRow() {
+                if (!row.value) {
+                    rowError.classList.remove('hidden');
+                    return false;
+                } else {
+                    rowError.classList.add('hidden');
+                    return true;
+                }
+            }
+
+            function validateSeat() {
+                if (!seat.value) {
+                    seatError.classList.remove('hidden');
+                    return false;
+                } else {
+                    seatError.classList.add('hidden');
+                    return true;
+                }
+            }
+
+            function validateReceipt() {
+                if (receipt.hasAttribute('required')) {
+                    if (!receipt.files.length) {
+                        receiptError.textContent = "Please upload a receipt.";
+                        receiptError.classList.remove('hidden');
+                        return false;
+                    } else {
+                        const file = receipt.files[0];
+                        const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+                        if (!allowedTypes.includes(file.type)) {
+                            receiptError.textContent = "Invalid file type. Only JPG, PNG, PDF allowed.";
+                            receiptError.classList.remove('hidden');
+                            return false;
+                        } else if (file.size > 2 * 1024 * 1024) {
+                            receiptError.textContent = "File is too large. Max 2MB.";
+                            receiptError.classList.remove('hidden');
+                            return false;
+                        } else {
+                            receiptError.classList.add('hidden');
+                            return true;
+                        }
+                    }
+                }
+                receiptError.classList.add('hidden');
+                return true;
+            }
+
+            function checkFormValidity() {
+                const valid =
+                    validateName() &&
+                    validateEmail() &&
+                    validatePhone() &&
+                    validateTicketType() &&
+                    validateSection() &&
+                    validateRow() &&
+                    validateSeat() &&
+                    validateReceipt();
+                submitBtn.disabled = !valid;
+            }
+
+            // Attach live validation events
+            name.addEventListener('input', () => {
+                validateName();
+                checkFormValidity();
+            });
+            email.addEventListener('input', () => {
+                validateEmail();
+                checkFormValidity();
+            });
+            phone.addEventListener('input', () => {
+                validatePhone();
+                checkFormValidity();
+            });
+            ticketType.addEventListener('change', () => {
+                validateTicketType();
+                checkFormValidity();
+            });
+            section.addEventListener('change', () => {
+                validateSection();
+                checkFormValidity();
+            });
+            row.addEventListener('change', () => {
+                validateRow();
+                checkFormValidity();
+            });
+            seat.addEventListener('change', () => {
+                validateSeat();
+                checkFormValidity();
+            });
+            receipt.addEventListener('change', () => {
+                validateReceipt();
+                checkFormValidity();
+            });
+
+            // Initial check
+            checkFormValidity();
+
+            // Prevent submit if not valid (for extra safety)
+            form.addEventListener('submit', function(e) {
+                checkFormValidity();
+                if (submitBtn.disabled) e.preventDefault();
+            });
         });
     </script>
 </x-app-layout>
