@@ -81,7 +81,7 @@
                     <!-- Refund Policy -->
                     <div class="p-6 md:p-10 bg-gray-50 dark:bg-gray-700 rounded-b-lg">
                         <!--                 <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">Refund Type</h2>
-                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4>
                     {{ $event->refund_type ?? 'No refund type specified.' }}
                 </p> -->
 
@@ -151,8 +151,8 @@
                             class="bg-red-50 dark:bg-red-900/10 border-l-4 border-red-400 dark:border-red-600 text-red-700 dark:text-red-400 p-4 mb-6">
                             <ul class="list-disc list-inside text-sm">
                                 @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
+<li>{{ $error }}</li>
+@endforeach
                             </ul>
                         </div>
                     @endif
@@ -189,13 +189,6 @@
                             </div>
                         </div>
 
-                        <div>
-                            <button type="button" id="buyForSomeoneElse"
-                                class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors">
-                                Buy for someone else
-                            </button>
-                        </div>
-
                         <div class="flex flex-col md:flex-row gap-4">
                             <div class="w-full md:w-1/2">
                                 <label for="ticket_type" class="block text-sm text-gray-600 dark:text-gray-400 mb-1">
@@ -209,12 +202,12 @@
                                             $ticketTypes = $tickets->pluck('type')->unique();
                                         @endphp
                                         @foreach ($ticketTypes as $type)
-                                            <option value="{{ $type }}"
+<option value="{{ $type }}"
                                                 {{ old('ticket_type') == $type ? 'selected' : '' }}>
                                                 {{ $type }}
                                                 (RM{{ number_format($tickets->where('type', $type)->first()->price, 2) }})
-                                            </option>
-                                        @endforeach
+</option>
+@endforeach
                                     </select>
                                     <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500"
@@ -299,14 +292,14 @@
                             </h3>
 
                             @if ($event->qr_code)
-                                <div
+<div
                                     class="w-full flex justify-center items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                     <div class="relative max-w-md w-full">
                                         <img src="{{ Storage::url($event->qr_code) }}" alt="QR Code"
                                             class="w-auto h-auto max-w-full object-contain rounded-lg shadow-md">
                                     </div>
                                 </div>
-                            @endif
+@endif
 
                             <div>
                                 <label for="payment_details"
@@ -637,51 +630,6 @@
                     }
                 }, 100);
             }
-
-            // Buy for someone else functionality (existing code)
-            const buyForSomeoneElseBtn = document.getElementById('buyForSomeoneElse');
-            const nameField = document.getElementById('name');
-            const emailField = document.getElementById('email');
-
-            // Store original values
-            const originalName = nameField.value;
-            const originalEmail = emailField.value;
-
-            let isForSomeoneElse = false;
-
-            buyForSomeoneElseBtn.addEventListener('click', function() {
-                if (!isForSomeoneElse) {
-                    // Clear the fields with animation
-                    nameField.classList.add('transition-all', 'duration-300');
-                    emailField.classList.add('transition-all', 'duration-300');
-
-                    nameField.style.opacity = '0';
-                    emailField.style.opacity = '0';
-
-                    setTimeout(() => {
-                        nameField.value = '';
-                        emailField.value = '';
-                        nameField.style.opacity = '1';
-                        emailField.style.opacity = '1';
-                        buyForSomeoneElseBtn.textContent = 'Use my information';
-                        nameField.focus();
-                    }, 300);
-                } else {
-                    // Restore original values with animation
-                    nameField.style.opacity = '0';
-                    emailField.style.opacity = '0';
-
-                    setTimeout(() => {
-                        nameField.value = originalName;
-                        emailField.value = originalEmail;
-                        nameField.style.opacity = '1';
-                        emailField.style.opacity = '1';
-                        buyForSomeoneElseBtn.textContent = 'Buy for someone else';
-                    }, 300);
-                }
-
-                isForSomeoneElse = !isForSomeoneElse;
-            });
 
             // Enhanced modal functionality
             const modal = document.getElementById('registrationModal');
