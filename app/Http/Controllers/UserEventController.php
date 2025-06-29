@@ -16,11 +16,20 @@ use Illuminate\Support\Facades\Mail;
 
 class UserEventController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $events = Event::where('status', 'approved')
-            ->latest()
-            ->paginate(6); // Show 6 events per page
+        $query = Event::where('status', 'approved');
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('location', 'like', "%{$search}%");
+            });
+        }
+
+        $events = $query->latest()->paginate(6)->withQueryString();
 
         return view('events.index', compact('events'));
     }
