@@ -80,7 +80,7 @@
                             </button>
 
                             <div class="mt-6 flex justify-end">
-                                <button type="submit" onclick="return validateForm()"
+                                <button type="submit"
                                     class="px-6 py-3 bg-unimasblue hover:bg-blue-700 text-white font-medium rounded-lg transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                                     Create Questionnaire
                                 </button>
