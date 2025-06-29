@@ -32,7 +32,7 @@ class QuestionnaireController extends Controller
             ->get();
 
         if ($events->isEmpty()) {
-            return redirect()->route('organizer.events.create')
+            return redirect()->route('organizer.events')
                 ->with('warning', 'You need to create and get approval for an event before creating a questionnaire.');
         }
 

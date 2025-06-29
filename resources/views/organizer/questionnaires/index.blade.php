@@ -39,7 +39,7 @@
                                 <p class="text-gray-500 dark:text-gray-400 mb-6">
                                     Create your first questionnaire to gather feedback from event participants
                                 </p>
-                                <a href="{{ route('organizer.questionnaires.create') }}"
+                                {{--                                 <a href="{{ route('organizer.questionnaires.create') }}"
                                     class="inline-flex items-center px-5 py-2.5 bg-unimasblue hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -47,7 +47,7 @@
                                             d="M12 4v16m8-8H4" />
                                     </svg>
                                     Create Questionnaire
-                                </a>
+                                </a> --}}
                             </div>
                         @else
                             <div class="grid gap-6 md:gap-8">
