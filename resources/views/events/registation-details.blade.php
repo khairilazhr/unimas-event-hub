@@ -36,7 +36,7 @@
                                     {{ ucfirst($registration->status ?? 'unknown') }}
                                 </span>
 
-                                @if ($registration->status == 'pending')
+                                {{--                                 @if ($registration->status == 'pending')
                                     <a href="{{ route('user.events.payment', $registration->id) }}"
                                         class="inline-flex items-center px-4 py-1.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-all duration-300 hover:shadow-md transform hover:translate-y-[-1px]">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none"
@@ -46,7 +46,7 @@
                                         </svg>
                                         Pay Now
                                     </a>
-                                @endif
+                                @endif --}}
                             </div>
                         </div>
 
@@ -79,7 +79,7 @@
                                             </p>
                                             <p class="font-medium text-gray-800 dark:text-white">
                                                 {{ \Carbon\Carbon::parse($registration->event->date)->format('d
-                                                                                                M Y, h:i A') }}
+                                                                                                                                                M Y, h:i A') }}
                                             </p>
                                         </div>
                                     </div>
@@ -222,7 +222,7 @@
                                             <p class="font-medium text-gray-800 dark:text-white">
                                                 {{ $registration->phone ?:
                                                     'Not
-                                                                                                provided' }}
+                                                                                                                                                provided' }}
                                             </p>
                                         </div>
                                     </div>
@@ -259,7 +259,7 @@
                                             </p>
                                             <p class="font-medium text-gray-800 dark:text-white">
                                                 {{ $registration->created_at->format('d
-                                                                                                M Y, h:i A') }}
+                                                                                                                                                M Y, h:i A') }}
                                             </p>
                                         </div>
                                         <div>
@@ -269,7 +269,7 @@
                                             </p>
                                             <p class="font-medium text-gray-800 dark:text-white">
                                                 {{ $registration->updated_at->format('d
-                                                                                                M Y, h:i A') }}
+                                                                                                                                                M Y, h:i A') }}
                                             </p>
                                         </div>
                                     </div>
@@ -412,11 +412,11 @@
                                                 </div>
                                                 <div class="font-semibold">
                                                     {{ \Carbon\Carbon::parse($registration->event->date)->format('d
-                                                                                                        M Y') }}
+                                                                                                                                                            M Y') }}
                                                 </div>
                                                 <div class="text-sm">
                                                     {{ \Carbon\Carbon::parse($registration->event->date)->format('h:i
-                                                                                                        A') }}
+                                                                                                                                                            A') }}
                                                 </div>
                                             </div>
                                             <div class="text-right">
@@ -797,7 +797,7 @@
                             qrContainer.innerHTML = '';
                             new QRCode(qrContainer, {
                                 text: data
-                                .qrData, // This now contains base64 encoded JSON from server
+                                    .qrData, // This now contains base64 encoded JSON from server
                                 width: 150,
                                 height: 150,
                                 colorDark: "#000000",
