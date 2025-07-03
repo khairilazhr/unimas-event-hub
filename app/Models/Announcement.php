@@ -22,7 +22,7 @@ class Announcement extends Model
      */
     public function event()
     {
-        return $this->belongsTo(Event::class, 'eventId', 'id');
+        return $this->belongsTo(Event::class, 'eventId');
     }
 
     public function organizer()

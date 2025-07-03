@@ -121,12 +121,19 @@
                         <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-3 max-h-[200px] overflow-y-auto">
                             <h3 class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-2">Recent:</h3>
                             <ul class="space-y-2">
-                                <li class="text-xs text-gray-600 dark:text-gray-400">
-                                    - Schedule Change for Event 1
-                                </li>
-                                <li class="text-xs text-gray-600 dark:text-gray-400">
-                                    - New Event Coming Soon
-                                </li>
+                                @forelse($recentAnnouncements as $announcement)
+                                    <li class="text-xs text-gray-600 dark:text-gray-400">
+                                        <span class="font-semibold text-gray-800 dark:text-gray-100">{{ $announcement->title }}</span>
+                                        <span class="ml-2 text-gray-500 dark:text-gray-300">(
+                                            {{ $announcement->event ? $announcement->event->name : 'Unknown Event' }}
+                                            @if($announcement->announcement_date)
+                                                - {{ \Carbon\Carbon::parse($announcement->announcement_date)->format('d/m/Y') }}
+                                            @endif
+                                        )</span>
+                                    </li>
+                                @empty
+                                    <li class="text-xs text-gray-500 dark:text-gray-400">No recent announcements.</li>
+                                @endforelse
                             </ul>
                         </div>
                     </div>

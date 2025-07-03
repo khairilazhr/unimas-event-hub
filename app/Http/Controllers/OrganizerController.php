@@ -33,12 +33,19 @@ class OrganizerController extends Controller
         // Placeholder logic
         $pendingPayments = 0;
 
+        // Fetch recent announcements for organizer's events
+        $recentAnnouncements = \App\Models\Announcement::whereIn('eventId', $events->pluck('id'))
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
         return view('organizer.organizer-dashboard', [
             'events'            => $events,
             'totalEvents'       => $totalEvents,
             'upcomingEvents'    => $upcomingEvents,
             'pendingPayments'   => $pendingPayments,
             'totalParticipants' => $totalParticipants,
+            'recentAnnouncements' => $recentAnnouncements,
         ]);
     }
 
