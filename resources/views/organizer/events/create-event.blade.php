@@ -361,7 +361,7 @@
             desc = "No refunds are allowed for this event.";
         } else {
             desc =
-                `You can request a ${percent}% refund ${daysInput.value ? daysInput.value : '[N]'} days ${typeSelect.value === 'before' ? 'before' : 'after'} the event date.`;
+                `You can request a ${percent}% refund within ${daysInput.value ? daysInput.value : '[N]'} days ${typeSelect.value === 'before' ? 'before' : 'after'} the event date.`;
         }
         refundPolicy.value = desc;
     }

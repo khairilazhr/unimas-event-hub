@@ -117,7 +117,7 @@ class UserEventController extends Controller
             // Send email notifications
             try {
                 // Send email to the user
-                Mail::to($request->email)->send(new EventRegistrationNotification($registration));
+                Mail::to($validated['email'])->send(new EventRegistrationNotification($registration));
 
                 // Send email to the organizer if they have an email
                 if ($event->organizer && $event->organizer->email) {

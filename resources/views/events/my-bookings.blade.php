@@ -177,28 +177,22 @@
 
                                                                 // Only allow if refund policy is set and percentage > 0
                                                                 if (
-                                                                    $event->refund_window_type &&
-                                                                    $event->refund_window_days &&
-                                                                    $event->refund_percentage > 0
-                                                                ) {
-                                                                    if ($event->refund_window_type === 'before') {
-                                                                        // Refund allowed X days before event
-                                                                        $refundDeadline = $eventDate
-                                                                            ->copy()
-                                                                            ->subDays($event->refund_window_days);
-                                                                        $refundAllowed = $now->lessThanOrEqualTo(
-                                                                            $refundDeadline,
-                                                                        );
-                                                                    } elseif ($event->refund_window_type === 'after') {
-                                                                        // Refund allowed X days after event
-                                                                        $refundDeadline = $eventDate
-                                                                            ->copy()
-                                                                            ->addDays($event->refund_window_days);
-                                                                        $refundAllowed =
-                                                                            $now->greaterThanOrEqualTo($eventDate) &&
-                                                                            $now->lessThanOrEqualTo($refundDeadline);
-                                                                    }
-                                                                }
+    $event->refund_window_type &&
+    $event->refund_window_days &&
+    $event->refund_percentage > 0
+) {
+    if ($event->refund_window_type === 'before') {
+        // Refund allowed only if today is more than X days before event
+        $refundStart = $eventDate->copy()->subDays($event->refund_window_days);
+        $refundAllowed = $now->greaterThanOrEqualTo($refundStart) && $now->lessThanOrEqualTo($eventDate);
+    } elseif ($event->refund_window_type === 'after') {
+        // Refund allowed X days after event
+        $refundDeadline = $eventDate->copy()->addDays($event->refund_window_days);
+        $refundAllowed =
+            $now->greaterThanOrEqualTo($eventDate) &&
+            $now->lessThanOrEqualTo($refundDeadline);
+    }
+}
                                                                 $refund =
                                                                     $registration->ticket->refunds->first() ?? null;
                                                             @endphp

@@ -121,6 +121,15 @@
                                             </p>
                                         </div>
                                     </div>
+                                    <div>
+                                            <p
+                                                class="text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wide font-medium mb-1">
+                                                Refund Policy
+                                            </p>
+                                            <p class="font-medium text-gray-800 dark:text-white">
+                                                {{ $registration->event->refund_policy }}
+                                            </p>
+                                        </div>
                                 </div>
                             </div>
                         </div>

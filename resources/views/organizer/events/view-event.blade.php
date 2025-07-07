@@ -49,6 +49,11 @@
                                 <p class="text-gray-700 dark:text-gray-300">{{ $event->description }}</p>
                             </div>
 
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                                <p class="text-sm text-gray-500">Refund Plicy</p>
+                                <p class="text-gray-700 dark:text-gray-300">{{ $event->refund_policy }}</p>
+                            </div>
+
                             <!-- Quick Stats -->
                             <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 grid grid-cols-3 text-center">
                                 <div>

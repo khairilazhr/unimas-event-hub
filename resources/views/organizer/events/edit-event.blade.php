@@ -232,8 +232,8 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="refund_window_days" class="block text-sm font-medium mb-1">How
-                                            many days
+                                        <label for="refund_window_days" class="block text-sm font-medium mb-1">Period
+                                            (Days)
                                             <span
                                                 id="refund_window_label">{{ $event->refund_window_type ?? 'before' }}</span>
                                         </label>
@@ -649,7 +649,7 @@
                 desc = "No refunds are allowed for this event.";
             } else {
                 desc =
-                    `You can request a ${percent}% refund ${daysInput.value ? daysInput.value : '[N]'} days ${typeSelect.value === 'before' ? 'before' : 'after'} the event date.`;
+                    `You can request a ${percent}% refund within ${daysInput.value ? daysInput.value : '[N]'} days ${typeSelect.value === 'before' ? 'before' : 'after'} the event date.`;
             }
             refundPolicy.value = desc;
         }

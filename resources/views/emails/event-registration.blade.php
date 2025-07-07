@@ -122,6 +122,7 @@
     <div class="container">
         <div class="header">
             <h1>Registration Confirmed!</h1>
+            <p>Dear {{ $registration->name }},</p>
             <p>Thank you for registering for our event</p>
         </div>
 

@@ -17,9 +17,15 @@ class EventRegistrationNotification extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(EventRegistration $registration)
+    public function __construct($registration)
     {
         $this->registration = $registration;
+    }
+    
+    public function build()
+    {
+        return $this->subject('Your Event Registration')
+            ->view('emails.event-registration');
     }
 
     /**
