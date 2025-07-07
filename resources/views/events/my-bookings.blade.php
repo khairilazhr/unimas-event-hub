@@ -41,10 +41,10 @@
                         @else
                             @php
                                 $userEmail = Auth::user()->email;
-                                $ownRegistrations = $registrations->filter(function($registration) use ($userEmail) {
+                                $ownRegistrations = $registrations->filter(function ($registration) use ($userEmail) {
                                     return $registration->email === $userEmail;
                                 });
-                                $otherRegistrations = $registrations->filter(function($registration) use ($userEmail) {
+                                $otherRegistrations = $registrations->filter(function ($registration) use ($userEmail) {
                                     return $registration->email !== $userEmail;
                                 });
                             @endphp
@@ -170,34 +170,70 @@
                                                             </a>
 
                                                             @php
-                                                                $refund = $registration->ticket->refunds->first();
+                                                                $event = $registration->event;
+                                                                $now = \Carbon\Carbon::now();
+                                                                $eventDate = \Carbon\Carbon::parse($event->date);
+                                                                $refundAllowed = false;
+
+                                                                // Only allow if refund policy is set and percentage > 0
+                                                                if (
+                                                                    $event->refund_window_type &&
+                                                                    $event->refund_window_days &&
+                                                                    $event->refund_percentage > 0
+                                                                ) {
+                                                                    if ($event->refund_window_type === 'before') {
+                                                                        // Refund allowed X days before event
+                                                                        $refundDeadline = $eventDate
+                                                                            ->copy()
+                                                                            ->subDays($event->refund_window_days);
+                                                                        $refundAllowed = $now->lessThanOrEqualTo(
+                                                                            $refundDeadline,
+                                                                        );
+                                                                    } elseif ($event->refund_window_type === 'after') {
+                                                                        // Refund allowed X days after event
+                                                                        $refundDeadline = $eventDate
+                                                                            ->copy()
+                                                                            ->addDays($event->refund_window_days);
+                                                                        $refundAllowed =
+                                                                            $now->greaterThanOrEqualTo($eventDate) &&
+                                                                            $now->lessThanOrEqualTo($refundDeadline);
+                                                                    }
+                                                                }
+                                                                $refund =
+                                                                    $registration->ticket->refunds->first() ?? null;
                                                             @endphp
 
-                                                            @if ($refund)
-                                                                <div
-                                                                    class="inline-flex flex-col items-start px-2 py-1.5 text-xs rounded border border-orange-200 bg-orange-50 dark:bg-orange-900/20 dark:border-orange-700 w-full">
-                                                                    <span
-                                                                        class="font-semibold text-orange-600 dark:text-orange-400">Refund
-                                                                        Requested</span>
-                                                                    <span
-                                                                        class="text-gray-700 dark:text-gray-200">Status:
-                                                                        <span class="font-bold">
-                                                                            {{ ucfirst($refund->status) }}
+                                                            @if ($refundAllowed)
+                                                                @if ($refund)
+                                                                    <div
+                                                                        class="inline-flex flex-col items-start px-2 py-1.5 text-xs rounded border border-orange-200 bg-orange-50 dark:bg-orange-900/20 dark:border-orange-700 w-full">
+                                                                        <span
+                                                                            class="font-semibold text-orange-600 dark:text-orange-400">Refund
+                                                                            Requested</span>
+                                                                        <span
+                                                                            class="text-gray-700 dark:text-gray-200">Status:
+                                                                            <span class="font-bold">
+                                                                                {{ ucfirst($refund->status) }}
+                                                                            </span>
                                                                         </span>
-                                                                    </span>
-                                                                </div>
-                                                            @else
-                                                                <a href="{{ route('user.refunds.index', ['ticket_id' => $registration->ticket_id]) }}"
-                                                                    class="inline-flex items-center justify-center w-full px-2 py-1.5 text-xs font-medium rounded border border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-700 dark:hover:bg-orange-900/30 transition-colors">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                                        class="h-3 w-3 mr-1" fill="none"
-                                                                        viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path stroke-linecap="round"
-                                                                            stroke-linejoin="round" stroke-width="2"
-                                                                            d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
-                                                                    </svg>
-                                                                    Request Refund
-                                                                </a>
+                                                                    </div>
+                                                                @else
+                                                                    <a href="{{ route('user.refunds.index', ['ticket_id' => $registration->ticket_id]) }}"
+                                                                        class="inline-flex items-center justify-center w-full px-2 py-1.5 text-xs font-medium rounded border border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-700 dark:hover:bg-orange-900/30 transition-colors">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            class="h-3 w-3 mr-1" fill="none"
+                                                                            viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round"
+                                                                                stroke-linejoin="round" stroke-width="2"
+                                                                                d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z" />
+                                                                        </svg>
+                                                                        Request Refund
+                                                                    </a>
+                                                                @endif
+                                                            @elseif ($event->refund_window_type && $event->refund_window_days && $event->refund_percentage > 0)
+                                                                <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                                    Refund not available at this time based on event
+                                                                    policy.</div>
                                                             @endif
                                                         @endif
                                                     </div>
@@ -209,27 +245,35 @@
                             </div>
                             @if ($otherRegistrations->count())
                                 <div class="mt-12">
-                                    <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Tickets Bought for Others</h2>
+                                    <h2 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Tickets Bought for
+                                        Others</h2>
                                     <div class="grid gap-6 md:gap-8">
                                         @foreach ($otherRegistrations as $registration)
-                                            <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+                                            <div
+                                                class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
                                                 <div class="p-6">
                                                     <div class="flex flex-col lg:flex-row min-h-[120px]">
                                                         <div class="flex-1">
                                                             <div class="flex justify-between items-start mb-4">
                                                                 <div class="flex-1 pr-4">
-                                                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1 truncate">
+                                                                    <h3
+                                                                        class="text-lg font-semibold text-gray-900 dark:text-white mb-1 truncate">
                                                                         {{ $registration->event->name }}
                                                                     </h3>
-                                                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                                                    <p
+                                                                        class="text-sm text-gray-600 dark:text-gray-400">
                                                                         {{ $registration->event->location }}
                                                                     </p>
-                                                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                                                        <span class="font-semibold">For:</span> {{ $registration->name }} ({{ $registration->email }})
+                                                                    <p
+                                                                        class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                                        <span class="font-semibold">For:</span>
+                                                                        {{ $registration->name }}
+                                                                        ({{ $registration->email }})
                                                                     </p>
                                                                 </div>
                                                                 <div class="w-24 flex-shrink-0">
-                                                                    <span class="px-3 py-1 inline-flex justify-center w-full text-xs leading-5 font-semibold rounded-full
+                                                                    <span
+                                                                        class="px-3 py-1 inline-flex justify-center w-full text-xs leading-5 font-semibold rounded-full
                                                                         @if ($registration->status == 'approved') bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100
                                                                         @elseif($registration->status == 'pending')
                                                                             bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100
@@ -241,31 +285,42 @@
                                                                     </span>
                                                                 </div>
                                                             </div>
-                                                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                                            <div
+                                                                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                                                                 <div>
-                                                                    <span class="block text-gray-500 dark:text-gray-400 font-medium">Date & Time</span>
+                                                                    <span
+                                                                        class="block text-gray-500 dark:text-gray-400 font-medium">Date
+                                                                        & Time</span>
                                                                     <span class="text-gray-900 dark:text-white">
                                                                         {{ \Carbon\Carbon::parse($registration->event->date)->format('d M Y') }}
                                                                     </span>
-                                                                    <span class="block text-gray-600 dark:text-gray-300 text-xs">
+                                                                    <span
+                                                                        class="block text-gray-600 dark:text-gray-300 text-xs">
                                                                         {{ \Carbon\Carbon::parse($registration->event->date)->format('h:i A') }}
                                                                     </span>
                                                                 </div>
                                                                 <div>
-                                                                    <span class="block text-gray-500 dark:text-gray-400 font-medium">Ticket Type</span>
+                                                                    <span
+                                                                        class="block text-gray-500 dark:text-gray-400 font-medium">Ticket
+                                                                        Type</span>
                                                                     <span class="text-gray-900 dark:text-white">
                                                                         {{ $registration->ticket->type }}
                                                                     </span>
                                                                 </div>
                                                                 <div>
-                                                                    <span class="block text-gray-500 dark:text-gray-400 font-medium">Seat</span>
+                                                                    <span
+                                                                        class="block text-gray-500 dark:text-gray-400 font-medium">Seat</span>
                                                                     <span class="text-gray-900 dark:text-white">
-                                                                        {{ $registration->ticket->section }} - Row {{ $registration->ticket->row }} - Seat {{ $registration->ticket->seat }}
+                                                                        {{ $registration->ticket->section }} - Row
+                                                                        {{ $registration->ticket->row }} - Seat
+                                                                        {{ $registration->ticket->seat }}
                                                                     </span>
                                                                 </div>
                                                                 <div>
-                                                                    <span class="block text-gray-500 dark:text-gray-400 font-medium">Price</span>
-                                                                    <span class="text-gray-900 dark:text-white font-semibold">
+                                                                    <span
+                                                                        class="block text-gray-500 dark:text-gray-400 font-medium">Price</span>
+                                                                    <span
+                                                                        class="text-gray-900 dark:text-white font-semibold">
                                                                         RM{{ number_format($registration->ticket->price, 2) }}
                                                                     </span>
                                                                 </div>
@@ -275,9 +330,15 @@
                                                             <div class="flex flex-col gap-1.5">
                                                                 <a href="{{ route('user.events.registration-details', $registration->id) }}"
                                                                     class="inline-flex items-center justify-center w-full px-2 py-1.5 text-xs font-medium rounded border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-700 dark:hover:bg-blue-900/30 transition-colors">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                                        class="h-3 w-3 mr-1" fill="none"
+                                                                        viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path stroke-linecap="round"
+                                                                            stroke-linejoin="round" stroke-width="2"
+                                                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                        <path stroke-linecap="round"
+                                                                            stroke-linejoin="round" stroke-width="2"
+                                                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                                                     </svg>
                                                                     View Details
                                                                 </a>
