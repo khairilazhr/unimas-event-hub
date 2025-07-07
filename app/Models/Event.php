@@ -21,6 +21,9 @@ class Event extends Model
         'supporting_docs',
         'refund_type',
         'refund_policy',
+        'refund_window_type',
+        'refund_window_days',
+        'refund_percentage',
         'status',
     ];
 

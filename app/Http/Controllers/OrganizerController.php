@@ -40,11 +40,11 @@ class OrganizerController extends Controller
             ->get();
 
         return view('organizer.organizer-dashboard', [
-            'events'            => $events,
-            'totalEvents'       => $totalEvents,
-            'upcomingEvents'    => $upcomingEvents,
-            'pendingPayments'   => $pendingPayments,
-            'totalParticipants' => $totalParticipants,
+            'events'              => $events,
+            'totalEvents'         => $totalEvents,
+            'upcomingEvents'      => $upcomingEvents,
+            'pendingPayments'     => $pendingPayments,
+            'totalParticipants'   => $totalParticipants,
             'recentAnnouncements' => $recentAnnouncements,
         ]);
     }
@@ -91,6 +91,9 @@ class OrganizerController extends Controller
             'supporting_docs'         => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'refund_type'             => 'nullable|string|max:255',
             'refund_policy'           => 'nullable|string|max:1000',
+            'refund_window_type'      => 'nullable|in:before,after',
+            'refund_window_days'      => 'nullable|integer|min:1',
+            'refund_percentage'       => 'nullable|integer|min:1|max:100',
             'tickets'                 => 'required|array|min:1',
             'tickets.*.section'       => 'required|string|max:255',
             'tickets.*.type'          => 'required|string|max:255',
@@ -115,20 +118,23 @@ class OrganizerController extends Controller
             $supportingDocsPath = $request->file('supporting_docs')->store('supporting_docs', 'public');
         }
 
-        $event                  = new Event;
-        $event->name            = $request->input('name');
-        $event->description     = $request->input('description');
-        $event->date            = $request->input('date');
-        $event->location        = $request->input('location');
-        $event->organizer_name  = $request->input('organizer_name');
-        $event->poster          = $posterPath;
-        $event->qr_code         = $qrcodePath;
-        $event->payment_details = $request->input('payment_details');
-        $event->supporting_docs = $supportingDocsPath;
-        $event->refund_type     = $request->input('refund_type');
-        $event->refund_policy   = $request->input('refund_policy');
-        $event->organizer_id    = Auth::id();
-        $event->status          = 'pending';
+        $event                     = new Event;
+        $event->name               = $request->input('name');
+        $event->description        = $request->input('description');
+        $event->date               = $request->input('date');
+        $event->location           = $request->input('location');
+        $event->organizer_name     = $request->input('organizer_name');
+        $event->poster             = $posterPath;
+        $event->qr_code            = $qrcodePath;
+        $event->payment_details    = $request->input('payment_details');
+        $event->supporting_docs    = $supportingDocsPath;
+        $event->refund_type        = $request->input('refund_type');
+        $event->refund_policy      = $request->input('refund_policy');
+        $event->refund_window_type = $request->input('refund_window_type');
+        $event->refund_window_days = $request->input('refund_window_days');
+        $event->refund_percentage  = $request->input('refund_percentage');
+        $event->organizer_id       = Auth::id();
+        $event->status             = 'pending';
         $event->save();
 
         // Process ticket sections
@@ -167,9 +173,9 @@ class OrganizerController extends Controller
             return redirect()->route('organizer.events')->with('error', 'You are not authorized to edit this event.');
         }
 
-        // Check if event status is pending
-        if ($event->status !== 'pending') {
-            return redirect()->route('organizer.events')->with('error', 'Only pending events can be edited.');
+        // Check if event status is pending or approved
+        if (! in_array($event->status, ['pending', 'approved'])) {
+            return redirect()->route('organizer.events')->with('error', 'Only pending or approved events can be edited.');
         }
 
         return view('organizer.events.edit-event', compact('event'));
@@ -184,24 +190,27 @@ class OrganizerController extends Controller
             return redirect()->route('organizer.events')->with('error', 'You are not authorized to edit this event.');
         }
 
-        // Check if event status is pending
-        if ($event->status !== 'pending') {
-            return redirect()->route('organizer.events')->with('error', 'Only pending events can be edited.');
+        // Check if event status is pending or approved
+        if (! in_array($event->status, ['pending', 'approved'])) {
+            return redirect()->route('organizer.events')->with('error', 'Only pending or approved events can be edited.');
         }
 
         // Validate the request
         $request->validate([
-            'name'            => 'required|string|max:255',
-            'description'     => 'required|string',
-            'date'            => 'required|date',
-            'location'        => 'required|string|max:255',
-            'organizer_name'  => 'required|string|max:255',
-            'poster'          => 'nullable|image|max:2048',
-            'qr_code'         => 'nullable|image|max:2048',
-            'payment_details' => 'nullable|string|max:1000',
-            'supporting_docs' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-            'refund_type'     => 'nullable|string|max:255',
-            'refund_policy'   => 'nullable|string|max:1000',
+            'name'               => 'required|string|max:255',
+            'description'        => 'required|string',
+            'date'               => 'required|date',
+            'location'           => 'required|string|max:255',
+            'organizer_name'     => 'required|string|max:255',
+            'poster'             => 'nullable|image|max:2048',
+            'qr_code'            => 'nullable|image|max:2048',
+            'payment_details'    => 'nullable|string|max:1000',
+            'supporting_docs'    => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+            'refund_type'        => 'nullable|string|max:255',
+            'refund_policy'      => 'nullable|string|max:1000',
+            'refund_window_type' => 'nullable|in:before,after',
+            'refund_window_days' => 'nullable|integer|min:1',
+            'refund_percentage'  => 'nullable|integer|min:1|max:100',
         ]);
 
         // Handle file uploads
@@ -239,9 +248,12 @@ class OrganizerController extends Controller
         $event->organizer_name = $request->input('organizer_name');
 
         // Add these missing field updates
-        $event->payment_details = $request->input('payment_details');
-        $event->refund_type     = $request->input('refund_type');
-        $event->refund_policy   = $request->input('refund_policy');
+        $event->payment_details    = $request->input('payment_details');
+        $event->refund_type        = $request->input('refund_type');
+        $event->refund_policy      = $request->input('refund_policy');
+        $event->refund_window_type = $request->input('refund_window_type');
+        $event->refund_window_days = $request->input('refund_window_days');
+        $event->refund_percentage  = $request->input('refund_percentage');
 
         $event->save();
 

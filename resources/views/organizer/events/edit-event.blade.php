@@ -213,39 +213,67 @@
                                 </div>
                             </div>
 
-                            <!-- Refund Type & Refund Policy -->
-                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 shadow-sm mt-4">
-                                <h3 class="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4">Refund Policy
-                                </h3>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Refund Policy Section -->
+                            <div class="mb-6">
+                                <h2 class="text-lg font-semibold mb-2">Refund Policy</h2>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div>
-                                        <label for="refund_type"
-                                            class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Refund Type
+                                        <label for="refund_window_type" class="block text-sm font-medium mb-1">Refund
+                                            Allowed
                                         </label>
-                                        <select name="refund_type" id="refund_type"
-                                            class="block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm">
-                                            <option value="no_refund"
-                                                {{ old('refund_type', $event->refund_type) == 'no_refund' ? 'selected' : '' }}>
-                                                No Refund</option>
-                                            <option value="partial_refund"
-                                                {{ old('refund_type', $event->refund_type) == 'partial_refund' ? 'selected' : '' }}>
-                                                Partial Refund</option>
-                                            <option value="full_refund"
-                                                {{ old('refund_type', $event->refund_type) == 'full_refund' ? 'selected' : '' }}>
-                                                Full Refund</option>
+                                        <select id="refund_window_type" name="refund_window_type"
+                                            class="form-select w-full" required>
+                                            <option value="before"
+                                                {{ old('refund_window_type', $event->refund_window_type) == 'before' ? 'selected' : '' }}>
+                                                Before Event</option>
+                                            <option value="after"
+                                                {{ old('refund_window_type', $event->refund_window_type) == 'after' ? 'selected' : '' }}>
+                                                After Event</option>
                                         </select>
                                     </div>
-
                                     <div>
-                                        <label for="refund_policy"
-                                            class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            Refund Policy
+                                        <label for="refund_window_days" class="block text-sm font-medium mb-1">How
+                                            many days
+                                            <span
+                                                id="refund_window_label">{{ $event->refund_window_type ?? 'before' }}</span>
                                         </label>
-                                        <textarea name="refund_policy" id="refund_policy" rows="3"
-                                            class="block w-full rounded-md border-gray-300 dark:border-gray-700 shadow-sm focus:border-unimasblue focus:ring focus:ring-unimasblue focus:ring-opacity-50 dark:bg-gray-900 dark:text-white text-sm">{{ old('refund_policy', $event->refund_policy) }}</textarea>
+                                        <input type="number" id="refund_window_days" name="refund_window_days"
+                                            min="1"
+                                            value="{{ old('refund_window_days', $event->refund_window_days) }}"
+                                            class="form-input w-full" required>
                                     </div>
+                                    <div>
+                                        <label for="refund_percentage" class="block text-sm font-medium mb-1">Refund
+                                            Percentage (%)</label>
+                                        <input type="number" id="refund_percentage" name="refund_percentage"
+                                            min="1" max="100"
+                                            value="{{ old('refund_percentage', $event->refund_percentage) }}"
+                                            class="form-input w-full" required>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <label for="refund_type" class="block text-sm font-medium mb-1">Refund
+                                        Type</label>
+                                    <select id="refund_type" name="refund_type" class="form-select w-full">
+                                        <option value="" disabled {{ !$event->refund_type ? 'selected' : '' }}>
+                                            Select refund
+                                            type
+                                        </option>
+                                        <option value="full"
+                                            {{ old('refund_type', $event->refund_type) == 'full' ? 'selected' : '' }}>
+                                            Full Refund</option>
+                                        <option value="partial"
+                                            {{ old('refund_type', $event->refund_type) == 'partial' ? 'selected' : '' }}>
+                                            Partial Refund</option>
+                                        <option value="no_refund"
+                                            {{ old('refund_type', $event->refund_type) == 'no_refund' ? 'selected' : '' }}>
+                                            No Refund</option>
+                                    </select>
+                                </div>
+                                <div class="mt-4">
+                                    <label for="refund_policy" class="block text-sm font-medium mb-1">Refund Policy
+                                        Description</label>
+                                    <textarea id="refund_policy" name="refund_policy" rows="3" class="form-textarea w-full">{{ old('refund_policy', $event->refund_policy) }}</textarea>
                                 </div>
                             </div>
 
@@ -592,6 +620,47 @@
                 hiddenField.value = section;
                 ticketSection.appendChild(hiddenField);
             };
+        });
+
+        function updateRefundFields() {
+            const typeSelect = document.getElementById('refund_window_type');
+            const daysInput = document.getElementById('refund_window_days');
+            const percentInput = document.getElementById('refund_percentage');
+            const refundType = document.getElementById('refund_type');
+            const refundPolicy = document.getElementById('refund_policy');
+            const label = document.getElementById('refund_window_label');
+
+            // Update label for days
+            label.textContent = typeSelect.value;
+
+            // Determine refund type
+            let percent = parseInt(percentInput.value, 10);
+            if (isNaN(percent) || percent <= 0) {
+                refundType.value = "no_refund";
+            } else if (percent >= 100) {
+                refundType.value = "full";
+            } else {
+                refundType.value = "partial";
+            }
+
+            // Generate policy description
+            let desc = "";
+            if (refundType.value === "no_refund") {
+                desc = "No refunds are allowed for this event.";
+            } else {
+                desc =
+                    `You can request a ${percent}% refund ${daysInput.value ? daysInput.value : '[N]'} days ${typeSelect.value === 'before' ? 'before' : 'after'} the event date.`;
+            }
+            refundPolicy.value = desc;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('refund_window_type').addEventListener('change', updateRefundFields);
+            document.getElementById('refund_window_days').addEventListener('input', updateRefundFields);
+            document.getElementById('refund_percentage').addEventListener('input', updateRefundFields);
+
+            // Initial update on page load
+            updateRefundFields();
         });
     </script>
 </x-app-layout>

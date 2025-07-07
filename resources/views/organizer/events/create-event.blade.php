@@ -131,6 +131,36 @@
                                             class="w-full rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-unimasblue focus:border-transparent resize-none"></textarea>
                                     </div>
                                 </div>
+
+                                <!-- New refund policy fields -->
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                                    <div>
+                                        <label for="refund_window_type"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Refund
+                                            Allowed</label>
+                                        <select id="refund_window_type" name="refund_window_type" required
+                                            class="w-full rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-unimasblue focus:border-transparent">
+                                            <option value="before">Before Event</option>
+                                            <option value="after">After Event</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="refund_window_days"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">How
+                                            many days <span id="refund_window_label">before</span></label>
+                                        <input type="number" id="refund_window_days" name="refund_window_days"
+                                            min="1" required
+                                            class="w-full rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-unimasblue focus:border-transparent" />
+                                    </div>
+                                    <div>
+                                        <label for="refund_percentage"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Refund
+                                            Percentage (%)</label>
+                                        <input type="number" id="refund_percentage" name="refund_percentage"
+                                            min="1" max="100" required
+                                            class="w-full rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-unimasblue focus:border-transparent" />
+                                    </div>
+                                </div>
                             </section>
 
                             <!-- Ticket Information Section -->
@@ -299,22 +329,49 @@
         });
     });
 
-    const refundTypeSelect = document.getElementById('refund_type');
-    const refundPolicyDiv = refundTypeSelect.closest('.grid').querySelector('textarea#refund_policy').parentElement;
-    const refundPolicyTextarea = document.getElementById('refund_policy');
+    // Update label based on before/after selection
+    document.getElementById('refund_window_type').addEventListener('change', function() {
+        document.getElementById('refund_window_label').textContent = this.value;
+    });
 
-    function toggleRefundPolicyVisibility() {
-        if (refundTypeSelect.value === '' || refundTypeSelect.value === 'no_refund') {
-            refundPolicyDiv.style.display = 'none';
-            refundPolicyTextarea.value = ''; // Clear when hidden (optional)
+    function updateRefundFields() {
+        const typeSelect = document.getElementById('refund_window_type');
+        const daysInput = document.getElementById('refund_window_days');
+        const percentInput = document.getElementById('refund_percentage');
+        const refundType = document.getElementById('refund_type');
+        const refundPolicy = document.getElementById('refund_policy');
+        const label = document.getElementById('refund_window_label');
+
+        // Update label for days
+        label.textContent = typeSelect.value;
+
+        // Determine refund type
+        let percent = parseInt(percentInput.value, 10);
+        if (isNaN(percent) || percent <= 0) {
+            refundType.value = "no_refund";
+        } else if (percent >= 100) {
+            refundType.value = "full";
         } else {
-            refundPolicyDiv.style.display = 'block';
+            refundType.value = "partial";
         }
+
+        // Generate policy description
+        let desc = "";
+        if (refundType.value === "no_refund") {
+            desc = "No refunds are allowed for this event.";
+        } else {
+            desc =
+                `You can request a ${percent}% refund ${daysInput.value ? daysInput.value : '[N]'} days ${typeSelect.value === 'before' ? 'before' : 'after'} the event date.`;
+        }
+        refundPolicy.value = desc;
     }
 
-    // Initialize visibility on page load
-    toggleRefundPolicyVisibility();
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('refund_window_type').addEventListener('change', updateRefundFields);
+        document.getElementById('refund_window_days').addEventListener('input', updateRefundFields);
+        document.getElementById('refund_percentage').addEventListener('input', updateRefundFields);
 
-    // Listen for changes on refund type select
-    refundTypeSelect.addEventListener('change', toggleRefundPolicyVisibility);
+        // Initial update on page load
+        updateRefundFields();
+    });
 </script>
