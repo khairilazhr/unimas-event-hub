@@ -225,7 +225,7 @@
                                             class="form-select w-full" required>
                                             <option value="before"
                                                 {{ old('refund_window_type', $event->refund_window_type) == 'before' ? 'selected' : '' }}>
-                                                Before Event</option>
+                                                Before Event </option>
                                             <option value="after"
                                                 {{ old('refund_window_type', $event->refund_window_type) == 'after' ? 'selected' : '' }}>
                                                 After Event</option>

@@ -146,8 +146,8 @@
                                     </div>
                                     <div>
                                         <label for="refund_window_days"
-                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">How
-                                            many days <span id="refund_window_label">before</span></label>
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Period
+                                            (Days) <span id="refund_window_label">before</span></label>
                                         <input type="number" id="refund_window_days" name="refund_window_days"
                                             min="1" required
                                             class="w-full rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-unimasblue focus:border-transparent" />
