@@ -240,11 +240,15 @@ class QuestionnaireController extends Controller
     public function userQuestionnaires($eventId)
     {
         $event = Event::findOrFail($eventId);
+        $user  = Auth::user();
 
         // Check if user is registered for this event
         $isRegistered = EventRegistration::where('event_id', $eventId)
-            ->where('user_id', Auth::id())
             ->where('status', 'approved')
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhere('email', $user->email);
+            })
             ->exists();
 
         if (! $isRegistered) {
@@ -262,10 +266,13 @@ class QuestionnaireController extends Controller
 
     public function showResponseForm(Questionnaire $questionnaire)
     {
-        // Check if user is registered for this event
+        $user         = Auth::user();
         $isRegistered = EventRegistration::where('event_id', $questionnaire->event_id)
-            ->where('user_id', Auth::id())
             ->where('status', 'approved')
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhere('email', $user->email);
+            })
             ->exists();
 
         if (! $isRegistered) {

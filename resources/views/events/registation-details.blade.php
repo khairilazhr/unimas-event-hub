@@ -79,7 +79,7 @@
                                             </p>
                                             <p class="font-medium text-gray-800 dark:text-white">
                                                 {{ \Carbon\Carbon::parse($registration->event->date)->format('d
-                                                                                                                                                M Y, h:i A') }}
+                                                                                                                                                                                                M Y, h:i A') }}
                                             </p>
                                         </div>
                                     </div>
@@ -222,7 +222,7 @@
                                             <p class="font-medium text-gray-800 dark:text-white">
                                                 {{ $registration->phone ?:
                                                     'Not
-                                                                                                                                                provided' }}
+                                                                                                                                                                                                provided' }}
                                             </p>
                                         </div>
                                     </div>
@@ -259,7 +259,7 @@
                                             </p>
                                             <p class="font-medium text-gray-800 dark:text-white">
                                                 {{ $registration->created_at->format('d
-                                                                                                                                                M Y, h:i A') }}
+                                                                                                                                                                                                M Y, h:i A') }}
                                             </p>
                                         </div>
                                         <div>
@@ -269,7 +269,7 @@
                                             </p>
                                             <p class="font-medium text-gray-800 dark:text-white">
                                                 {{ $registration->updated_at->format('d
-                                                                                                                                                M Y, h:i A') }}
+                                                                                                                                                                                                M Y, h:i A') }}
                                             </p>
                                         </div>
                                     </div>
@@ -313,7 +313,7 @@
                                 @endif
 
                                 <!-- Digital Ticket Button - Only shown when status is approved -->
-                                @if ($registration->status == 'approved' && \Carbon\Carbon::parse($registration->event->date)->isFuture())
+                                @if ($registration->status == 'approved')
                                     <button type="button" id="generateTicketBtn"
                                         class="px-5 py-2.5 bg-unimasblue text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-300 hover:shadow-md transform hover:translate-y-[-1px] flex items-center"
                                         data-registration-id="{{ $registration->id }}">
@@ -412,11 +412,11 @@
                                                 </div>
                                                 <div class="font-semibold">
                                                     {{ \Carbon\Carbon::parse($registration->event->date)->format('d
-                                                                                                                                                            M Y') }}
+                                                                                                                                                                                                                M Y') }}
                                                 </div>
                                                 <div class="text-sm">
                                                     {{ \Carbon\Carbon::parse($registration->event->date)->format('h:i
-                                                                                                                                                            A') }}
+                                                                                                                                                                                                                A') }}
                                                 </div>
                                             </div>
                                             <div class="text-right">

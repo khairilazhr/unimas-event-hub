@@ -19,6 +19,7 @@ class RefundsController extends Controller
     public function index(Request $request)
     {
         $ticketId = $request->get('ticket_id');
+        $user     = Auth::user();
 
         // If no ticket_id provided, show user's refund history
         if (! $ticketId) {
@@ -32,12 +33,15 @@ class RefundsController extends Controller
 
         // Get the registration details for the specific ticket
         $registration = EventRegistration::where('ticket_id', $ticketId)
-            ->where('user_id', Auth::id())
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhere('email', $user->email);
+            })
             ->with(['event', 'ticket', 'payment'])
             ->first();
 
         if (! $registration) {
-            return redirect()->back()->with('error', 'Registration not found or you do not have permission to refund this ticket.');
+            return redirect()->back()->with('error', 'Registration not found.');
         }
 
         // Check if refund already exists for this ticket
@@ -72,9 +76,13 @@ class RefundsController extends Controller
         ]);
 
         // Get the registration to calculate refund amount
+        $user         = Auth::user();
         $registration = EventRegistration::where('ticket_id', $request->ticket_id)
-            ->where('user_id', Auth::id())
-            ->with(['ticket', 'payment', 'event'])
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                    ->orWhere('email', $user->email);
+            })
+            ->with(['event', 'ticket', 'payment'])
             ->first();
 
         if (! $registration) {

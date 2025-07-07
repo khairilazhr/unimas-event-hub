@@ -7,13 +7,16 @@
         $query
             ->select('event_id')
             ->from('event_registrations')
-            ->where('user_id', auth()->id());
+            ->where('user_id', auth()->id())
+            ->orWhere('email', auth()->user()->email);
     })
         ->latest()
         ->get();
 
     // Get user's event registrations and stats
-$userRegistrations = \App\Models\EventRegistration::where('user_id', auth()->id())
+$userRegistrations = \App\Models\EventRegistration::where(function ($query) {
+    $query->where('user_id', auth()->id())->orWhere('email', auth()->user()->email);
+})
     ->with('event')
         ->latest()
         ->get();
@@ -224,34 +227,56 @@ $userRegistrations = \App\Models\EventRegistration::where('user_id', auth()->id(
                     <!-- Announcement Cards Section -->
                     <div class="dashboard-announcement-cards" style="display: flex; flex-wrap: wrap; gap: 24px;">
                         @forelse ($userAnnouncements as $announcement)
-                            <div class="dashboard-announcement-card" style="background: #fff; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: 1px solid #e5e7eb; padding: 0; max-width: 1700px; min-width: 320px; flex: 1 1 1000px; transition: box-shadow 0.2s; display: flex; flex-direction: row; overflow: hidden; align-items: stretch;">
+                            <div class="dashboard-announcement-card"
+                                style="background: #fff; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: 1px solid #e5e7eb; padding: 0; max-width: 1700px; min-width: 320px; flex: 1 1 1000px; transition: box-shadow 0.2s; display: flex; flex-direction: row; overflow: hidden; align-items: stretch;">
                                 <div style="flex: 0 0 160px; display: flex; align-items: stretch;">
                                     @if ($announcement->event && $announcement->event->poster)
-                                        <img src="{{ asset('storage/' . $announcement->event->poster) }}" alt="Event Poster" style="width: 100%; height: 100%; min-height: 180px; object-fit: cover; border-top-left-radius: 16px; border-bottom-left-radius: 16px;">
+                                        <img src="{{ asset('storage/' . $announcement->event->poster) }}"
+                                            alt="Event Poster"
+                                            style="width: 100%; height: 100%; min-height: 180px; object-fit: cover; border-top-left-radius: 16px; border-bottom-left-radius: 16px;">
                                     @else
-                                        <img src="{{ asset('images/default-event-poster.png') }}" alt="Default Poster" style="width: 100%; height: 100%; min-height: 180px; object-fit: cover; border-top-left-radius: 16px; border-bottom-left-radius: 16px;">
+                                        <img src="{{ asset('images/default-event-poster.png') }}"
+                                            alt="Default Poster"
+                                            style="width: 100%; height: 100%; min-height: 180px; object-fit: cover; border-top-left-radius: 16px; border-bottom-left-radius: 16px;">
                                     @endif
                                 </div>
-                                <div style="padding: 20px 24px; display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0;">
-                                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 4px; flex-wrap: wrap;">
-                                        <span style="font-size: 1.1rem; font-weight: 700; color: #1f2937; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <div
+                                    style="padding: 20px 24px; display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0;">
+                                    <div
+                                        style="display: flex; align-items: center; gap: 16px; margin-bottom: 4px; flex-wrap: wrap;">
+                                        <span
+                                            style="font-size: 1.1rem; font-weight: 700; color: #1f2937; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                             {{ $announcement->event ? $announcement->event->name : 'Unknown Event' }}
                                         </span>
                                         @if ($announcement->event && $announcement->event->date)
-                                            <span style="font-size: 0.98rem; color: #6b7280; display: flex; align-items: center;">
-                                                <svg style="width: 1em; height: 1em; vertical-align: middle; margin-right: 4px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                            <span
+                                                style="font-size: 0.98rem; color: #6b7280; display: flex; align-items: center;">
+                                                <svg style="width: 1em; height: 1em; vertical-align: middle; margin-right: 4px;"
+                                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                    </path>
+                                                </svg>
                                                 {{ \Carbon\Carbon::parse($announcement->event->date)->format('d/m/Y') }}
                                             </span>
                                         @endif
                                     </div>
-                                    <h4 style="font-size: 1.15rem; font-weight: 700; color: #2563eb; margin: 0 0 4px 0;">{{ $announcement->title }}</h4>
-                                    <p style="font-size: 1rem; color: #374151; margin: 0 0 8px 0; word-break: break-word;">{{ $announcement->content }}</p>
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; flex-wrap: wrap; gap: 8px;">
+                                    <h4
+                                        style="font-size: 1.15rem; font-weight: 700; color: #2563eb; margin: 0 0 4px 0;">
+                                        {{ $announcement->title }}</h4>
+                                    <p
+                                        style="font-size: 1rem; color: #374151; margin: 0 0 8px 0; word-break: break-word;">
+                                        {{ $announcement->content }}</p>
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; flex-wrap: wrap; gap: 8px;">
                                         @if ($announcement->announcement_date)
-                                            <span style="font-size: 0.95rem; color: #6b7280;">Announced: {{ \Carbon\Carbon::parse($announcement->announcement_date)->format('d/m/Y') }}</span>
+                                            <span style="font-size: 0.95rem; color: #6b7280;">Announced:
+                                                {{ \Carbon\Carbon::parse($announcement->announcement_date)->format('d/m/Y') }}</span>
                                         @endif
                                         @if ($announcement->created_by)
-                                            <span style="font-size: 0.95rem; color: #6b7280;">By: {{ $announcement->created_by }}</span>
+                                            <span style="font-size: 0.95rem; color: #6b7280;">By:
+                                                {{ $announcement->created_by }}</span>
                                         @endif
                                     </div>
                                 </div>

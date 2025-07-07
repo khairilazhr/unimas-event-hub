@@ -153,10 +153,17 @@ class UserEventController extends Controller
     {
         $user = auth()->user();
 
-        $registrations = \App\Models\EventRegistration::where('user_id', $user->id)
-            ->with(['event', 'ticket', 'ticket.refunds' => function ($q) use ($user) {
-                $q->where('user_id', $user->id);
-            }])
+        $registrations = EventRegistration::where(function ($query) use ($user) {
+            $query->where('user_id', $user->id)
+                ->orWhere('email', $user->email);
+        })
+            ->with([
+                'event',
+                'ticket',
+                'ticket.refunds' => function ($q) use ($user) {
+                    $q->where('user_id', $user->id);
+                },
+            ])
             ->latest()
             ->get();
 
@@ -165,8 +172,11 @@ class UserEventController extends Controller
 
     public function registrationDetails(EventRegistration $registration)
     {
+        // Get authenticated user
+        $user = auth()->user();
+
         // Security check - only allow users to view their own registrations
-        if ($registration->user_id != auth()->id()) {
+        if ($registration->user_id != $user->id && $registration->email !== $user->email) {
             abort(403, 'You are not authorized to view this registration.');
         }
 
@@ -231,7 +241,12 @@ class UserEventController extends Controller
 
     public function generateTicket(EventRegistration $registration)
     {
-        if ($registration->user_id != auth()->id() || $registration->status !== 'approved') {
+        $user = auth()->user();
+
+        if (
+            ($registration->user_id != $user->id && $registration->email !== $user->email)
+            || $registration->status !== 'approved'
+        ) {
             abort(403);
         }
 

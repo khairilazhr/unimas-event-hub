@@ -27,10 +27,15 @@ class ForumController extends Controller
         if ($user->role === 'organizer') {
             abort_unless($event->organizer_id === $user->id, 403, 'Unauthorized access');
         } elseif ($user->role === 'user') {
-            $hasConfirmedRegistration = EventRegistration::where('user_id', $user->id)
-                ->where('event_id', $event->id)
+            $user                     = auth()->user();
+            $hasConfirmedRegistration = EventRegistration::where('event_id', $eventId)
                 ->where('status', 'approved')
+                ->where(function ($q) use ($user) {
+                    $q->where('user_id', $user->id)
+                        ->orWhere('email', $user->email);
+                })
                 ->exists();
+
             abort_unless($hasConfirmedRegistration, 403, 'You need a confirmed registration');
         }
         // Admin requires no checks
